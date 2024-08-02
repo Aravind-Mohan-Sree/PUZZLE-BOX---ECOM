@@ -55,5 +55,35 @@ app.use(express.urlencoded({extended: true}));
 // manages the session
 app.use(session({
   secret: uuidv4(),
-  
+  resave: false,
+  saveUninitialized: true,
+  cookie: {secure: false}
 }));
+
+// mounting and initialization of 'passport'
+app.use(passport.initialize());
+app.use(passport.session());
+
+// setting 'ejs'
+app.use(expressLayouts());
+app.set('layout', './layouts/layout');
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+// mounting route handlers
+app.use('/', userRouters);
+app.use('/admin/', adminRouters);
+
+// for handling unspecified routes
+app.get('*', (req, res) => {
+  res.render('pageNotFound', {title: '404 Page not found'});
+});
+
+// listening port
+app.listen(port, (err) => {
+  if (err) {
+    console.log(`Error occurred while listening to port ${err}`);
+  } else {
+    console.log(`Server is running on http://localhost:${port}`);
+  }
+});
