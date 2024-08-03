@@ -10,7 +10,7 @@ const {v4: uuidv4} = require('uuid');
 
 // admin and user routers
 const adminRouters = require('./router/adminRouter');
-const userRouters = require('./router/userRouter');
+// const userRouters = require('./router/userRouter');
 
 // requiring mongodb
 const connectDB = require('./config/connection');
@@ -66,13 +66,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // setting 'ejs'
-app.use(expressLayouts());
+app.use(expressLayouts);
 app.set('layout', './layouts/layout');
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // mounting route handlers
-app.use('/', userRouters);
+// app.use('/', userRouters);
 app.use('/admin', adminRouters);
 
 // for handling unspecified routes
@@ -85,6 +85,6 @@ app.listen(port, (err) => {
   if (err) {
     console.log(`Error occurred while listening to port ${err}`);
   } else {
-    console.log(`Server is running on http://localhost:${port}`);
+    console.log(`Server is running on http://127.0.0.1:${port}`);
   }
 });
