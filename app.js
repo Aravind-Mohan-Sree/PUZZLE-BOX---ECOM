@@ -47,6 +47,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/style', express.static(path.join(__dirname, 'public', 'style')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
 
 // will parse incoming request bodies and can be used for further processing
 app.use(express.json());
@@ -72,7 +73,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 // mounting route handlers
 app.use('/', userRouters);
-app.use('/admin/', adminRouters);
+app.use('/admin', adminRouters);
 
 // for handling unspecified routes
 app.get('*', (req, res) => {
