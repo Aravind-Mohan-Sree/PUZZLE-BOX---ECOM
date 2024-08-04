@@ -46,12 +46,12 @@
     <div class="login-container text-center pt-4 px-4">
       <h2 class="fw-medium lh-base">Admin Login</h2>
       <p>Welcome Back!</p>
-      <form>
+      <form method="post" action="/admin/dashboard">
         <div class="form-group">
-          <input type="email" class="form-control pe-5 bg-dark" placeholder="Email Address">
+          <input type="email" class="form-control pe-5 bg-dark" placeholder="Email Address" required>
         </div>
         <div class="input-group mt-3">
-          <input type="password" class="form-control pe-5 bg-dark border-end-0" placeholder="Password" id="password">
+          <input type="password" class="form-control pe-5 bg-dark border-end-0" placeholder="Password" id="password" required>
           <span class="input-group-text bg-dark rounded-end-pill" id="togglePassword">
             <i class="fad fa-eye-slash" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i>
           </span>
