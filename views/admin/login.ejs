@@ -1,2 +1,54 @@
+<style>
+  .form-container {
+    background-image: url('/image/bg.webp'); /* Replace with your image URL */
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 100vw;
+    height: 72vh;
+    margin-top: .9375rem;
+  }
+
+  .login-container {
+    background: rgba(255, 255, 255, 0.8);
+    padding: 1.875rem;
+    border-radius: .9375rem;
+    box-shadow: 0 0 .625rem rgba(0, 0, 0, 0.1);
+  }
+
+  .form-control {
+    color: rgb(255, 255, 255);
+    border-radius: 1.25rem;
+  }
+
+  .form-control::placeholder {
+    color: rgba(255, 255, 255, .5);
+  }
+
+  .form-control:focus {
+    outline: none;
+    box-shadow: none;
+    border-color: transparent;
+    color: rgb(255, 255, 255);
+  }
+</style>
+
 <%- include('navbar') %>
 
+<div class="form-container">
+  <div class="container d-flex justify-content-center align-items-center h-100">
+    <div class="login-container text-center pt-4 px-4">
+      <h2 class="font-weight-bold">Admin Login</h2>
+      <p>Welcome Back!</p>
+      <form>
+        <div class="form-group">
+          <input type="email" class="form-control pe-5 bg-dark" placeholder="Email Address">
+        </div>
+        <div class="form-group mt-3">
+          <input type="password" class="form-control pe-5 bg-dark" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-dark btn-block rounded-pill mt-3">Login</button>
+      </form>
+    </div>
+  </div>
+</div>
