@@ -11,21 +11,23 @@ const login = (req, res) => {
     if (req.session.admin) {
       res.redirect('/admin/dashboard');
     } else {
-      res.render('./admin/login', {title: 'Admin Login', alertMessage: req.flash('errorMessage')});
+      res.render('./admin/login', {title: 'Admin Login', alertMessage: req.flash('message')});
     }
   } catch (err) {
     console.error(`Error while rendering admin login page ${err}`);
   }
 };
 
+// will send login post data to the server
 const loginPost = (req, res) => {
   try {
     if (req.body.username === process.env.ADMIN_USERNAME && req.body.password === process.env.ADMIN_PASSWORD) {
-      req.session.username = req.body.username;
+      req.session.admin = req.body.username;
 
+      req.flash('message', 'Login Successfull');
       res.redirect('/admin/dashboard');
     } else {
-      req.flash('errorMessage', 'Invalid username or password');
+      req.flash('message', 'Invalid username or password');
       res.redirect('/admin/login');
     }
   } catch (err) {
@@ -33,8 +35,18 @@ const loginPost = (req, res) => {
   }
 };
 
+// will render admin dashboard page if admin session is present
+const dashboard = (req, res) => {
+  try {
+    res.render('./admin/dashboard', {title: 'Admin Dashboard', alertMessage: req.flash('message')});
+  } catch (err) {
+    console.error(`Error while rendering admin dashboard page ${err}`);
+  }
+};
+
 module.exports = {
   admin,
   login,
   loginPost,
+  dashboard,
 };

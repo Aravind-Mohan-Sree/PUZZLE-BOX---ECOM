@@ -1,5 +1,30 @@
+<style>
+  .alert-box {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgb(255, 0, 0);
+    background-color: rgb(33, 37, 14);
+    padding: .3125rem .75rem .3125rem .75rem;
+    text-align: center;
+    border-radius: 6px;
+  }
+</style>
+
+<!-- alert box -->
 <% if (alertMessage.length > 0) { %>
-  <div class="container-fluid">
+  <div class="alert-box">
     <%= alertMessage %>
   </div>
 <% } %>
+
+<!-- script for making alert box disappear -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const duration = 5000;
+
+    setTimeout(() => {
+      document.querySelector('.alert-box').style.display = 'none';
+    }, duration);     
+  });
+</script>

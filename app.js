@@ -77,7 +77,7 @@ app.use('/admin', adminRouters);
 
 // for handling unspecified routes
 app.get('*', (req, res) => {
-  res.render('pageNotFound', {title: '404 Page not found'});
+  res.render('./pageNotFound', {title: '404 Page not found'});
 });
 
 // listening port
