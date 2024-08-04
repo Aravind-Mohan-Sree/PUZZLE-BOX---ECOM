@@ -10,10 +10,12 @@
   }
 
   .login-container {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.5);
     padding: 1.875rem;
     border-radius: .9375rem;
     box-shadow: 0 0 .625rem rgba(0, 0, 0, 0.1);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
 
   .form-control {
@@ -31,6 +33,10 @@
     border-color: transparent;
     color: rgb(255, 255, 255);
   }
+
+  .input-group:hover {
+    cursor: pointer;
+  }
 </style>
 
 <%- include('navbar') %>
@@ -38,17 +44,32 @@
 <div class="form-container">
   <div class="container d-flex justify-content-center align-items-center h-100">
     <div class="login-container text-center pt-4 px-4">
-      <h2 class="font-weight-bold">Admin Login</h2>
+      <h2 class="fw-medium lh-base">Admin Login</h2>
       <p>Welcome Back!</p>
       <form>
         <div class="form-group">
           <input type="email" class="form-control pe-5 bg-dark" placeholder="Email Address">
         </div>
-        <div class="form-group mt-3">
-          <input type="password" class="form-control pe-5 bg-dark" placeholder="Password">
+        <div class="input-group mt-3">
+          <input type="password" class="form-control pe-5 bg-dark border-end-0" placeholder="Password" id="password">
+          <span class="input-group-text bg-dark rounded-end-pill" id="togglePassword">
+            <i class="fad fa-eye-slash" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i>
+          </span>
         </div>
-        <button type="submit" class="btn btn-dark btn-block rounded-pill mt-3">Login</button>
+        <button type="submit" class="btn btn-dark btn-block rounded-pill mt-4">Login</button>
       </form>
     </div>
   </div>
 </div>
+
+<%- include('footer') %>
+
+<script>
+  document.getElementById('togglePassword').addEventListener('click', function (e) {
+    const type = document.getElementById('password').getAttribute('type') === 'password' ? 'text' : 'password';
+
+    document.getElementById('password').setAttribute('type', type);
+    document.querySelector('i').classList.toggle('fa-eye');
+    document.querySelector('i').classList.toggle('fa-eye-slash');
+  });
+</script>
