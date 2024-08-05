@@ -10,7 +10,7 @@ const {v4: uuidv4} = require('uuid');
 
 // admin and user routers
 const adminRouters = require('./router/adminRouter');
-// const userRouters = require('./router/userRouter');
+const userRouters = require('./router/userRouter');
 
 // requiring mongodb
 const connectDB = require('./config/connection');
@@ -72,7 +72,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // mounting route handlers
-// app.use('/', userRouters);
+app.use('/', userRouters);
 app.use('/admin', adminRouters);
 
 // for handling unspecified routes

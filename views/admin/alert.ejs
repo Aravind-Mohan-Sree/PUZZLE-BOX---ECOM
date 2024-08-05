@@ -3,18 +3,25 @@
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
-    color: rgb(255, 0, 0);
     background-color: rgb(33, 37, 14);
     padding: .3125rem .75rem .3125rem .75rem;
     text-align: center;
     border-radius: 6px;
   }
+
+  .red {
+    color: rgb(255, 0, 0);
+  }
+
+  .green {
+    color: rgb(0, 255, 0);
+  }
 </style>
 
 <!-- alert box -->
 <% if (alertMessage.length > 0) { %>
-  <div class="alert-box">
-    <%= alertMessage %>
+  <div class="alert-box <%= alertMessage[0].color %>">
+    <%= alertMessage[0].content %>
   </div>
 <% } %>
 

@@ -24,10 +24,10 @@ const loginPost = (req, res) => {
     if (req.body.username === process.env.ADMIN_USERNAME && req.body.password === process.env.ADMIN_PASSWORD) {
       req.session.admin = req.body.username;
 
-      req.flash('message', 'Login Successfull');
+      req.flash('message', {color: 'green', content: 'Login Successful'});
       res.redirect('/admin/dashboard');
     } else {
-      req.flash('message', 'Invalid username or password');
+      req.flash('message', {color: 'red', content: 'Invalid username or password'});
       res.redirect('/admin/login');
     }
   } catch (err) {
