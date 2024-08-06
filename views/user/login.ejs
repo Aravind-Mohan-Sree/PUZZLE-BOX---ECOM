@@ -1,2 +1,533 @@
+<style>
+  .content-child {
+    align-self: stretch;
+    height: 0.063rem;
+    position: relative;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+  }
+
+  .frame-child {
+    width: 31.938rem;
+    height: 38.188rem;
+    position: relative;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.22);
+    display: none;
+    max-width: 100%;
+  }
+
+  .login1 {
+    margin: 0;
+    align-self: stretch;
+    position: relative;
+    font-size: 2rem;
+    line-height: 150%;
+    font-weight: 700;
+    color: #000;
+    text-align: center;
+    z-index: 1;
+  }
+
+  .welcome-back {
+    flex: 1;
+    position: relative;
+    font-size: 1rem;
+    line-height: 150%;
+    color: #000;
+    text-align: center;
+    display: inline-block;
+    max-width: 100%;
+    z-index: 1;
+  }
+
+  .welcome-message {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0rem 0.75rem 0rem 0.687rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .login-button-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.562rem;
+    max-width: 100%;
+  }
+
+  .login-button-container-wrapper {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0rem 1rem 0.875rem 1.125rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .frame-item {
+    width: 25.306rem;
+    position: relative;
+    border-radius: 20px;
+    background-color: #000;
+    height: 2.938rem;
+    display: none;
+  }
+
+  .email-address {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: 300;
+    font-size: 1rem;
+    background-color: transparent;
+    height: 1.75rem;
+    position: relative;
+    line-height: 150%;
+    color: #fff;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .rectangle-group {
+    height: 2.938rem;
+    width: 25.306rem;
+    border-radius: 20px;
+    background-color: #000;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.562rem 1.312rem 0.625rem;
+    box-sizing: border-box;
+    white-space: nowrap;
+    z-index: 1;
+  }
+
+  .input-fields {
+    align-self: stretch;
+    height: 4.188rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0rem 0rem 1.25rem;
+    box-sizing: border-box;
+    min-width: 15.188rem;
+  }
+
+  .password {
+    width: 100%;
+    border: none;
+    outline: none;
+    font-weight: 300;
+    font-size: 1rem;
+    background-color: transparent;
+    height: 1.75rem;
+    position: relative;
+    line-height: 150%;
+    color: #fff;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+  }
+
+  .rectangle-container {
+    height: 2.938rem;
+    width: 25.306rem;
+    border-radius: 20px;
+    background-color: #000;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.562rem 1.312rem 0.625rem;
+    box-sizing: border-box;
+    z-index: 1;
+  }
+
+  .input-fields1 {
+    align-self: stretch;
+    height: 3.625rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0rem 0rem 0.687rem;
+    box-sizing: border-box;
+    min-width: 15.188rem;
+  }
+
+  .forgot-password {
+    width: 9.563rem;
+    position: relative;
+    font-size: 1rem;
+    line-height: 1.563rem;
+    font-weight: 500;
+    color: #000;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    z-index: 2;
+  }
+
+  .forgot-password:hover {
+    text-decoration: none;
+  }
+
+  .password-reset {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0rem 0rem 0.75rem 0.187rem;
+  }
+
+  .rectangle-div {
+    width: 7.875rem;
+    position: relative;
+    border-radius: 20px;
+    background-color: #000;
+    height: 3.313rem;
+    display: none;
+  }
+
+  .login2 {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-weight: 500;
+    font-size: 1rem;
+    background-color: transparent;
+    position: relative;
+    line-height: 150%;
+    color: #fff;
+    text-align: center;
+    display: inline-block;
+    z-index: 1;
+  }
+
+  .group-div {
+    border-radius: 20px;
+    background-color: #000;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 7rem;
+    height: 3rem;
+    box-sizing: border-box;
+    z-index: 1;
+  }
+
+  .frame-wrapper {
+    align-self: stretch;
+    height: 3.313rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 0rem 8.625rem 0rem 8.75rem;
+    box-sizing: border-box;
+    min-width: 15.188rem;
+  }
+
+  .new-customer-signup-container {
+    flex: 1;
+    position: relative;
+    font-size: 1rem;
+    line-height: 150%;
+    font-weight: 500;
+    color: #000;
+    text-align: center;
+    z-index: 1;
+  }
+
+  .signup {
+    color: black;
+    cursor: pointer;
+  }
+
+  .new-customer-signup {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0rem 1.937rem 0rem 2.062rem;
+  }
+
+  .new-customer-signup a:hover {
+    text-decoration: none;
+  }
+
+  .divider1 {
+    align-self: stretch;
+    height: 0.063rem;
+    position: relative;
+    background-color: #000;
+  }
+
+  .divider-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.593rem 0rem 0rem;
+    box-sizing: border-box;
+    min-width: 4.125rem;
+  }
+
+  .or-continue-with {
+    position: relative;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: #000;
+    text-align: center;
+    display: inline-block;
+    min-width: 6.563rem;
+  }
+
+  .divider {
+    align-self: stretch;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 1;
+  }
+
+  .google-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    min-height: 1.25rem;
+  }
+
+  .google {
+    position: relative;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    font-weight: 500;
+    color: #fff;
+    text-align: left;
+    display: inline-block;
+    min-width: 2.938rem;
+  }
+
+  .button {
+    cursor: pointer;
+    border: none;
+    padding: 0.625rem 1.25rem;
+    background-color: #000;
+    flex: 1;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.5rem;
+    z-index: 1;
+    text-decoration: none;
+  }
+
+  .google-login {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0rem 1.937rem;
+  }
+
+  .social-login-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 1.156rem;
+    max-width: 100%;
+  }
+
+  .social-login-container-wrapper {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0rem 2.562rem 0.562rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .by-clicking-continue {
+    flex: 1;
+    position: relative;
+    font-size: 0.75rem;
+    line-height: 150%;
+    color: #000;
+    text-align: center;
+    display: inline-block;
+    max-width: 100%;
+    z-index: 1;
+  }
+
+  .terms {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding: 0rem 2.562rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .rectangle-parent {
+    margin: 0;
+    width: 31.938rem;
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.22);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    padding: 1.5rem 3.312rem 2.062rem;
+    box-sizing: border-box;
+    gap: 0.812rem;
+    max-width: 100%;
+    z-index: 1;
+    backdrop-filter: blur(3px);
+  }
+
+  .login-form-container {
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 0rem 1.312rem 0rem 1.25rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .content {
+    width: 77.5rem;
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+  }
+
+  .main {
+    background-image: url('/image/bg.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+</style>
+
 <%- include('navbar') %>
 
+<!-- login form container -->
+<section class="main">
+  <div class="content">
+    <div class="content-child"></div>
+    <!-- login form -->
+    <div class="login-form-container">
+      <form class="rectangle-parent" method="post" action="/login">
+        <div class="frame-child"></div>
+        <div class="login-button-container-wrapper">
+          <div class="login-button-container">
+            <h1 class="login1">Login</h1>
+            <div class="welcome-message">
+              <div class="welcome-back">Welcome Back!</div>
+            </div>
+          </div>
+        </div>
+        <div class="input-fields">
+          <div class="rectangle-group">
+            <div class="frame-item"></div>
+            <input class="email-address" placeholder="Email Address" type="text" />
+          </div>
+        </div>
+        <div class="input-fields1">
+          <div class="rectangle-container">
+            <div class="frame-item"></div>
+            <input class="password" placeholder="Password" type="text" />
+          </div>
+        </div>
+        <div class="password-reset">
+          <a href="#" class="forgot-password">Forgot Password ?</a>
+        </div>
+        <div class="frame-wrapper">
+          <div class="group-div">
+            <div class="rectangle-div"></div>
+            <input class="login2" type="submit" value="Login"/>
+          </div>
+        </div>
+        <div class="social-login-container-wrapper">
+          <div class="social-login-container">
+            <div class="new-customer-signup">
+              <div class="new-customer-signup-container" id="newCustomerSignup">
+                New Customer?
+                <a class="signup">Signup</a>
+              </div>
+            </div>
+            <div class="divider">
+              <div class="divider-wrapper">
+                <div class="divider1"></div>
+              </div>
+              <div class="or-continue-with">or continue with</div>
+              <div class="divider-wrapper">
+                <div class="divider1"></div>
+              </div>
+            </div>
+            <div class="google-login">
+              <a class="button" href="#">
+                <img class="google-icon" alt="" src="./image/google.svg" />
+
+                <div class="google">Google</div>
+              </a>
+            </div>  
+          </div>
+        </div>
+        <div class="terms">
+          <div class="by-clicking-continue">
+            By clicking continue, you agree to our Terms of Service and
+            Privacy Policy.
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
