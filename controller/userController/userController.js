@@ -18,7 +18,21 @@ const login = (req, res) => {
   }
 };
 
+// will render user signup page if user session is not present
+const signup = (req, res) => {
+  try {
+    if (req.session.user) {
+      res.redirect('/home');
+    } else {
+      res.render('./user/signup', {title: 'User Signup'});
+    }
+  } catch (err) {
+    console.error(`Error while rendering user signup page ${err}`);
+  }
+};
+
 module.exports = {
   user,
   login,
+  signup,
 };

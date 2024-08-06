@@ -47,6 +47,7 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-start;
+    padding: 0rem 0.75rem 0rem 0.687rem;
     box-sizing: border-box;
     max-width: 100%;
   }
@@ -272,7 +273,6 @@
     flex-direction: row;
     align-items: flex-start;
     justify-content: flex-end;
-    padding: 0rem 1.937rem 0rem 2.062rem;
   }
 
   .new-customer-signup a:hover {
@@ -475,20 +475,32 @@
     <div class="content-child"></div>
     <!-- login form -->
     <div class="login-form-container">
-      <form class="rectangle-parent" method="post" action="/login">
+      <form class="rectangle-parent" method="post" action="/signup">
         <div class="frame-child"></div>
         <div class="login-button-container-wrapper">
           <div class="login-button-container">
-            <h1 class="login1">Welcome Back!</h1>
+            <h1 class="login1">Create New Account!</h1>
             <div class="welcome-message">
-              <div class="welcome-back">Enter your email and password to continue...</div>
+              <div class="welcome-back">Enter your details to continue...</div>
             </div>
           </div>
         </div>
         <div class="input-fields">
           <div class="rectangle-group">
             <div class="frame-item"></div>
-            <input class="email-address" placeholder="Email Address" type="email" name="email"/>
+            <input class="email-address" placeholder="Full Name" type="text" name="name"/>
+          </div>
+        </div>
+        <div class="input-fields">
+          <div class="rectangle-group">
+            <div class="frame-item"></div>
+            <input class="email-address" placeholder="Email Address" type="email" name="username"/>
+          </div>
+        </div>
+        <div class="input-fields">
+          <div class="rectangle-group">
+            <div class="frame-item"></div>
+            <input class="email-address" placeholder="Phone Number" type="text" name="phone"/>
           </div>
         </div>
         <div class="input-fields1">
@@ -496,45 +508,37 @@
             <div class="frame-item"></div>
             <div class="input-group h-100">
               <input type="password" name="password" class="form-control ms-2 bg-black border-0 shadow-none text-light" placeholder="Password" aria-label="Recipient's username" aria-describedby="basic-addon2" id="password">
-              <span class="input-group-text bg-black border-0" id="togglePassword">
+              <span class="input-group-text bg-black border-0" id="togglePassword1">
                 <i class="fad fa-eye-slash p-1" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i>
               </span>
             </div>
           </div>
         </div>
-        <div class="password-reset">
-          <a href="#" class="forgot-password">Forgot Password ?</a>
-        </div>
+        <div class="input-fields1">
+          <div class="rectangle-container">
+            <div class="frame-item"></div>
+            <div class="input-group h-100">
+              <input type="password" name="confirmPassword" class="form-control ms-2 bg-black border-0 shadow-none text-light" placeholder="Confirm Password" aria-label="Recipient's username" aria-describedby="basic-addon2" id="confirmPassword">
+              <span class="input-group-text bg-black border-0" id="togglePassword2">
+                <i class="fad fa-eye-slash p-1" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i>
+              </span>
+            </div>
+          </div>
+        </div>        
         <div class="frame-wrapper">
           <div class="group-div">
             <div class="rectangle-div"></div>
-            <input class="login2" type="submit" value="Login"/>
+            <input class="login2" type="submit" value="Signup"/>
           </div>
         </div>
         <div class="social-login-container-wrapper">
           <div class="social-login-container">
             <div class="new-customer-signup">
               <div class="new-customer-signup-container" id="newCustomerSignup">
-                New Customer?
-                <a class="signup" href="/signup">Signup</a>
+                Already have an account?
+                <a class="signup" href="/login">Login</a>
               </div>
-            </div>
-            <div class="divider">
-              <div class="divider-wrapper">
-                <div class="divider1"></div>
-              </div>
-              <div class="or-continue-with">or continue with</div>
-              <div class="divider-wrapper">
-                <div class="divider1"></div>
-              </div>
-            </div>
-            <div class="google-login">
-              <a class="button" href="#">
-                <img class="google-icon" alt="" src="./image/google.svg" />
-
-                <div class="google">Google</div>
-              </a>
-            </div>  
+            </div>            
           </div>
         </div>
         <div class="terms">
@@ -552,11 +556,19 @@
 
 <!-- script for toggling password visibility -->
 <script>
-  document.getElementById('togglePassword').addEventListener('click', function (e) {
+  document.getElementById('togglePassword1').addEventListener('click', function (e) {
     const type = document.getElementById('password').getAttribute('type') === 'password' ? 'text' : 'password';
-
+    
     document.getElementById('password').setAttribute('type', type);
-    document.querySelector('i').classList.toggle('fa-eye');
-    document.querySelector('i').classList.toggle('fa-eye-slash');
+    document.querySelectorAll('i')[0].classList.toggle('fa-eye');
+    document.querySelectorAll('i')[0].classList.toggle('fa-eye-slash');
+  });
+
+  document.getElementById('togglePassword2').addEventListener('click', function (e) {
+    const type = document.getElementById('confirmPassword').getAttribute('type') === 'password' ? 'text' : 'password';
+    
+    document.getElementById('confirmPassword').setAttribute('type', type);
+    document.querySelectorAll('i')[1].classList.toggle('fa-eye');
+    document.querySelectorAll('i')[1].classList.toggle('fa-eye-slash');
   });
 </script>

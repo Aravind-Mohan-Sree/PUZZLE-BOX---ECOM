@@ -8,6 +8,9 @@ user.get('/', userController.user);
 user.get('/login', userController.login);
 // user.post('/login', userController.loginPost);
 
+// will handle user signup route
+user.get('/signup', userController.signup);
+
 // will handle user home route
 // user.get('/home', checkUserSession, userController.home);
 // user.post('/home', checkUserSession.homePost);
