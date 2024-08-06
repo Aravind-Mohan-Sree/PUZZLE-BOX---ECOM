@@ -1,0 +1,350 @@
+<style>
+  .info-child {
+    width: 90.063rem;
+    height: 31.188rem;
+    position: relative;
+    background-color: #f0f0f0;
+    display: none;
+    max-width: 100%;
+  }
+
+  .puzzle-box1 {
+    margin: 0;
+    padding: .1875rem;
+    font-size: inherit;
+    font-weight: 700;
+  }
+
+  .discover-a-world {
+    margin: 0;
+    align-self: stretch;
+    position: relative;
+    line-height: 1.375rem;
+  }
+
+  .social-icons {
+    height: 1.75rem;
+    width: 1.75rem;
+    position: relative;
+    min-height: 1.75rem;
+  }
+
+  .social-links {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+
+  .description {
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 2.187rem;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .company-info {
+    width: 15.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.562rem;
+    font-size: 2rem;
+  }
+
+  .help-menu1 {
+    position: relative;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 5.938rem;
+  }
+
+  .about-features-works-container {
+    align-self: stretch;
+    position: relative;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .help-menu-parent {
+    width: 6.125rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.625rem;
+  }
+
+  .help-menu2 {
+    position: relative;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 3.188rem;
+  }
+
+  .about-features-works-container1 {
+    position: relative;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .help-menu-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.625rem;
+  }
+
+  .help-menu3 {
+    text-decoration: none;
+    position: relative;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: inherit;
+    display: inline-block;
+    min-width: 2.438rem;
+  }
+
+  .help-menu-container {
+    width: 9.313rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.625rem;
+  }
+
+  .help-menu4 {
+    position: relative;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 7.5rem;
+  }
+
+  .help-menu {
+    width: 77.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+    max-width: 100%;
+    z-index: 2;
+  }
+
+  .footer-divider {
+    margin-top: 10px;
+    align-self: stretch;
+    height: 0.063rem;
+    position: relative;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    z-index: 2;
+  }
+
+  .all-rights-reserved {
+    position: relative;
+    z-index: 2;
+  }
+
+  .copyright-notice {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0.312rem 0rem 0rem;
+  }
+
+  .badge-icon {
+    align-self: stretch;
+    width: 2.913rem;
+    position: relative;
+    border-radius: 5.38px;
+    max-height: 100%;
+    min-height: 1.875rem;
+    z-index: 2;
+  }
+
+  .payment-badges {
+    height: 1.875rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.75rem;
+  }
+
+  .legal {
+    margin-top: 0.875rem;
+    align-self: stretch;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+  }
+
+  .footer-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 1.187rem;
+    max-width: 100%;
+  }
+
+  .copyright {
+    width: 77.625rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: 0rem 0.062rem;
+    box-sizing: border-box;
+    max-width: 100%;
+    text-align: right;
+    font-size: 0.875rem;
+    color: rgba(0, 0, 0, 0.6);
+  }
+
+  .info {
+    align-self: stretch;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5rem 3.25rem 2rem 3.25rem;
+    box-sizing: border-box;
+    gap: 0.375rem;
+    max-width: 100%;
+    z-index: 1;
+    text-align: left;
+    font-size: 1rem;
+    color: #000;
+  }
+
+  .blank-line {
+    margin: 0;
+  }
+
+  .features {
+    margin: 0;
+    white-space: pre-wrap;
+  }
+</style>
+
+<!-- footer -->
+<footer class="info">
+  <div class="info-child"></div>
+  <div class="help-menu">
+    <div class="company-info">
+      <h1 class="puzzle-box1">PUZZLE BOX</h1>
+      <div class="description">
+        <blockquote class="discover-a-world">
+          "Discover a world of puzzles that challenge your mind and
+          ignite your creativity. From brain teasers to jigsaw puzzles,
+          we have something for every enthusiast."
+        </blockquote>
+        <div class="social-links">
+          <img class="social-icons" loading="lazy" alt="" src="./image/twitter.svg" />
+
+          <img class="social-icons" loading="lazy" alt="" src="./image/facebook.svg" />
+
+          <img class="social-icons" loading="lazy" alt="" src="./image/instagram.svg" />
+
+          <img class="social-icons" loading="lazy" alt="" src="./image/github.svg" />
+        </div>
+      </div>
+    </div>
+    <div class="help-menu-parent">
+      <div class="help-menu1">Company</div>
+      <div class="about-features-works-container">
+        <p class="features">About</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="features">Features</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="features">Works</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="features">Career</p>
+      </div>
+    </div>
+    <div class="help-menu-group">
+      <div class="help-menu2">Help</div>
+      <div class="about-features-works-container1">
+        <p class="blank-line">Customer Support</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Delivery Details</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Terms & Conditions</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Privacy Policy</p>
+      </div>
+    </div>
+    <div class="help-menu-container">
+      <a class="help-menu3">FAQ</a>
+      <div class="about-features-works-container">
+        <p class="blank-line">Account</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Manage Deliveries</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Orders</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Payments</p>
+      </div>
+    </div>
+    <div class="help-menu-group">
+      <div class="help-menu4">Resources</div>
+      <div class="about-features-works-container1">
+        <p class="blank-line">Free eBooks</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Development Tutorial</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">How to - Blog</p>
+        <p class="blank-line">&nbsp;</p>
+        <p class="blank-line">Youtube Playlist</p>
+      </div>
+    </div>
+  </div>
+  <div class="copyright">
+    <div class="footer-info">
+      <div class="footer-divider"></div>
+      <div class="legal">
+        <div class="copyright-notice">
+          <div class="all-rights-reserved">
+            Puzzle Box &#169; <span id="year"></span>, All Rights Reserved
+          </div>
+        </div>
+        <div class="payment-badges">
+          <img class="badge-icon" loading="lazy" alt="" src="./image/visa.svg" />
+
+          <img class="badge-icon" loading="lazy" alt="" src="./image/mastercard.svg" />
+
+          <img class="badge-icon" loading="lazy" alt="" src="./image/paypal.svg" />
+
+          <img class="badge-icon" loading="lazy" alt="" src="./image/applePay.svg" />
+
+          <img class="badge-icon" loading="lazy" alt="" src="./image/gPay.svg" />
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- script for changing year dynamically -->
+<script>
+  document.getElementById('year').innerText = new Date().getFullYear();
+</script>
