@@ -18,7 +18,7 @@ const login = (req, res) => {
   }
 };
 
-// will send login post data to the server
+// will send admin login form data to the server for verification
 const loginPost = (req, res) => {
   try {
     if (req.body.username === process.env.ADMIN_USERNAME && req.body.password === process.env.ADMIN_PASSWORD) {

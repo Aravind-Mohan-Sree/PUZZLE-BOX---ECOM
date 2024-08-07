@@ -171,6 +171,7 @@
     padding: 0rem 0rem 0.687rem;
     box-sizing: border-box;
     min-width: 15.188rem;
+    margin-bottom: .5625rem;
   }
 
   .forgot-password {
@@ -469,11 +470,11 @@
 
 <%- include('navbar') %>
 
-<!-- login form container -->
+<!-- signup form container -->
 <section class="main">
   <div class="content">
     <div class="content-child"></div>
-    <!-- login form -->
+    <!-- signup form -->
     <div class="login-form-container">
       <form class="rectangle-parent" method="post" action="/signup">
         <div class="frame-child"></div>
@@ -554,8 +555,10 @@
 
 <%- include('footer') %>
 
-<!-- script for toggling password visibility -->
 <script>
+  
+
+  // script for toggling password visibility
   document.getElementById('togglePassword1').addEventListener('click', function (e) {
     const type = document.getElementById('password').getAttribute('type') === 'password' ? 'text' : 'password';
     
