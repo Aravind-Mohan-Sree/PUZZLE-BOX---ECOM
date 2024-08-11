@@ -1,3 +1,4 @@
+<!-- styles -->
 <style>
   .form-container {
     background-image: url('/image/bg.webp');
@@ -9,24 +10,43 @@
   .text-decoration-underline:hover {
     text-decoration: none !important;
   }
+
+  form {
+    backdrop-filter: blur(8px);
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+  }
+
+  small {
+    font-size: .75rem;
+  }
 </style>
 
+<!-- navbar included -->
 <%- include('navbar') %>
 
+<!-- form container -->
 <div class="d-flex vh-100 form-container justify-content-center align-items-center">
-  <form class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3">
-    <h3 class="text-center mb-4 text-dark fw-bold">Create a new account!</h3>
-    <!-- 2 column grid layout with text inputs for the first and last names -->
+  <!-- signup form -->
+  <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3" method="post" action="/signup"> 
+    <h3 class="text-center mb-4 text-dark fw-bold">CREATE A NEW ACCOUNT!</h3>
+    <!-- name and phone input -->
     <div class="row mb-4">
       <div class="col">
         <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form3Example1" class="form-control" />
-          <label class="form-label" for="form3Example1">Full name</label>
-        </div>
+          <input type="text" id="name-input" class="form-control" name="name"/>
+          <label class="form-label" for="form3Example1">Full Name</label>
+          <small id="name-phone-alert" class="position-absolute text-danger"></small>  
+        </div>     
       </div>
       <div class="col">
         <div data-mdb-input-init class="form-outline">
-          <input type="text" id="form3Example2" class="form-control" />
+          <input type="number" id="form3Example2" class="form-control" name="phone"/>
           <label class="form-label" for="form3Example2">Phone Number</label>
         </div>
       </div>
@@ -34,27 +54,40 @@
 
     <!-- Email input -->
     <div data-mdb-input-init class="form-outline mb-4">
-      <input type="email" id="form3Example3" class="form-control" />
-      <label class="form-label" for="form3Example3">Email address</label>
+      <input type="text" id="form3Example3" class="form-control" name="email"/>
+      <label class="form-label" for="form3Example3">Email Address</label>
+      <small id="email-alert" class="position-absolute text-danger"></small>
     </div>
 
     <!-- Password input -->
-    <div data-mdb-input-init class="form-outline mb-4">
-      <input type="password" id="form3Example4" class="form-control" />
-      <label class="form-label" for="form3Example4">Password</label>
+    <div class="input-group mb-4">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="password-input1" type="password" class="form-control" name="password"/>
+        <label class="form-label" for="form1">Password</label>
+        <small id="password-alert1" class="position-absolute text-danger"></small>
+      </div>
+      <button data-mdb-ripple-init id="password-button1" type="button" class="btn btn-dark shadow-0 w-25">
+        <i id="eye1" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
     </div>
 
-    <div data-mdb-input-init class="form-outline mb-4">
-      <input type="password" id="form3Example5" class="form-control" />
-      <label class="form-label" for="form3Example5">Confirm Password</label>
+    <div class="input-group mb-4">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="password-input2" type="password" class="form-control" name="confirmPassword"/>
+        <label class="form-label" for="form1">Confirm Password</label>
+        <small id="password-alert2" class="position-absolute text-danger"></small>
+      </div>
+      <button data-mdb-ripple-init id="password-button2" type="button" class="btn btn-dark shadow-0 w-25">
+        <i id="eye2" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
     </div>    
 
-    <!-- Submit button -->
-    <button data-mdb-ripple-init type="button" class="btn btn-dark btn-block mb-4">Sign up</button>
+    <!-- submit input -->
+    <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block" value="sign up">
 
-    <!-- Register buttons -->
-    <div class="text-center text-dark">
-      <p>Not a member? <a href="#!" class="text-dark text-decoration-underline" id="login">Login In</a></p>
+    <div class="text-center text-dark mt-4">
+      <p>Already a member? <a href="#!" class="text-dark text-decoration-underline" id="login">Log In</a></p>
+      <!-- google signup -->
       <p>or sign up with:</p>     
       <button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
         <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
@@ -62,3 +95,40 @@
     </div>
   </form>
 </div>
+
+<!-- footer included -->
+<%- include('footer') %>
+
+<!-- javaScript -->
+<script>
+  // script for form validation
+  document.getElementById('form').addEventListener('submit', function (e) {
+    const name = document.getElementById('name-input');
+    const namePhoneAlert = document.getElementById('name-phone-alert');
+
+    namePhoneAlert.style.display = 'none';
+
+    if (name.value.length === 0) {
+      namePhoneAlert.style.display = 'inline';
+      namePhoneAlert.innerText = 'Username is required';
+      e.preventDefault();
+    }
+  });
+
+  // script for toggling password visibility
+  document.getElementById('password-button1').addEventListener('click', function (e) {
+    const type = document.getElementById('password-input1').getAttribute('type') === 'password' ? 'text' : 'password';
+    
+    document.getElementById('password-input1').setAttribute('type', type);
+    document.getElementById('eye1').classList.toggle('fa-eye');
+    document.getElementById('eye1').classList.toggle('fa-eye-slash');
+  });
+
+  document.getElementById('password-button2').addEventListener('click', function (e) {
+    const type = document.getElementById('password-input2').getAttribute('type') === 'password' ? 'text' : 'password';
+    
+    document.getElementById('password-input2').setAttribute('type', type);
+    document.getElementById('eye2').classList.toggle('fa-eye');
+    document.getElementById('eye2').classList.toggle('fa-eye-slash');
+  });
+</script>
