@@ -47,7 +47,8 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/style', express.static(path.join(__dirname, 'public', 'style')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
-app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist')));
+app.use('/sweetalert', express.static(path.join(__dirname, 'node_modules', 'sweetalert2', 'dist')));
+app.use('/mdb-ui-kit', express.static(path.join(__dirname, 'node_modules', 'mdb-ui-kit')));
 
 // will parse incoming request bodies and can be used for further processing
 app.use(express.json());

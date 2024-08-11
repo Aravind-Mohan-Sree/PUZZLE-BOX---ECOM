@@ -1,174 +1,148 @@
 <style>
-  .puzzle-box {
-    text-decoration: none;
-    position: relative;
-    font-weight: 700;
-    color: inherit;
-    display: flex;
-    align-items: center;
+  /* unfocused borders and label*/
+  .form-outline .form-control~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;    
   }
 
-  .category {
-    text-decoration: none;
-    position: relative;
-    color: inherit;
-    display: inline-block;
-    min-width: 4.313rem;
+  .form-outline .form-control~.form-notch .form-notch-middle {
+    border-bottom: .125rem solid #000000;
+    border-top: .125rem solid #000000;
+  }
+  
+  .form-outline .form-control~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
   }
 
-  .category-dropdown-icon {
-    height: 1rem;
-    width: 1rem;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
+  .form-outline .form-control~.form-label {
+    color: #000000;
   }
 
-  .categories {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 0.25rem;
+  /* focused borders and label*/
+  .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
+    box-shadow: none;
   }
-
-  .explore {
-    text-decoration: none;
-    position: relative;
-    color: inherit;
-    display: inline-block;
-    min-width: 3.5rem;
+  
+  .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
   }
-
-  .about {
-    text-decoration: none;
-    position: relative;
-    color: inherit;
-    display: inline-block;
-    min-width: 2.813rem;
+  
+  .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-top: 0;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
   }
-
-  .contact {
-    text-decoration: none;
-    position: relative;
-    color: inherit;
-    display: inline-block;
-    min-width: 3.813rem;
-  }
-
-  .site-links {
-    margin: 0;
-    width: 20.188rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    max-width: 100%;
-    gap: 1.25rem;
-    text-align: left;
-    font-size: 1rem;
-    color: #000;
-  }
-
-  .search-icon {
-    height: 1.5rem;
-    width: 1.5rem;
-    position: relative;
-    overflow: hidden;
-    flex-shrink: 0;
-    min-height: 1.5rem;
-  }
-
-  .search-for-puzzles {
-    width: calc(100% - 346px);
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    background-color: transparent;
-    height: 1.375rem;
-    flex: 1;
-    position: relative;
-    color: rgba(0, 0, 0, 0.4);
-    text-align: left;
-    display: inline-block;
-    min-width: 5.563rem;
-    padding: 0;
-  }
-
-  .search {
-    flex: 1;
-    border-radius: 62px;
-    background-color: #f0f0f0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    padding: 0.75rem 1rem; 
-    box-sizing: border-box;
-    gap: 0.75rem;
-    min-width: 10.813rem;
-    max-width: 100%;
-  }
-
-  .image-carousel {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: flex-start;
-    gap: 0.875rem;
-  }
-
-  .brand-links {
-    width: 77.5rem;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: center;
-    gap: 2.5rem;
-    max-width: 100%;
-  }
-
-  .navigation {
-    align-self: stretch;
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 1rem 1.25rem;
-    box-sizing: border-box;
-    max-width: 100%;
-    font-size: 2rem;
-    color: #000;
-    border-bottom: solid .0625rem rgba(0, 0, 0, .2);
+  
+  .form-outline .form-control:focus~.form-label {
+    color: #000000;
+    box-shadow: none;
   }
 </style>
 
 <!-- navbar -->
-<div class="navigation">
-  <div class="brand-links">
-    <a class="puzzle-box">PUZZLE BOX</a>
-    <nav class="site-links">
-      <div class="categories">
-        <a class="category">Category</a>
-        <img class="category-dropdown-icon" alt="" src="./image/arrowDown.svg" />
-      </div>
-      <a class="explore">Explore</a>
-      <a class="about">About</a>
-      <a class="contact">Contact</a>
-    </nav>
-    <div class="search">
-      <img class="search-icon" alt="" src="./image/search.svg" />
-
-      <input class="search-for-puzzles" placeholder="Search for Puzzles..." type="text" />
-    </div>
-    <div class="image-carousel">
-      <img class="search-icon" loading="lazy" alt="" src="./image/heart.svg" />
-
-      <img class="search-icon" loading="lazy" alt="" src="./image/cart.svg" />
-
-      <img class="search-icon" loading="lazy" alt="" src="./image/profile.svg" />
+<nav class="position-fixed w-100 z-1 navbar navbar-expand-lg navbar-light bg-body-tertiary ps-sm- pe-sm- ps-md-3 pe-md-3 ps-lg-5 pe-lg-5">
+  <div class="container-fluid">
+    <!-- branding -->
+    <a class="navbar-brand fs-3 fw-bold" href="#">Puzzle Box</a>
+    <ul class="navbar-nav d-flex flex-row ms-lg-4 ms-auto">
+      <!-- Icons -->
+      <li class="nav-item me-3 me-lg-0">
+        <a class="nav-link" href="#">
+          <i class="fa-duotone fa-solid fa-heart fa-xl" style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+          <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
+        </a>
+      </li>
+      <li class="nav-item me-3 me-lg-0">
+        <a class="nav-link" href="#">
+          <i class="fa-duotone fa-solid fa-cart-shopping fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
+          <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
+        </a>
+      </li>
+      <li class="nav-item me-3 me-lg-0">
+        <a data-mdb-dropdown-init class="nav-link" href="#" id="navbarDropdown" role="button" aria-expanded="false">
+          <i class="fa-duotone fa-solid fa-user fa-lg" style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
+        </a>
+      </li>
+    </ul>
+    <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarTogglerDemo02"
+      aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+      <i id="hamburger" class="fa-regular fa-bars fa-lg" style="color: #000000;"></i>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+      <ul class="navbar-nav me-auto ms-lg-5 mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="#">Explore</a>
+        </li>
+        <!-- Dropdown -->
+        <li class="nav-item dropdown">
+          <a data-mdb-dropdown-init class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
+            aria-expanded="false">
+            Categories
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li>
+              <a class="dropdown-item" href="#">Action</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Another action</a>
+            </li>
+            <li>
+              <a class="dropdown-item" href="#">Something else here</a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">About</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Contact</a>
+        </li>
+      </ul>
+      <form class="d-flex input-group w-auto ms-lg-5">
+        <div class="form-outline" data-mdb-input-init>
+          <input id="search-input" type="search" id="form1" class="form-control" />
+          <label class="form-label" for="form1">Search</label>
+        </div>
+        <button id="search-button" type="button" class="btn btn-dark shadow-0">
+          <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl" style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+        </button>
+      </form>
     </div>
   </div>
-</div>
+</nav>
+
+<script>
+  // for changing navbar toggler icon
+  document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function () {
+    const collapse = document.getElementsByClassName('navbar-collapse')[0];
+    const hamburger = document.getElementById('hamburger');
+
+    // create a mutation observer to watch for class changes
+    const observer = new MutationObserver(mutationsList => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          // check if the class is present
+          if (collapse.classList.contains('show')) {
+            console.log('Class "myClass" was added.');
+            hamburger.classList.add('fa-xmark-large');
+            observer.disconnect();
+          } else {
+            hamburger.classList.remove('fa-xmark-large');
+          }
+        }
+      }
+    });
+
+    // start observing the target node for configured mutations
+    observer.observe(collapse, { attributes: true });
+  });
+</script>
