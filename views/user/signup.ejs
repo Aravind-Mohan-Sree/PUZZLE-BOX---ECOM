@@ -15,6 +15,10 @@
     backdrop-filter: blur(8px);
   }
 
+  input {
+    color: black !important;
+  }
+
   input::-webkit-outer-spin-button,
   input::-webkit-inner-spin-button {
       -webkit-appearance: none;
@@ -41,12 +45,12 @@
         <div data-mdb-input-init class="form-outline">
           <input type="text" id="name-input" class="form-control" name="name"/>
           <label class="form-label" for="form3Example1">Full Name</label>
-          <small id="name-phone-alert" class="position-absolute text-danger"></small>  
         </div>     
+        <small id="name-phone-alert" class="position-absolute text-danger"></small>  
       </div>
       <div class="col">
         <div data-mdb-input-init class="form-outline">
-          <input type="number" id="form3Example2" class="form-control" name="phone"/>
+          <input type="text" id="phone-input" class="form-control" name="phone"/>
           <label class="form-label" for="form3Example2">Phone Number</label>
         </div>
       </div>
@@ -54,7 +58,7 @@
 
     <!-- Email input -->
     <div data-mdb-input-init class="form-outline mb-4">
-      <input type="text" id="form3Example3" class="form-control" name="email"/>
+      <input type="text" id="email-input" class="form-control" name="email"/>
       <label class="form-label" for="form3Example3">Email Address</label>
       <small id="email-alert" class="position-absolute text-danger"></small>
     </div>
@@ -75,15 +79,15 @@
       <div class="form-outline" data-mdb-input-init>
         <input id="password-input2" type="password" class="form-control" name="confirmPassword"/>
         <label class="form-label" for="form1">Confirm Password</label>
-        <small id="password-alert2" class="position-absolute text-danger"></small>
       </div>
       <button data-mdb-ripple-init id="password-button2" type="button" class="btn btn-dark shadow-0 w-25">
         <i id="eye2" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
       </button>
+      <small id="password-alert2" class="position-absolute text-danger"></small>
     </div>    
 
     <!-- submit input -->
-    <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block" value="sign up">
+    <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="sign up">
 
     <div class="text-center text-dark mt-4">
       <p>Already a member? <a href="#!" class="text-dark text-decoration-underline" id="login">Log In</a></p>
@@ -103,14 +107,154 @@
 <script>
   // script for form validation
   document.getElementById('form').addEventListener('submit', function (e) {
-    const name = document.getElementById('name-input');
+    const name = document.getElementById('name-input').value;
+    const phone = document.getElementById('phone-input').value;
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('password-input1').value;
+    const confirmPassword = document.getElementById('password-input2').value;
+
     const namePhoneAlert = document.getElementById('name-phone-alert');
+    const emailAlert = document.getElementById('email-alert');
+    const passwordAlert1 = document.getElementById('password-alert1');
+    const passwordAlert2 = document.getElementById('password-alert2');
 
     namePhoneAlert.style.display = 'none';
+    emailAlert.style.display = 'none';
+    passwordAlert1.style.display = 'none';
+    passwordAlert2.style.display = 'none';
 
-    if (name.value.length === 0) {
-      namePhoneAlert.style.display = 'inline';
-      namePhoneAlert.innerText = 'Username is required';
+    passwordAlert1.style.width = window.getComputedStyle(document.getElementById('password-alert1')).width;
+    console.log(passwordAlert1.style.width);
+
+    if (name === '' || /[^\w\s]/.test(name) || /\d/.test(name) || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 3 || name.replace(/\s+/g, '').length > 15) {
+      if (name === '') {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = 'Username is required';
+        e.preventDefault();
+      } else if (/[^\w\s]/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Username can't contain special characters`;
+        e.preventDefault();
+      } else if (/\d/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Username can't contain numbers`;
+        e.preventDefault();
+      } else if (/^\s|\s{2,}|\s$/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Username can't contain unwanted spaces`;
+        e.preventDefault();
+      } else if (name.replace(/\s+/g, '').length < 3) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Username minimum length is 3`;
+        e.preventDefault();
+      } else {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Username maximum length is 15`;
+        e.preventDefault();
+      }
+    } else if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+      if (phone === '') {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone number is required`;
+        e.preventDefault();
+      } else if (/[a-zA-Z]/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone number can't contain alphabets`;
+        e.preventDefault();
+      } else if (/[^\w\s]/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone number can't contain special characters`;
+        e.preventDefault();
+      } else if (/\s/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone number can't contain spaces`;
+        e.preventDefault();
+      } else {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone number length must be 10`;
+        e.preventDefault();
+      }
+    } else if (email === '' || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      if (email === '') {
+        emailAlert.style.display = 'inline';
+        emailAlert.innerText = `Email is required`;
+        e.preventDefault();
+      } else {
+        emailAlert.style.display = 'inline';
+        emailAlert.innerText = `Email format is invalid`;
+        e.preventDefault();
+      }
+    } else if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
+      if (password === '') {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password is required`;
+        e.preventDefault();
+      } else if (!/[a-z]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must be case-sensitive`;
+        e.preventDefault();
+      } else if (!/[A-Z]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must be case-sensitive`;
+        e.preventDefault();
+      } else if (!/[^\w\s]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password should contain a special character`;
+        e.preventDefault();
+      } else if (!/\d/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password should contain a number`;
+        e.preventDefault();
+      } else if (/\s/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password can't contain spaces`;
+        e.preventDefault();
+      } else if (password.length < 8) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password minimum length is 8`;
+        e.preventDefault();
+      } else {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password maximum length is 30`;
+        e.preventDefault();
+      }
+    } else if (confirmPassword === '' || !/[a-z]/.test(confirmPassword) || !/[A-Z]/.test(confirmPassword) || !/[^\w\s]/.test(confirmPassword) || !/\d/.test(confirmPassword) || /\s/.test(confirmPassword) || confirmPassword.length < 8 || confirmPassword.length > 30) {
+      if (confirmPassword === '') {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password is required`;
+        e.preventDefault();
+      } else if (!/[a-z]/.test(confirmPassword)) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password must be case-sensitive`;
+        e.preventDefault();
+      } else if (!/[A-Z]/.test(confirmPassword)) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password must be case-sensitive`;
+        e.preventDefault();
+      } else if (!/[^\w\s]/.test(confirmPassword)) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password should contain a special character`;
+        e.preventDefault();
+      } else if (!/\d/.test(confirmPassword)) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password should contain a number`;
+        e.preventDefault();
+      } else if (/\s/.test(confirmPassword)) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password can't contain spaces`;
+        e.preventDefault();
+      } else if (confirmPassword.length < 8) {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password minimum length is 8`;
+        e.preventDefault();
+      } else {
+        passwordAlert2.style.display = 'inline';
+        passwordAlert2.innerText = `Password maximum length is 30`;
+        e.preventDefault();
+      }
+    } else if (password !== confirmPassword) {
+      passwordAlert2.style.display = 'inline';
+      passwordAlert2.innerText = `Passwords mismatch`;
       e.preventDefault();
     }
   });
