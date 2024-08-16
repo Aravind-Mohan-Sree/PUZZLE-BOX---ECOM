@@ -1,6 +1,6 @@
 const otpGenerator = require('otp-generator');
 
-// this will generate an OTP containing 6 digits
+// generates OTP using otp-generator module
 const generateOtp = () => {
   const otp = otpGenerator.generate(6, {
     lowerCaseAlphabets: false,
@@ -9,6 +9,6 @@ const generateOtp = () => {
   });
 
   return otp;
-}
+};
 
 module.exports = generateOtp;

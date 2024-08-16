@@ -1,4 +1,3 @@
-const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const generateOtp = require('../../services/generateOtp');
 const userSchema = require('../../model/userSchema');
@@ -12,10 +11,13 @@ const user = (req, res) => {
 // will render user login page if user session is not present
 const login = (req, res) => {
   try {
+    // will delete OTP stored in session
+    delete req.session.otp;
+
     if (req.session.user) {
       res.redirect('/home');
     } else {
-      res.render('./user/login', { title: 'User Login' });
+      res.render('user/login', { title: 'User Login' });
     }
   } catch (err) {
     console.error(`Error while rendering user login page ${err}`);
@@ -25,170 +27,159 @@ const login = (req, res) => {
 // will render user signup page if user session is not present
 const signup = (req, res) => {
   try {
+    // will delete OTP stored in session
+    delete req.session.otp;
+
     if (req.session.user) {
       res.redirect('/home');
     } else {
-      res.render('./user/signup', { title: 'User Signup' });
+      res.render('user/signup', { title: 'User Signup' });
     }
   } catch (err) {
     console.error(`Error while rendering user signup page ${err}`);
   }
 };
 
-// user login with username and password
-const loginPost = async (req, res) => {
-  try {
-    // the username is the email address of the user 
-    // find the user with entered email address in user collection
-    console.log(req.body);
-    const checkUser = await userSchema.findOne({ email: req.body.email })
-    if (checkUser != null) {
-      if (checkUser.isBlocked) {
-        req.flash('errorMessage', 'Access to this account has been restricted. Please reach out to the administrator for further assistance and guidance on the next steps.')
-        res.redirect('/login')
-      } else {
-        // check the entered password in login form and data stored in user collection is same
-        const mongoPassword = await bcrypt.compare(req.body.password, checkUser.password)
-
-        // if the user entered password and password in the collection is same then redirect to home page with session
-        if (checkUser && mongoPassword) {
-          req.session.user = checkUser.id //user section is created
-          res.redirect('/home')
-        } else {
-          req.flash("errorMessage", "Invalid username or password")
-          res.redirect('/login')
-        }
-      }
-    } else {
-      req.flash("errorMessage", `We couldn't find your user details. Please proceed with registration to access our services.`)
-      res.redirect('/login')
-    }
-  } catch (err) {
-    console.log(`Error while login ${err}`);
-  }
-};
-
-// will send user signup form data to the server for verification
+// will send user signup details to the server
 const signupPost = async (req, res) => {
   try {
-    // getting data from user signup form
-    const signupData = {
+    const userDetails = {
       name: req.body.name,
-      email: req.body.email,
       phone: req.body.phone,
-      // password is hashed using bcrypt
-      password: await bcrypt.hash(req.body.password, 10)
-    }
+      email: req.body.email,
+      password: req.body.password
+    };
 
-    const userExist = await userSchema.findOne({ email: signupData.email });
+    req.session.name = userDetails.name;
+    req.session.phone = userDetails.phone;
+    req.session.email = userDetails.email;
+    req.session.password = await bcrypt.hash(userDetails.password, 10);
 
-    if (userExist) {
-      req.flash('message', 'Email already exists. Try again');
-      res.redirect('/signup');
-    } else {
-      // will generate a random OTP
-      const otp = generateOtp();
-
-      // will send OTP to the mail ID of user
-      mailSender.sendOtpMail(req.body.email, otp);
-      req.flash('message', `OTP successfully send to '${req.body.email}'`);
-
-      // storing OTP and OTP expiry in session
-      req.session.otp = otp;
-      req.session.otpExpireTime = Date.now();
-
-      // storing user data in session
-      req.session.name = signupData.name;
-      req.session.email = signupData.email;
-      req.session.phone = signupData.phone;
-      req.session.password = signupData.password;
-
-      // will redirect to OTP validation page
-      res.redirect('/otp');
-    }
-  } catch (err) {
-    console.error(`Error on user signup post ${err}`);
-  }
-};
-
-// will render OTP validation page after email verification
-const otp = (req, res) => {
-  try {
-    res.render('./user/otp', { title: "OTP Validation", emailAddress: req.session.email, alertMessage: req.flash('errorMessage'), otpExpireTime: req.session.otpExpireTime, /*user: req.session.user*/ })
-  } catch (err) {
-    console.log(`Error occurred during otp verification ${err}`)
-  }
-};
-
-const otpPost = async (req, res) => {
-  try {
-    // if otp is in the session then continue with checking
-    if (req.session.otp !== undefined) {
-
-      // if the user entered otp and otp in session is equal then only the user's data is stored in users collection
-      if (req.session.otp === req.body.otp) {
-        // adding the user data to mongodb with collection name user
-        const newUser = new userSchema({
-          name: req.session.name,
-          phone: req.session.phone,
-          password: req.session.password,
-          email: req.session.email
-        })
-
-        await newUser.save()
-        mailSender.sendWelcomeMail(req.session.email, req.session.name)
-        req.flash('errorMessage', 'user registration successful');
-        req.session.user = newUser.id
-        res.redirect('/home')
-
-      } else {
-        req.flash('errorMessage', 'It appears the OTP you entered is invalid. Please ensure you enter the OTP correctly.')
-        res.redirect('/Otp')
-      }
-
-
-      // if otp is not in the session an alert message is displayed
-    } else {
-      req.flash('errorMessage', 'An error occurred during OTP generation, please kindly retry.')
-      res.redirect('/signup')
-    }
-  } catch (err) {
-    console.log(`Error occurred while verifying OTP ${err}`)
-  }
-};
-
-// will resend otp using fetch 
-const resendOtp = (req, res) => {
-  try {
-    const email = req.params.email;
-
-    // will generate a random OTP
+    // generates a random OTP and assigns to the variable
     const otp = generateOtp();
 
-    // will send OTP to the mail ID of user
-    mailSender.sendOtpMail(email, otp)
-
-    // storing OTP and OTP expiry in session
     req.session.otp = otp;
-    req.session.otpExpireTime = Date.now();
 
-    res.status(200);
+    // will store OTP send time in session
+    req.session.otpSendTime = Date.now();
 
-    // will redirect to OTP validation page
-    // req.flash('errorMessage', "OTP re-sended successfully")
-    res.redirect('/otp')
+    // mail will be sent to the user using nodemailer
+    mailSender.sendOtpMail(userDetails.email, otp);
+
+    res.redirect('/otp');
   } catch (err) {
-    console.log(`Error during OTP resending ${err}`);
+    console.error('Error while sending details to the server', err);
+  }
+};
+
+// will check if the email already exist in database
+const checkEmail = async (req, res) => {
+  try {
+    const emailExist = await userSchema.findOne({ email: req.params.email });
+
+    if (emailExist) {
+      res.json({ exist: true });
+    } else {
+      res.json({ exist: false });
+    }
+  } catch (err) {
+    res.json({error: true});
+
+    console.error('Error while validating email', err);
+  }
+};
+
+// will render OTP page if OTP remains in session
+const otp = (req, res) => {
+  try {
+    if (req.session.otp) {
+      res.render('user/otp', { title: 'OTP Page' });
+    } else {
+      res.redirect('/login');
+    }
+  } catch (err) {
+    console.error('Error on rendering OTP page', err);
+  }
+};
+
+// will delete OTP from the session if expired
+const otpTimer = (req, res) => {
+  try {
+    const timeDifference = Number(req.query.currentTime) - req.session.otpSendTime;
+
+    if (timeDifference >= req.query.expiryTime || req.query.time < 0) {
+      delete req.session.otp;
+      res.json({ timeDifference });
+    } else {
+      res.json({ timeDifference });
+    }
+  } catch (err) {
+    res.json({error: true});
+
+    console.log('Error on OTP timer', err);
+  }
+};
+
+// will check if the entered OTP is valid
+const checkOtp = (req, res) => {
+  try {
+    if (req.session.otp) {
+      if (req.session.otp === req.params.otp) {
+        res.json({ valid: true });
+      } else {
+        res.json({ valid: false });
+      }
+    } else {
+      res.json({ otpExpired: true });
+    }
+  } catch (err) {
+    res.json({error: true});
+
+    console.error('Error while validating OTP', err);
+  }
+};
+
+// will resend OTP if user opt to do so
+const resendOtp = (req, res) => {
+  try {
+    // generates a random OTP and assigns to the variable
+    const otp = generateOtp();
+
+    req.session.otp = otp;
+
+    // will store OTP send time in session
+    req.session.otpSendTime = Date.now();
+
+    // mail will be sent to the user using nodemailer
+    mailSender.sendOtpMail(req.session.email, otp);
+
+    res.json({success: true});  
+  } catch (err) {
+    res.json({success: false});
+
+    console.error('Error in resending OTP', err);
+  }
+};
+
+// will redirect to home page and store user details in database
+const otpPost = (req, res) => {
+  try {
+    delete req.session.otp;
+
+    
+  } catch (err) {
+    console.log('Error in OTP post request', err);
   }
 };
 
 module.exports = {
   user,
   login,
-  loginPost,
   signup,
   signupPost,
+  checkEmail,
   otp,
-  otpPost,
+  otpTimer,
+  checkOtp,
   resendOtp,
 };
