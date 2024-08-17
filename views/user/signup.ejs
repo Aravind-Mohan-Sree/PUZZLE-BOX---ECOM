@@ -206,8 +206,12 @@
           passwordAlert2.style.display = 'inline';
           passwordAlert2.innerText = `Passwords mismatch`;
         } else {
-          fetch(`/check-email/${email}`, {
-            method: 'GET'
+          fetch(`/check-email`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email})
           }).then(response => response.json())
             .then(data => {
               if (data.error) {
@@ -223,6 +227,15 @@
               console.log(err);
             });
         }
+      });
+
+      // will focus on all input elements with value when page shows
+      window.addEventListener('pageshow', function (event) {
+        const inputs = document.querySelectorAll('input');
+
+        inputs.forEach(ele => {
+          if (ele.value !== '' && ele.value !== 'sign up') ele.focus();
+        });
       });
 
       // script for toggling password visibility

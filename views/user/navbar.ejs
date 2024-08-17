@@ -4,14 +4,14 @@
   .form-outline .form-control~.form-notch .form-notch-trailing {
     border-top: .125rem solid #000000;
     border-right: .125rem solid #000000;
-    border-bottom: .125rem solid #000000;    
+    border-bottom: .125rem solid #000000;
   }
 
   .form-outline .form-control~.form-notch .form-notch-middle {
     border-bottom: .125rem solid #000000;
     border-top: .125rem solid #000000;
   }
-  
+
   .form-outline .form-control~.form-notch .form-notch-leading {
     border-top: .125rem solid #000000;
     border-bottom: .125rem solid #000000;
@@ -29,20 +29,20 @@
     border-left: .125rem solid #000000;
     box-shadow: none;
   }
-  
+
   .form-outline .form-control:focus~.form-notch .form-notch-trailing {
     border-top: .125rem solid #000000;
     border-right: .125rem solid #000000;
     border-bottom: .125rem solid #000000;
     box-shadow: none;
   }
-  
+
   .form-outline .form-control:focus~.form-notch .form-notch-middle {
     border-top: 0;
     border-bottom: .125rem solid #000000;
     box-shadow: none;
   }
-  
+
   .form-outline .form-control:focus~.form-label {
     color: #000000;
     box-shadow: none;
@@ -50,7 +50,8 @@
 </style>
 
 <!-- navbar -->
-<nav class="position-fixed w-100 z-1 navbar navbar-expand-lg navbar-light bg-body-tertiary ps-sm- pe-sm- ps-md-3 pe-md-3 ps-lg-5 pe-lg-5">
+<nav
+  class="position-fixed w-100 z-1 navbar navbar-expand-lg navbar-light bg-body-tertiary ps-sm- pe-sm- ps-md-3 pe-md-3 ps-lg-5 pe-lg-5">
   <div class="container-fluid">
     <!-- branding -->
     <a class="navbar-brand fs-3 fw-bold" href="/home">Puzzle Box</a>
@@ -58,19 +59,22 @@
       <!-- Icons -->
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="#">
-          <i class="fa-duotone fa-solid fa-heart fa-xl" style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-heart fa-xl"
+            style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
         </a>
       </li>
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="#">
-          <i class="fa-duotone fa-solid fa-cart-shopping fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-cart-shopping fa-lg"
+            style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
         </a>
       </li>
       <li class="nav-item me-3 me-lg-0">
         <a data-mdb-dropdown-init class="nav-link" href="#" id="navbarDropdown" role="button" aria-expanded="false">
-          <i class="fa-duotone fa-solid fa-user fa-lg" style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-user fa-lg"
+            style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification bg-danger text-white"><!--✓-->✕</span>
         </a>
       </li>
@@ -119,7 +123,8 @@
           <label class="form-label" for="form1">Search</label>
         </div>
         <button data-mdb-ripple-init id="search-button" type="button" class="btn btn-dark shadow-0">
-          <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl" style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl"
+            style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
         </button>
       </form>
     </div>
@@ -150,5 +155,10 @@
 
     // start observing the target node for configured mutations
     observer.observe(collapse, { attributes: true });
+  });
+
+  // will clear search input value when page shows
+  window.addEventListener('pageshow', function (event) {
+    document.getElementById('search-input').value = '';
   });
 </script>

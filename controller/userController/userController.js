@@ -16,6 +16,7 @@ const login = (req, res) => {
 
     if (req.session.user) {
       res.redirect('/home');
+      console.log(req.session.user);
     } else {
       res.render('user/login', { title: 'User Login' });
     }
@@ -24,12 +25,34 @@ const login = (req, res) => {
   }
 };
 
+// will send user login details to the server
+const loginPost = async (req, res) => {
+  try {
+    const userDetails = await userSchema.findOne({ email: req.body.email });
+
+    if (!userDetails) {
+      res.json({ wrongEmail: true });
+    } else {
+      const validPassword = await bcrypt.compare(req.body.password, userDetails.password);
+
+      if (validPassword) {
+        req.session.user = userDetails._id;
+
+        res.redirect('/home');
+      } else {
+        res.json({ wrongPassword: true });
+      }
+    }
+  } catch (err) {
+    res.json({ error: true });
+
+    console.log('Error in user login post', err);
+  }
+};
+
 // will render user signup page if user session is not present
 const signup = (req, res) => {
   try {
-    // will delete OTP stored in session
-    delete req.session.otp;
-
     if (req.session.user) {
       res.redirect('/home');
     } else {
@@ -68,14 +91,14 @@ const signupPost = async (req, res) => {
 
     res.redirect('/otp');
   } catch (err) {
-    console.error('Error while sending details to the server', err);
+    console.error('Error in user signup post', err);
   }
 };
 
 // will check if the email already exist in database
 const checkEmail = async (req, res) => {
   try {
-    const emailExist = await userSchema.findOne({ email: req.params.email });
+    const emailExist = await userSchema.findOne({ email: req.body.email });
 
     if (emailExist) {
       res.json({ exist: true });
@@ -83,7 +106,7 @@ const checkEmail = async (req, res) => {
       res.json({ exist: false });
     }
   } catch (err) {
-    res.json({error: true});
+    res.json({ error: true });
 
     console.error('Error while validating email', err);
   }
@@ -93,12 +116,12 @@ const checkEmail = async (req, res) => {
 const otp = (req, res) => {
   try {
     if (req.session.otp) {
-      res.render('user/otp', { title: 'OTP Page' });
+      res.render('user/otp', { title: 'Verify OTP' });
     } else {
       res.redirect('/login');
     }
   } catch (err) {
-    console.error('Error on rendering OTP page', err);
+    console.error('Error on rendering user OTP page', err);
   }
 };
 
@@ -114,7 +137,7 @@ const otpTimer = (req, res) => {
       res.json({ timeDifference });
     }
   } catch (err) {
-    res.json({error: true});
+    res.json({ error: true });
 
     console.log('Error on OTP timer', err);
   }
@@ -133,7 +156,7 @@ const checkOtp = (req, res) => {
       res.json({ otpExpired: true });
     }
   } catch (err) {
-    res.json({error: true});
+    res.json({ error: true });
 
     console.error('Error while validating OTP', err);
   }
@@ -153,20 +176,46 @@ const resendOtp = (req, res) => {
     // mail will be sent to the user using nodemailer
     mailSender.sendOtpMail(req.session.email, otp);
 
-    res.json({success: true});  
+    res.json({ success: true });
   } catch (err) {
-    res.json({success: false});
+    res.json({ success: false });
 
     console.error('Error in resending OTP', err);
   }
 };
 
 // will redirect to home page and store user details in database
-const otpPost = (req, res) => {
+const otpPost = async (req, res) => {
   try {
+    // will delete OTP stored in session
     delete req.session.otp;
 
-    
+    if (req.session.name) {
+      await userSchema.create({
+        name: req.session.name,
+        phone: req.session.phone,
+        email: req.session.email,
+        password: req.session.password
+      }).then(() => {
+        console.log('User details saved into database');
+      }).catch(err => {
+        console.log(err);
+      })
+
+      const userDetails = await userSchema.findOne({ email: req.session.email });
+
+      delete req.session.name;
+      delete req.session.phone;
+      delete req.session.email;
+      delete req.session.password;
+
+      // creating user session
+      req.session.user = userDetails._id;
+
+      res.redirect('/home');
+    } else {
+      res.redirect('/change-password');
+    }
   } catch (err) {
     console.log('Error in OTP post request', err);
   }
@@ -175,6 +224,7 @@ const otpPost = (req, res) => {
 module.exports = {
   user,
   login,
+  loginPost,
   signup,
   signupPost,
   checkEmail,
@@ -182,4 +232,5 @@ module.exports = {
   otpTimer,
   checkOtp,
   resendOtp,
+  otpPost,
 };
