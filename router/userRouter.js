@@ -26,6 +26,8 @@ user.post('/otp', userController.otpPost);
 // will handle user forgot password route
 user.get('/forgot-password', forgotPasswordController.forgotPassword);
 user.post('/forgot-password', forgotPasswordController.forgotPasswordPost);
+user.get('/change-password', forgotPasswordController.changePassword);
+user.post('/change-password', forgotPasswordController.changePasswordPost);
 
 // will handle user home route
 // user.get('/home', checkUserSession, userController.home);

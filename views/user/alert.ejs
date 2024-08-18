@@ -1,0 +1,30 @@
+<!-- styles -->
+<style>
+  .alert-box {
+    position: fixed;
+    width: 100%;
+    padding: 1rem;
+    top: 4.375rem;
+    text-align: center;
+    z-index: 1;
+  }
+</style>
+
+<!-- alert box -->
+<% if (alert.length> 0) { %>
+  <div class="<%= alert[0].color %> alert-box">
+    <p class="mb-0 text-dark">
+      <%= alert[0].message %>
+    </p>
+  </div>
+  <% } %>
+
+    <!-- javaScript -->
+    <script>
+      // hide the alert box after 5 seconds
+      const alertBox = document.getElementsByClassName('alert-box')[0];
+
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 115000);
+    </script>

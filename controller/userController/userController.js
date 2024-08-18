@@ -16,9 +16,12 @@ const login = (req, res) => {
 
     if (req.session.user) {
       res.redirect('/home');
-      console.log(req.session.user);
     } else {
-      res.render('user/login', { title: 'User Login' });
+      if (req.query.changePassword) {
+        req.flash('alert', { message: 'Password changed successfully', color: 'bg-success-subtle' });
+      }
+
+      res.render('user/login', { title: 'User Login', alert: req.flash('alert') });
     }
   } catch (err) {
     console.error(`Error while rendering user login page ${err}`);
@@ -38,7 +41,7 @@ const loginPost = async (req, res) => {
       if (validPassword) {
         req.session.user = userDetails._id;
 
-        res.redirect('/home');
+        res.json({url: '/home'});
       } else {
         res.json({ wrongPassword: true });
       }
@@ -56,7 +59,7 @@ const signup = (req, res) => {
     if (req.session.user) {
       res.redirect('/home');
     } else {
-      res.render('user/signup', { title: 'User Signup' });
+      res.render('user/signup', { title: 'User Signup', alert: req.flash('notification') });
     }
   } catch (err) {
     console.error(`Error while rendering user signup page ${err}`);
@@ -116,7 +119,7 @@ const checkEmail = async (req, res) => {
 const otp = (req, res) => {
   try {
     if (req.session.otp) {
-      res.render('user/otp', { title: 'Verify OTP' });
+      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('message') });
     } else {
       res.redirect('/login');
     }
