@@ -9,7 +9,7 @@ const forgotPassword = (req, res) => {
     // remove user from session
     delete req.session.user;
 
-    res.render('user/forgotPassword', { title: 'Forgot Password', alert: req.flash('notification') });
+    res.render('user/forgotPassword', { title: 'Forgot Password', alert: req.flash('alert'), user: req.session.user });
   } catch (err) {
     console.log('Error while rendering forgot password page', err);
   }
@@ -48,7 +48,7 @@ const forgotPasswordPost = async (req, res) => {
 const changePassword = (req, res) => {
   try {
     if (req.session.email) {
-      res.render('user/changePassword', { title: 'Change Password', alert: req.flash('notification') });
+      res.render('user/changePassword', { title: 'Change Password', alert: req.flash('alert'), user: req.session.user });
     } else {
       res.redirect('/login');
     }

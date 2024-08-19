@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const generateOtp = require('../../services/generateOtp');
 const userSchema = require('../../model/userSchema');
 const mailSender = require('../../services/emailSender');
+const passport = require('passport');
+require('../../services/auth');
 
 // will redirect to user login page
 const user = (req, res) => {
@@ -18,10 +20,14 @@ const login = (req, res) => {
       res.redirect('/home');
     } else {
       if (req.query.changePassword) {
-        req.flash('alert', { message: 'Password changed successfully', color: 'bg-success-subtle' });
+        req.flash('alert', { message: 'Password changed successfully!', color: 'bg-success-subtle' });
       }
 
-      res.render('user/login', { title: 'User Login', alert: req.flash('alert') });
+      if (req.query.logout) {
+        req.flash('alert', { message: 'Logout successful!', color: 'bg-danger-subtle' });
+      }
+
+      res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user });
     }
   } catch (err) {
     console.error(`Error while rendering user login page ${err}`);
@@ -41,7 +47,7 @@ const loginPost = async (req, res) => {
       if (validPassword) {
         req.session.user = userDetails._id;
 
-        res.json({url: '/home'});
+        res.json({ url: '/home?login=true' });
       } else {
         res.json({ wrongPassword: true });
       }
@@ -59,7 +65,7 @@ const signup = (req, res) => {
     if (req.session.user) {
       res.redirect('/home');
     } else {
-      res.render('user/signup', { title: 'User Signup', alert: req.flash('notification') });
+      res.render('user/signup', { title: 'User Signup', alert: req.flash('alert'), user: req.session.user });
     }
   } catch (err) {
     console.error(`Error while rendering user signup page ${err}`);
@@ -119,7 +125,7 @@ const checkEmail = async (req, res) => {
 const otp = (req, res) => {
   try {
     if (req.session.otp) {
-      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('message') });
+      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('alert'), user: req.session.user });
     } else {
       res.redirect('/login');
     }
@@ -215,12 +221,68 @@ const otpPost = async (req, res) => {
       // creating user session
       req.session.user = userDetails._id;
 
-      res.redirect('/home');
+      res.redirect('/home?login=true');
     } else {
       res.redirect('/change-password');
     }
   } catch (err) {
     console.log('Error in OTP post request', err);
+  }
+};
+
+// google auth 
+const googleAuth = (req, res) => {
+  try {
+    passport.authenticate('google', {
+      scope:
+        ['email', 'profile']
+    })(req, res)
+  } catch (err) {
+    console.log(`Error on google authentication ${err}`)
+  }
+}
+
+// google auth callback from the auth service
+const googleAuthCallback = (req, res, next) => {
+  try {
+    passport.authenticate('google', (err, user, info) => {
+      if (err) {
+        console.log(`Error on google auth callback: ${err}`);
+        return next(err);
+      }
+
+      if (!user) {
+        return res.redirect('/login');
+      }
+
+      req.logIn(user, (err) => {
+        if (err) {
+          return next(err);
+        }
+
+        // Store the user ID in the session
+        req.session.user = user.id;
+
+        return res.redirect('/home?login=true');
+      });
+    })(req, res, next);
+  } catch (err) {
+    console.log(`Error on google callback ${err}`);
+  }
+}
+
+// will destroy the session and logout user
+const logout = (req, res) => {
+  try {
+    req.session.destroy(err => {
+      if (err) {
+        console.log(err);
+      } else {
+        res.redirect('/login?logout=true');
+      }
+    });
+  } catch (err) {
+    console.log('Error on user logout', err);
   }
 };
 
@@ -236,4 +298,7 @@ module.exports = {
   checkOtp,
   resendOtp,
   otpPost,
+  googleAuth,
+  googleAuthCallback,
+  logout
 };

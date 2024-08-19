@@ -64,6 +64,7 @@
           <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
         </a>
       </li>
+
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="#">
           <i class="fa-duotone fa-solid fa-cart-shopping fa-lg"
@@ -71,12 +72,30 @@
           <span class="badge rounded-pill badge-notification bg-body-secondary text-black">1</span>
         </a>
       </li>
-      <li class="nav-item me-3 me-lg-0">
-        <a data-mdb-dropdown-init class="nav-link" href="#" id="navbarDropdown" role="button" aria-expanded="false">
+
+      <li class="nav-item me-3 me-lg-0 dropdown">
+        <a data-mdb-dropdown-init class="nav-link <%= user ? 'opacity-100' : 'opacity-50 disabled' %>" href="#" id="navbarDropdown" role="button" aria-expanded="false">
           <i class="fa-duotone fa-solid fa-user fa-lg"
             style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
-          <span class="badge rounded-pill badge-notification bg-danger text-white"><!--✓-->✕</span>
+          <span class="badge rounded-pill badge-notification text-white <%= user ? 'bg-success' : 'bg-danger disabled' %>">
+            <%= user ? '✓' : '✕' %>
+          </span>
         </a>
+        <% if (user) { %>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li>
+              <a class="dropdown-item text-dark" href="#">Profile</a>
+            </li>
+            <li>
+              <hr class="dropdown-divider" />
+            </li>
+            <li>
+              <form method="post" action="/logout">
+                <input class="p-1 w-100 bg-danger-subtle rounded-2 hover-shadow" type="submit" value="Logout">
+              </form>
+            </li>
+          </ul>
+          <% } %>
       </li>
     </ul>
     <!-- navbar collapse button -->
@@ -134,34 +153,34 @@
 <!-- alert box included -->
 <%- include('alert') %>
 
-<script>
-  // for changing navbar toggler icon
-  document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function () {
-    const collapse = document.getElementsByClassName('navbar-collapse')[0];
-    const hamburger = document.getElementById('hamburger');
+  <script>
+    // for changing navbar toggler icon
+    document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function () {
+      const collapse = document.getElementsByClassName('navbar-collapse')[0];
+      const hamburger = document.getElementById('hamburger');
 
-    // create a mutation observer to watch for class changes
-    const observer = new MutationObserver(mutationsList => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          // check if the class is present
-          if (collapse.classList.contains('show')) {
-            console.log('Class "myClass" was added.');
-            hamburger.classList.add('fa-xmark-large');
-            observer.disconnect();
-          } else {
-            hamburger.classList.remove('fa-xmark-large');
+      // create a mutation observer to watch for class changes
+      const observer = new MutationObserver(mutationsList => {
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            // check if the class is present
+            if (collapse.classList.contains('show')) {
+              console.log('Class "myClass" was added.');
+              hamburger.classList.add('fa-xmark-large');
+              observer.disconnect();
+            } else {
+              hamburger.classList.remove('fa-xmark-large');
+            }
           }
         }
-      }
+      });
+
+      // start observing the target node for configured mutations
+      observer.observe(collapse, { attributes: true });
     });
 
-    // start observing the target node for configured mutations
-    observer.observe(collapse, { attributes: true });
-  });
-
-  // will clear search input value when page shows
-  window.addEventListener('pageshow', function (event) {
-    document.getElementById('search-input').value = '';
-  });
-</script>
+    // will clear search input value when page shows
+    window.addEventListener('pageshow', function (event) {
+      document.getElementById('search-input').value = '';
+    });
+  </script>

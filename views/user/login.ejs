@@ -72,15 +72,16 @@
 
       <!-- submit button -->
       <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="log in">
-      <a href="/forgot-password"><small id="forgot-password" class="d-inline position-absolute text-dark mt-1 text-decoration-underline">Forgot Password?</small></a>
+      <a href="/forgot-password"><small id="forgot-password"
+          class="d-inline position-absolute text-dark mt-1 text-decoration-underline">Forgot Password?</small></a>
 
       <div class="text-center text-dark mt-4 pt-2">
         <p>Not a member? <a href="/signup" class="text-dark text-decoration-underline" id="login">Sign Up</a></p>
         <!-- google login -->
         <p>or log in with:</p>
-        <button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
-          <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
-        </button>
+        <a href="/auth/google"><button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
+            <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
+          </button></a>
       </div>
     </form>
   </div>
@@ -92,7 +93,7 @@
     <script>
       // after redirection, remove the query parameter from the URL
       window.history.replaceState(null, null, window.location.pathname);
-      
+
       // using fetch to validate form
       document.getElementById('form').addEventListener('submit', function (e) {
         e.preventDefault();

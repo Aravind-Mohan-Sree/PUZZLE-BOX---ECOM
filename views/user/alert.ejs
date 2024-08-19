@@ -11,9 +11,9 @@
 </style>
 
 <!-- alert box -->
-<% if (alert.length> 0) { %>
+<% if (alert.length > 0) { %>
   <div class="<%= alert[0].color %> alert-box">
-    <p class="mb-0 text-dark">
+    <p class="mb-0 text-dark ls-widest">
       <%= alert[0].message %>
     </p>
   </div>
@@ -26,5 +26,5 @@
 
       setTimeout(() => {
         alertBox.style.display = 'none';
-      }, 115000);
+      }, 5000);
     </script>

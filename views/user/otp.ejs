@@ -150,7 +150,7 @@
 
       // function uses fetch to update expiry time of OTP
       function updateExpiry() {
-        const expiryTime = 20000; // 2 mins in millisecond
+        const expiryTime = 40000; // 2 mins in millisecond
         const currentTime = Date.now();
         const resendOtpTimer = document.getElementById('resend-otp-timer');
         const resendOtp = document.getElementById('resend-otp');
