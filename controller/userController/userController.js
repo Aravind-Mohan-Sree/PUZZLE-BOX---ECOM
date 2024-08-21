@@ -20,11 +20,11 @@ const login = (req, res) => {
       res.redirect('/home');
     } else {
       if (req.query.changePassword) {
-        req.flash('alert', { message: 'Password changed successfully!', color: 'bg-success-subtle' });
+        req.flash('alert', { message: 'Password changed successfully!', color: 'bg-success' });
       }
 
       if (req.query.logout) {
-        req.flash('alert', { message: 'Logout successful!', color: 'bg-danger-subtle' });
+        req.flash('alert', { message: 'Logout successful!', color: 'bg-danger' });
       }
 
       res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user });

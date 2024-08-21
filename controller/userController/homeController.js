@@ -2,7 +2,7 @@
 const home = (req, res) => {
   try {
     if (req.query.login) {
-      req.flash('alert', { message: 'Login successful!', color: 'bg-success-subtle' });
+      req.flash('alert', { message: 'Login successful!', color: 'bg-success' });
     }
 
     res.render('user/home', {title: 'Home', alert: req.flash('alert'), user: req.session.user})

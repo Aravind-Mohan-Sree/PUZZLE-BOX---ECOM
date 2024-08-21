@@ -1,8 +1,65 @@
+<!-- styles -->
+<style>
+  nav {
+    z-index: 1;
+  }
+
+  /* unfocused borders and label*/
+  .form-outline .form-control~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-notch .form-notch-middle {
+    border-bottom: .125rem solid #000000;
+    border-top: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-label {
+    color: #000000;
+  }
+
+  /* focused borders and label*/
+  .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-top: 0;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-label {
+    color: #000000;
+    box-shadow: none;
+  }
+</style>
+
 <!-- navbar -->
-<nav class="navbar">
+<nav class="position-fixed w-100 navbar navbar-expand-lg bg-light ps-sm- pe-sm- ps-md-3 pe-md-3 ps-lg-5 pe-lg-5">
   <div class="container-fluid">
-    <a class="navbar-brand fw-bold fs-3 mx-auto border-bottom border-dark-subtle w-75 text-center p-3" href="/admin/dashboard">PUZZLE BOX</a>
+    <!-- branding -->
+    <a class="navbar-brand fs-3 fw-bold mx-auto" href="/home">Puzzle Box</a>    
   </div>
 </nav>
 
+<!-- alert box included -->
 <%- include('alert') %>

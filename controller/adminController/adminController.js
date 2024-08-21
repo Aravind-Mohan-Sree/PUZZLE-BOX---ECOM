@@ -9,9 +9,13 @@ const admin = (req, res) => {
 const login = (req, res) => {
   try {
     if (req.session.admin) {
+      if (req.query.logout) {
+        req.flash('alert', { message: 'Login successful!', color: 'bg-danger' });
+      }
+
       res.redirect('/admin/dashboard');
     } else {
-      res.render('./admin/login', {title: 'Admin Login', alertMessage: req.flash('message')});
+      res.render('./admin/login', {title: 'Admin Login', alert: req.flash('alert')});
     }
   } catch (err) {
     console.error(`Error while rendering admin login page ${err}`);
@@ -21,16 +25,20 @@ const login = (req, res) => {
 // will send admin login form data to the server for verification
 const loginPost = (req, res) => {
   try {
-    if (req.body.username === process.env.ADMIN_USERNAME && req.body.password === process.env.ADMIN_PASSWORD) {
-      req.session.admin = req.body.username;
+    if (req.body.email === process.env.ADMIN_EMAIL && req.body.password === process.env.ADMIN_PASSWORD) {
+      req.session.admin = req.body.email;
 
-      req.flash('message', {color: 'green', content: 'Login Successful'});
-      res.redirect('/admin/dashboard');
+      res.json({url: '/admin/dashboard?login=true'});
     } else {
-      req.flash('message', {color: 'red', content: 'Invalid username or password'});
-      res.redirect('/admin/login');
+      if (req.body.email !== process.env.ADMIN_EMAIL) {
+        res.json({wrongEmail: true});
+      } else {
+        res.json({wrongPassword: true});
+      }
     }
   } catch (err) {
+    res.json({error: true});
+
     console.error(`Error on admin login post ${err}`);
   }
 };
@@ -38,7 +46,11 @@ const loginPost = (req, res) => {
 // will render admin dashboard page if admin session is present
 const dashboard = (req, res) => {
   try {
-    res.render('./admin/dashboard', {title: 'Admin Dashboard', alertMessage: req.flash('message')});
+    if (req.query.login) {
+      req.flash('alert', { message: 'Login successful!', color: 'bg-success' });
+    }
+
+    res.render('./admin/dashboard', {title: 'Admin Dashboard', alert: req.flash('alert')});
   } catch (err) {
     console.error(`Error while rendering admin dashboard page ${err}`);
   }

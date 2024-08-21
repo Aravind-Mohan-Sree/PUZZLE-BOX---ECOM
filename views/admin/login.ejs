@@ -1,88 +1,131 @@
+<!-- styles -->
 <style>
   .form-container {
     background-image: url('/image/bg.webp');
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
-    width: 100vw;
-    height: 72vh;
-    margin-top: .9375rem;
   }
 
-  .login-container {
-    background: rgba(255, 255, 255, 0.5);
-    padding: 1.875rem;
-    border-radius: .9375rem;
-    box-shadow: 0 0 .625rem rgba(0, 0, 0, 0.1);
-    -webkit-backdrop-filter: blur(2px);
-    backdrop-filter: blur(2px);
+  form {
+    backdrop-filter: blur(8px);
   }
 
-  .form-control {
-    color: rgb(255, 255, 255);
-    border-radius: 1.25rem;
+  input {
+    color: black !important;
   }
 
-  .form-control::placeholder {
-    color: rgba(255, 255, 255, .5);
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent !important;
   }
 
-  .form-control:focus {
-    outline: none;
-    box-shadow: none;
-    border-color: transparent;
-    color: rgb(255, 255, 255);
+  small {
+    display: none;
+    font-size: .75rem;
   }
 
-  .input-group:hover {
-    cursor: pointer;
+  #password-button {
+    width: 5rem;
   }
 </style>
 
+<!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- container which holds login form -->
-  <div class="form-container">
-    <div class="container d-flex justify-content-center align-items-center h-100">
-      <!-- login form -->
-      <div class="login-container text-center pt-4 px-4">
-        <h2 class="fw-medium lh-base">Admin Login</h2>
-        <p>Welcome Back!</p>
-        <form method="post" action="/admin/login">
-          <div class="form-group">
-            <input type="email" name="username" class="form-control pe-5 bg-dark" placeholder="Email Address">
-          </div>
-          <div class="input-group mt-3">
-            <input type="password" name="password" class="form-control pe-5 bg-dark border-end-0" placeholder="Password"
-              id="password">
-            <span class="input-group-text bg-dark rounded-end-pill" id="togglePassword">
-              <i class="fad fa-eye-slash" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff;"></i>
-            </span>
-          </div>
-          <button type="submit" class="btn btn-dark btn-block rounded-pill mt-4">Login</button>
-        </form>
+  <!-- form container -->
+  <div class="d-flex vh-100 form-container justify-content-center align-items-center">
+    <!-- signup form -->
+    <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3">
+      <h3 class="text-center mb-4 text-dark fw-bold">ADMIN LOGIN!</h3>
+
+      <!-- Email input -->
+      <div data-mdb-input-init class="form-outline mb-4">
+        <input type="text" id="email-input" class="form-control" name="email" />
+        <label class="form-label" for="form3Example3">Email</label>
+        <small id="email-alert" class="position-absolute text-danger"></small>
       </div>
-    </div>
+
+      <!-- Password input -->
+      <div id="password" class="input-group mb-4">
+        <div class="form-outline" data-mdb-input-init>
+          <input id="password-input" type="password" class="form-control" name="password" />
+          <label class="form-label" for="form1">Password</label>
+          <small id="password-alert" class="position-absolute text-danger"></small>
+        </div>
+        <button data-mdb-ripple-init id="password-button" type="button" class="btn btn-dark shadow-0">
+          <i id="eye1" class="fa-duotone fa-eye-slash fa-lg"
+            style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+        </button>
+      </div>
+
+      <!-- submit button -->
+      <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="log in">
+    </form>
   </div>
 
+  <!-- footer included -->
   <%- include('footer') %>
 
+    <!-- javaScript -->
     <script>
+      // after redirection, remove the query parameter from the URL
+      window.history.replaceState(null, null, window.location.pathname);
+
+      // using fetch to validate form
+      document.getElementById('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById('email-input').value;
+        const password = document.getElementById('password-input').value;
+
+        const emailAlert = document.getElementById('email-alert');
+        const passwordAlert = document.getElementById('password-alert');
+
+        emailAlert.style.display = 'none';
+        passwordAlert.style.display = 'none';
+
+        fetch(`/admin/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              passwordAlert.style.display = 'inline';
+              passwordAlert.innerText = 'Something went wrong. Try again';
+            } else if (data.wrongEmail) {
+              emailAlert.style.display = 'inline';
+              emailAlert.innerText = 'Wrong email';
+            } else if (data.wrongPassword) {
+              passwordAlert.style.display = 'inline';
+              passwordAlert.innerText = 'Wrong password';
+            } else {
+              window.location.href = data.url;
+            }
+          })
+      });
+
+      // script for toggling password visibility
+      document.getElementById('password-button').addEventListener('click', function (e) {
+        const type = document.getElementById('password-input').getAttribute('type') === 'password' ? 'text' : 'password';
+
+        document.getElementById('password-input').setAttribute('type', type);
+        document.getElementById('eye1').classList.toggle('fa-eye');
+        document.getElementById('eye1').classList.toggle('fa-eye-slash');
+      });
+
       // will focus on all input elements with value when page shows
       window.addEventListener('pageshow', function (event) {
         const inputs = document.querySelectorAll('input');
 
         inputs.forEach(ele => {
-          if (ele.value !== '' && ele.value !== 'sign up') ele.focus();
+          if (ele.value !== '' && ele.value !== 'log in') ele.focus();
         });
-      });
-
-      // script for toggling password visibility
-      document.getElementById('togglePassword').addEventListener('click', function (e) {
-        const type = document.getElementById('password').getAttribute('type') === 'password' ? 'text' : 'password';
-
-        document.getElementById('password').setAttribute('type', type);
-        document.querySelector('i').classList.toggle('fa-eye');
-        document.querySelector('i').classList.toggle('fa-eye-slash');
       });
     </script>

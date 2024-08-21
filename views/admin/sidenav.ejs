@@ -1,0 +1,272 @@
+<!-- styles -->
+<style>
+  .sidenav {
+    z-index: -1;
+    margin-top: 3rem;
+  }
+
+  .page-intro {
+    background-color: white;
+    width: 100vw;
+    min-height: 100vh;
+  }
+
+  img {
+    max-width: 80%;
+  }
+
+  .mdb-page-content {
+    padding-left: 15rem;
+    transition: padding 0.3s linear;
+  }
+
+  #toggler {
+    display: inline-block;
+    margin-left: .4375rem;
+    margin-top: 5.5rem;
+  }
+
+  #toggler .fa-bars {
+    display: none;
+  }
+
+  @media (max-width: 41.25em) {
+    .sidenav {
+      margin-top: 0;
+    }
+
+    .mdb-page-content {
+      padding-left: 0px;
+    }
+
+    #toggler {
+      display: unset;
+      margin-top: .9375rem;
+      z-index: 1;
+    }
+
+    #toggler .fa-xmark-large {
+      display: none;
+    }
+
+    #toggler .fa-bars {
+      display: inline-block;
+    }
+
+    .mask img {
+      width: 100%;
+    }
+
+    .sidenav[data-mdb-hidden='false'] {
+      transform: translateX(-100%);
+    }
+  }
+
+  #siteURL:hover {
+    text-decoration: none !important;
+  }
+
+  /* unfocused borders and label*/
+  .form-outline .form-control~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-notch .form-notch-middle {
+    border-bottom: .125rem solid #000000;
+    border-top: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
+  }
+
+  .form-outline .form-control~.form-label {
+    color: #000000;
+  }
+
+  /* focused borders and label*/
+  .form-outline .form-control:focus~.form-notch .form-notch-leading {
+    border-top: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    border-left: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-notch .form-notch-trailing {
+    border-top: .125rem solid #000000;
+    border-right: .125rem solid #000000;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-notch .form-notch-middle {
+    border-top: 0;
+    border-bottom: .125rem solid #000000;
+    box-shadow: none;
+  }
+
+  .form-outline .form-control:focus~.form-label {
+    color: #000000;
+    box-shadow: none;
+  }
+</style>
+
+<!-- Sidenav -->
+<div id="full-screen-example" class="sidenav bg-light" data-mdb-color="dark" data-mdb-mode="side"
+  data-mdb-hidden="false" data-mdb-scroll-container="#scrollContainer">
+  <div class="mt-5 pt-5">
+    <div id="header-content" class="ps-3">
+      <h4>
+        <span style="white-space: nowrap;" class="fs-3">ADMIN</span>
+      </h4>
+      <p><a href="/home" id="siteURL" class="text-decoration-underline text-dark fs-5">puzzlebox.shop</a></p>
+    </div>
+  </div>
+  <hr class="mb-0">
+  <div class="text-center d-flex align-items-center justify-content-center" style="height: 65px;">
+    <!-- search input -->
+    <form class="d-flex input-group w-auto ps-3 pe-3">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="search-input" type="search" class="form-control" />
+        <label class="form-label" for="form1">Search</label>
+      </div>
+      <button data-mdb-ripple-init id="search-button" type="button" class="btn btn-dark shadow-0">
+        <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl"
+          style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
+    </form>
+  </div>
+  <hr class="mt-0">
+  <div id="scrollContainer">
+    <ul class="sidenav-menu">
+      <li class="sidenav-item">
+        <a class="sidenav-link" href="/">
+          <i class="fas fa-envelope pe-3"></i>Dashboard</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Categories</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Products</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Customers</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Orders</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Coupon</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Banner</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link">
+          <i class="fas fa-paper-plane pe-3"></i>Logout</a>
+      </li>
+    </ul>    
+  </div>
+  <div class="text-center" style="height: 100px;">
+    <hr class="mb-4 mt-0">
+    <p>MDBootstrap.com</p>
+  </div>
+</div>
+<!-- Sidenav -->
+
+<!-- toggler -->
+<button id="toggler" class="btn btn-floating shadow-0 bg-transparent" data-mdb-toggle="sidenav"
+  data-mdb-target="#full-screen-example">
+  <i id="toggler-icon1" class="fa-regular fa-xl fa-bars"></i>
+  <i id="toggler-icon2" class="fa-regular fa-xl fa-xmark-large"></i>
+</button>
+
+<!-- javaScript -->
+<script>
+  // will clear search input value when page shows
+  window.addEventListener('pageshow', function (event) {
+    document.getElementById('search-input').value = '';
+  });
+
+  // Get the sidenav element by ID
+  var sidenav = document.getElementById('full-screen-example');
+
+  // Initialize the instance using plain JavaScript (assuming you have a function to manage this)
+  var instance = {
+    mode: 'side',
+    changeMode: function (newMode) {
+      this.mode = newMode;
+      console.log('Mode changed to:', newMode);
+    },
+    hide: function () {
+      sidenav.style.display = 'none';
+      console.log('Sidenav hidden');
+    },
+    show: function () {
+      sidenav.style.display = 'block';
+      console.log('Sidenav shown');
+    }
+  };
+
+  var innerWidth = null;
+
+  var setMode = function () {
+    // Check necessary for Android devices
+    if (window.innerWidth === innerWidth) {
+      return;
+    }
+
+    innerWidth = window.innerWidth;
+
+    if (window.innerWidth < 660) {
+      instance.changeMode('over');
+      instance.hide();
+    } else {
+      instance.changeMode('side');
+      instance.show();
+    }
+  };
+
+  // Initial mode setting
+  setMode();
+
+  // Event listener for window resize
+  window.addEventListener('resize', setMode);
+
+  // for changing navbar toggler icon
+  document.getElementById('toggler').addEventListener('click', function () {
+    const ariaExpanded = document.getElementById('toggler').getAttribute('aria-expanded');
+    const toggler = document.getElementById('toggler');
+    const togglerIcon1 = document.getElementById('toggler-icon1');
+    const togglerIcon2 = document.getElementById('toggler-icon2');
+
+    // create a mutation observer to watch for class changes
+    const observer = new MutationObserver(mutationsList => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          // check if the class is present
+          if (ariaExpanded === 'false') {
+            togglerIcon1.style.display = 'inline-block';
+            togglerIcon2.style.display = 'none';
+          } else {
+            togglerIcon1.style.display = 'none';
+            togglerIcon2.style.display = 'inline-block';
+          }
+        }
+      }
+    });
+
+    // start observing the target node for configured mutations
+    observer.observe(toggler, { attributes: true });
+  });
+</script>

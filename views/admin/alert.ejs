@@ -1,37 +1,30 @@
+<!-- styles -->
 <style>
   .alert-box {
     position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgb(33, 37, 14);
-    padding: .3125rem .75rem .3125rem .75rem;
+    width: 100%;
+    padding: 1rem;
+    top: 4.375rem;
     text-align: center;
-    border-radius: 6px;
-  }
-
-  .red {
-    color: rgb(255, 0, 0);
-  }
-
-  .green {
-    color: rgb(0, 255, 0);
+    z-index: 1;
   }
 </style>
 
 <!-- alert box -->
-<% if (alertMessage.length > 0) { %>
-  <div class="alert-box <%= alertMessage[0].color %>">
-    <%= alertMessage[0].content %>
+<% if (alert.length > 0) { %>
+  <div class="<%= alert[0].color %> alert-box">
+    <p class="mb-0 text-white ls-widest">
+      <%= alert[0].message %>
+    </p>
   </div>
-<% } %>
+  <% } %>
 
-<script>
-  // script for making alert box disappear
-  document.addEventListener('DOMContentLoaded', () => {
-    const duration = 5000;
+    <!-- javaScript -->
+    <script>
+      // hide the alert box after 5 seconds
+      const alertBox = document.getElementsByClassName('alert-box')[0];
 
-    setTimeout(() => {
-      document.querySelector('.alert-box').style.display = 'none';
-    }, duration);     
-  });
-</script>
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, 5000);
+    </script>
