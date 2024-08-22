@@ -1,8 +1,7 @@
 <!-- styles -->
 <style>
   .sidenav {
-    z-index: -1;
-    margin-top: 3rem;
+    margin-top: 71px;
   }
 
   .page-intro {
@@ -21,9 +20,11 @@
   }
 
   #toggler {
+    position: fixed;
     display: inline-block;
-    margin-left: .4375rem;
-    margin-top: 5.5rem;
+    margin-left: 1.25rem;
+    margin-top: 1.125rem;
+    z-index: 1;
   }
 
   #toggler .fa-bars {
@@ -118,7 +119,7 @@
 <!-- Sidenav -->
 <div id="full-screen-example" class="sidenav bg-light" data-mdb-color="dark" data-mdb-mode="side"
   data-mdb-hidden="false" data-mdb-scroll-container="#scrollContainer">
-  <div class="mt-5 pt-5">
+  <div class="pt-5">
     <div id="header-content" class="ps-3">
       <h4>
         <span style="white-space: nowrap;" class="fs-3">ADMIN</span>
@@ -145,50 +146,55 @@
     <ul class="sidenav-menu">
       <li class="sidenav-item">
         <a class="sidenav-link" href="/">
-          <i class="fas fa-envelope pe-3"></i>Dashboard</a>
+          <i class="fa-duotone fa-solid fa-gauge-high fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Dashboard</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Categories</a>
+          <i class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Categories</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Products</a>
+          <i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Products</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link" href="/admin/user-management">
+          <i class="fa-duotone fa-solid fa-user fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Customers</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Customers</a>
+          <i class="fa-duotone fa-solid fa-cart-shopping fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Orders</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Orders</a>
+          <i class="fa-duotone fa-solid fa-ticket fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Coupon</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Coupon</a>
+          <i class="fa-duotone fa-solid fa-presentation-screen fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Banner</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Banner</a>
+        <a class="sidenav-link" id="logout">
+          <i class="fa-duotone fa-solid fa-arrow-right-from-arc fa-xl pe-3"
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Logout</a>
       </li>
-      <li class="sidenav-item">
-        <a class="sidenav-link">
-          <i class="fas fa-paper-plane pe-3"></i>Logout</a>
-      </li>
-    </ul>    
+    </ul>
   </div>
-  <div class="text-center" style="height: 100px;">
-    <hr class="mb-4 mt-0">
-    <p>MDBootstrap.com</p>
-  </div>
+  <hr>
 </div>
 <!-- Sidenav -->
 
 <!-- toggler -->
 <button id="toggler" class="btn btn-floating shadow-0 bg-transparent" data-mdb-toggle="sidenav"
   data-mdb-target="#full-screen-example">
-  <i id="toggler-icon1" class="fa-regular fa-xl fa-bars"></i>
-  <i id="toggler-icon2" class="fa-regular fa-xl fa-xmark-large"></i>
+  <i id="toggler-icon1" class="fa-regular fa-2xl fa-bars"></i>
+  <i id="toggler-icon2" class="fa-regular fa-2xl fa-xmark-large"></i>
 </button>
 
 <!-- javaScript -->
@@ -268,5 +274,17 @@
 
     // start observing the target node for configured mutations
     observer.observe(toggler, { attributes: true });
+  });
+
+  // using fetch for admin logout
+  document.getElementById('logout').addEventListener('click', function () {
+    fetch('/admin/logout', {
+      method: 'POST'
+    }).then(response => response.json())
+    .then((data) => {
+      window.location.href = data.url;
+    }).catch(err => {
+      console.log(err);
+    });
   });
 </script>

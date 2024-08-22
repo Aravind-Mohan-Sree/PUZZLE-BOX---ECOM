@@ -33,19 +33,16 @@ const sendOtpMail = async (email, otp) => {
 };
 
 // Function to send a welcome email
-const sendWelcomeMail = async (recipientEmail, userName) => {
+const sendWelcomeMail = async (email, name) => {
   const mailOptions = {
-    from: 'your-email@example.com',
-    to: recipientEmail,
+    from: 'puzzleboxlimited@gmail.com',
+    to: email,
     subject: 'Welcome to Our Service!',
-    text: `Hi ${userName},\n\nWelcome to our service! We're excited to have you on board.\n\nBest regards,\nThe Team`,
-    html: `<p>Hi <strong>${userName}</strong>,</p><p>Welcome to our service! We're excited to have you on board.</p><p>Best regards,<br>The Team</p>`
+    html: `<p>Hi <strong>${name}</strong>,</p><p>Welcome to our service! We're excited to have you on board.</p><p>Best regards,<br>The Team, <strong>Puzzle Box</strong></p>`
   };
 
   try {
     const info = await transporter.sendMail(mailOptions);
-    
-    req.session.otpSendTime = Date.now();
 
     console.log('Welcome Email sent:', info.messageId);
   } catch (error) {

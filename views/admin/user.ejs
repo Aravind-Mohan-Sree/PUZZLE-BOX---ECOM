@@ -1,0 +1,83 @@
+<!-- styles -->
+<style>
+  .table-responsive {
+      position: relative;
+      height: 100vh;
+      overflow: auto;
+    }
+
+    .table thead th {
+      position: sticky;
+      top: 1.4375rem;
+      background-color: #332d2d;
+      z-index: 1;
+    }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+  <!-- sidenav included -->
+  <%- include('sidenav') %>
+
+    <!-- users table container -->
+    <div class="table-responsive pt-5">
+      <table class="table table-bordered align-middle mb-0 bg-white mt-5">
+        <thead class="text-white">  
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Status</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% users.forEach(user=> { %>
+            <tr>
+              <td>
+                <div class="d-flex align-items-center">
+                  <div>
+                    <p class="fw-bold mb-1">
+                      <%= user.name %>
+                    </p>
+                    <p class="text-muted mb-0">
+                      <%= user.email %>
+                    </p>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <p class="fw-normal mb-0">
+                  <%= user.phone %>
+                </p>
+              </td>
+              <td>
+                <span class="badge <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
+                  <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                </span>
+              </td>
+              <td>
+                <p class="fw-normal mb-1"><%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(0, -9) %></p>
+                <p class="fw-normal mb-0"><%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(-9) %></p>
+              </td>
+              <td>
+                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">
+                  <i class="fa-duotone fa-solid <%= user.isBlocked ? 'fa-user-slash' : 'fa-user' %> fa-xl"
+                    style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+                </button>
+              </td>
+            </tr>
+            <% }) %> %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- footer included -->
+    <%- include('footer') %>
+
+      <!-- javaScript -->
+      <script>
+        // after redirection, remove the query parameter from the URL
+        window.history.replaceState(null, null, window.location.pathname);
+      </script>

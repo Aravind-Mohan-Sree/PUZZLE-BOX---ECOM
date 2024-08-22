@@ -1,6 +1,7 @@
 const passport = require('passport');
 const userSchema = require('../model/userSchema');
 const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const mailSender = require('../services/emailSender');
 
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
@@ -21,6 +22,9 @@ passport.use(new GoogleStrategy({
       });
       // Save the new user
       await user.save();
+
+      // mail will be sent to the user using nodemailer
+      mailSender.sendWelcomeMail(user.email, user.name);
     }
     done(null, user);
   } catch (err) {

@@ -213,6 +213,9 @@ const otpPost = async (req, res) => {
 
       const userDetails = await userSchema.findOne({ email: req.session.email });
 
+      // mail will be sent to the user using nodemailer
+      mailSender.sendWelcomeMail(userDetails.email, userDetails.name);
+
       delete req.session.name;
       delete req.session.phone;
       delete req.session.email;

@@ -18,7 +18,7 @@ const schema = new mongoose.Schema({
 
   password: {
     type: String,
-    required: true
+    required: false
   },
 
   address: {
@@ -26,9 +26,14 @@ const schema = new mongoose.Schema({
     default: []
   },
 
+  isBlocked: {
+    type: Boolean,
+    default: false
+  },
+  
   googleID: {
     type: String
   }
-}, {timestamps: true});
+}, { timestamps: true });
 
 module.exports = mongoose.model('user', schema);
