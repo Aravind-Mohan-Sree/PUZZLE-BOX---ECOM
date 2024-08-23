@@ -118,6 +118,9 @@
             if (data.error) {
               passwordAlert.style.display = 'inline';
               passwordAlert.innerText = 'Something went wrong. Try again';
+            } else if (data.isBlocked) {
+              passwordAlert.style.display = 'inline';
+              passwordAlert.innerText = 'You are blocked by the admin';
             } else if (data.wrongEmail) {
               emailAlert.style.display = 'inline';
               emailAlert.innerText = 'Wrong email';

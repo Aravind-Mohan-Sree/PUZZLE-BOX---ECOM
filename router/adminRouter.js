@@ -15,6 +15,7 @@ admin.get('/dashboard', checkAdminSession, adminController.dashboard);
 
 // will handle user management route
 admin.get('/user-management', userManagement.users);
+admin.post('/user-management', userManagement.usersPost);
 
 
 // will handle admin logout route

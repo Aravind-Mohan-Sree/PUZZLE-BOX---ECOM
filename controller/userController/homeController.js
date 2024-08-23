@@ -1,3 +1,5 @@
+const userSchema = require('../../model/userSchema');
+
 // will render user home page
 const home = (req, res) => {
   try {
@@ -5,7 +7,7 @@ const home = (req, res) => {
       req.flash('alert', { message: 'Login successful!', color: 'bg-success' });
     }
 
-    res.render('user/home', {title: 'Home', alert: req.flash('alert'), user: req.session.user})
+    res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user });
   } catch (err) {
     console.log('Error while rendering user home page', err);
   }

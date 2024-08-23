@@ -4,14 +4,13 @@
     position: fixed;
     width: 100%;
     padding: 1rem;
-    top: 4.375rem;
     text-align: center;
     z-index: 1;
   }
 </style>
 
 <!-- alert box -->
-<% if (alert.length > 0) { %>
+<% if (alert.length> 0) { %>
   <div class="<%= alert[0].color %> alert-box">
     <p class="mb-0 text-white ls-widest">
       <%= alert[0].message %>
@@ -27,4 +26,8 @@
       setTimeout(() => {
         alertBox.style.display = 'none';
       }, 5000);
+
+      // dynamically adds top to alert box
+      const navHeight3 = document.getElementsByTagName('nav')[0].offsetHeight;
+      document.getElementsByClassName('alert-box')[0].style.top = `${navHeight3 - 1}px`;
     </script>

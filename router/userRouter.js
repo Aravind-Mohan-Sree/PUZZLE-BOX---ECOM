@@ -4,6 +4,7 @@ const userController = require('../controller/userController/userController');
 const forgotPasswordController = require('../controller/userController/forgotPasswordController');
 const homeController = require('../controller/userController/homeController');
 const checkUserSession = require('../middleware/userSession');
+const checkUserBlocked = require('../middleware/checkUserBlocked');
 
 // will handle user login route
 user.get('/', userController.user);
@@ -35,7 +36,7 @@ user.get('/change-password', forgotPasswordController.changePassword);
 user.post('/change-password', forgotPasswordController.changePasswordPost);
 
 // will handle user home route
-user.get('/home', homeController.home);
+user.get('/home', checkUserBlocked, homeController.home);
 // user.post('/home', checkUserSession.homePost);
 
 // will handle user logout

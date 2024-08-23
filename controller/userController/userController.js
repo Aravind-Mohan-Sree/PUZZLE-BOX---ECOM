@@ -27,6 +27,10 @@ const login = (req, res) => {
         req.flash('alert', { message: 'Logout successful!', color: 'bg-danger' });
       }
 
+      if (req.query.isBlocked) {
+        req.flash('alert', { message: 'You are blocked by the admin!', color: 'bg-danger' });
+      }
+
       res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user });
     }
   } catch (err) {
@@ -39,8 +43,12 @@ const loginPost = async (req, res) => {
   try {
     const userDetails = await userSchema.findOne({ email: req.body.email });
 
-    if (!userDetails) {
-      res.json({ wrongEmail: true });
+    if (!userDetails || userDetails.isBlocked) {
+      if (!userDetails) {
+        res.json({ wrongEmail: true });
+      } else {      
+        res.json({ isBlocked: true });
+      }
     } else {
       const validPassword = await bcrypt.compare(req.body.password, userDetails.password);
 

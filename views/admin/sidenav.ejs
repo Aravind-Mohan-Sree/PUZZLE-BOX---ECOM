@@ -1,9 +1,5 @@
 <!-- styles -->
 <style>
-  .sidenav {
-    margin-top: 71px;
-  }
-
   .page-intro {
     background-color: white;
     width: 100vw;
@@ -281,10 +277,14 @@
     fetch('/admin/logout', {
       method: 'POST'
     }).then(response => response.json())
-    .then((data) => {
-      window.location.href = data.url;
-    }).catch(err => {
-      console.log(err);
-    });
+      .then((data) => {
+        window.location.href = data.url;
+      }).catch(err => {
+        console.log(err);
+      });
   });
+
+  // dynamically adds margin to table container
+  const navHeight1 = document.getElementsByTagName('nav')[0].offsetHeight;
+  document.getElementById('full-screen-example').style.marginTop = `${navHeight1 - 1}px`;
 </script>
