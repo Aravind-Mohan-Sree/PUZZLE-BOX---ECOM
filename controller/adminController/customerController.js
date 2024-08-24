@@ -1,19 +1,19 @@
 const mongoose = require('mongoose');
 const userSchema = require('../../model/userSchema');
 
-// will render users list
-const users = async (req, res) => {
+// will render customers list
+const customer = async (req, res) => {
   try {
     const users = await userSchema.find();
 
-    res.render('admin/user', { title: 'User Management', alert: req.flash('alert'), users });
+    res.render('admin/customer', { title: 'Customers', alert: req.flash('alert'), users });
   } catch (err) {
     console.log('Error while rendering users list', err);
   }
 };
 
 // will block/unblock users based on fetch request
-const usersPost = async (req, res) => {
+const customerPost = async (req, res) => {
   try {
     const user = await userSchema.findOne({ email: req.body.email });
     
@@ -30,6 +30,6 @@ const usersPost = async (req, res) => {
 };
 
 module.exports = {
-  users,
-  usersPost,
+  customer,
+  customerPost,
 };  

@@ -1,0 +1,28 @@
+<!-- styles -->
+<style>
+  .container-404 {
+    background-image: url('/image/bg.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .box {
+    backdrop-filter: blur(8px);
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('user/navbar') %>
+
+  <!-- 404 container -->
+  <div class="d-flex vh-100 container-404 justify-content-center align-items-center">
+    <div class="ps-5 pe-5 pt-3 pb-4 bg-white mx-3 rounded-8 bg-opacity-25 box">
+      <h1 class="display-1 text-center text-dark">404</h1>
+      <p class="text-center fs-4">Oops! Page not found</p>
+      <a href="/login" class="btn btn-dark mx-auto d-block">go back</a>
+    </div>
+  </div>
+
+  <!-- footer included -->
+  <%- include('user/footer') %>

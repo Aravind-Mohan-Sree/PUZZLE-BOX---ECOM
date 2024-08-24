@@ -1,0 +1,184 @@
+<!-- styles -->
+<style>
+  .table-responsive {
+    overflow: auto;
+    height: 100vh;
+    padding-bottom: 75px;
+  }
+
+  .table thead th {
+    position: sticky;
+    background-color: #332d2d;
+    top: 0;
+    z-index: 1;
+  }
+
+  .action-button {
+    width: 3.75rem;
+  }
+
+  .status {
+    display: block !important;
+    width: 3.75rem;
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+  <!-- sidenav included -->
+  <%- include('sidenav') %>
+
+    <!-- users table container -->
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle mb-0 bg-white">
+        <thead class="text-white">
+          <tr>
+            <th>Category Name</th>
+            <th>Added On</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% categories.forEach(category=> { %>
+            <tr>
+              <td>
+                <p class="fw-bold mb-1 name">
+                  <%= user.name %>
+                </p>
+              </td>
+              <td>
+                <p class="fw-normal mb-1">
+                  <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(0, -9) %>
+                </p>
+                <p class="fw-normal mb-0">
+                  <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(-9) %>
+                </p>
+              </td>
+              <td>
+                <span
+                  class="badge status <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
+                  <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                </span>
+              </td>
+              <td>
+                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold action-button"
+                  data-mdb-ripple-color="dark">
+                  <i class="user-icon fa-duotone fa-solid <%= user.isBlocked ? 'fa-user-slash' : 'fa-user' %> fa-xl"
+                    style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+                </button>
+              </td>
+            </tr>
+            <% }) %> %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- add category button -->
+    <button class="btn btn-dark btn-lg position-fixed start-50 bottom-50"><i
+        class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
+        style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
+      category</button>
+
+    <!-- footer included -->
+    <%- include('footer') %>
+
+      <!-- javaScript -->
+      <script>
+        // after redirection, remove the query parameter from the URL
+        window.history.replaceState(null, null, window.location.pathname);
+
+        // dynamically adds padding to table container
+        const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;
+
+        // using fetch to block/unblock users        
+        document.addEventListener('DOMContentLoaded', function () {
+          // Select all action buttons
+          const actionButtons = document.querySelectorAll('.action-button');
+
+          // Add click event listener to each button
+          actionButtons.forEach(button => {
+            button.addEventListener('click', function (event) {
+              // Traverse up to the row element (tr)
+              const row = event.target.closest('tr');
+
+              // Find the element within the same row
+              const emailElement = row.querySelector('.email');
+              const email = emailElement.textContent.trim();
+
+              const statusElement = row.querySelector('.status');
+              const iconElement = row.querySelector('.user-icon');
+
+              fetch('/admin/customers', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email })
+              }).then(response => response.json())
+                .then(data => {
+                  if (data.error) {
+                    Swal.fire({
+                      title: 'Error!',
+                      text: 'Something went wrong. Try again',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  } else if (data.isBlocked) {
+                    statusElement.innerText = 'Blocked';
+                    statusElement.classList.add('badge-danger');
+
+                    iconElement.classList.add('fa-user-slash');
+                  } else {
+                    statusElement.innerText = 'Active';
+                    statusElement.classList.remove('badge-danger');
+                    statusElement.classList.add('badge-success');
+
+                    iconElement.classList.remove('fa-user-slash');
+                    iconElement.classList.add('fa-user');
+                  }
+                })
+            });
+          });
+        });
+
+        // for searching customers
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const tableRows = document.querySelectorAll('tbody tr');
+
+        // Add event listener to the search input
+        searchButton.addEventListener('click', function () {
+          const searchTerm = searchInput.value.toLowerCase();
+          let flag = 1;
+
+          tableRows.forEach(row => {
+            // Get user name from the current row
+            const name = row.querySelector('.name').innerText.toLowerCase();
+
+            // Check if the search term is in the name
+            if (name.includes(searchTerm)) {
+              flag = 0;
+
+              row.style.display = ''; // Show the row
+            } else {
+              row.style.display = 'none'; // Hide the row
+            }
+          });
+
+          if (flag) {
+            Swal.fire({
+              icon: "warning",
+              title: "Sorry",
+              text: "No customers found",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#332d2d"
+            }).then(() => {
+              searchInput.value = '';
+              searchButton.click();
+            });
+          }
+        });
+      </script>

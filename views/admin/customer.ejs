@@ -3,6 +3,7 @@
   .table-responsive {
     overflow: auto;
     height: 100vh;
+    padding-bottom: 75px;
   }
 
   .table thead th {
@@ -35,8 +36,8 @@
           <tr>
             <th>Name</th>
             <th>Phone</th>
-            <th>Status</th>
             <th>Joined</th>
+            <th>Status</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -61,18 +62,18 @@
                 </p>
               </td>
               <td>
-                <span
-                  class="badge status <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
-                  <%= user.isBlocked ? 'Blocked' : 'Active' %>
-                </span>
-              </td>
-              <td>
                 <p class="fw-normal mb-1">
                   <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(0, -9) %>
                 </p>
                 <p class="fw-normal mb-0">
                   <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(-9) %>
                 </p>
+              </td>
+              <td>
+                <span
+                  class="badge status <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
+                  <%= user.isBlocked ? 'Blocked' : 'Active' %>
+                </span>
               </td>
               <td>
                 <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold action-button"
@@ -97,7 +98,7 @@
 
         // dynamically adds padding to table container
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;
+        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;        
 
         // using fetch to block/unblock users        
         document.addEventListener('DOMContentLoaded', function () {
@@ -117,7 +118,7 @@
               const statusElement = row.querySelector('.status');
               const iconElement = row.querySelector('.user-icon');
 
-              fetch('/admin/user-management', {
+              fetch('/admin/customers', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'
@@ -150,15 +151,15 @@
           });
         });
 
-        // for searching users
+        // for searching customers
         const searchButton = document.getElementById('search-button');
         const searchInput = document.getElementById('search-input');
         const tableRows = document.querySelectorAll('tbody tr');
-        let flag = 0;
 
         // Add event listener to the search input
         searchButton.addEventListener('click', function () {
           const searchTerm = searchInput.value.toLowerCase();
+          let flag = 1;
 
           tableRows.forEach(row => {
             // Get user name from the current row
@@ -166,7 +167,7 @@
 
             // Check if the search term is in the name
             if (name.includes(searchTerm)) {
-              flag = 1;
+              flag = 0;
 
               row.style.display = ''; // Show the row
             } else {
@@ -174,12 +175,16 @@
             }
           });
 
-          if (!flag) {
+          if (flag) {
             Swal.fire({
-              title: 'Sorry!',
-              text: 'No users found',
-              icon: 'info',
-              confirmButtonText: 'OK'
+              icon: "warning",
+              title: "Sorry",
+              text: "No customers found",
+              confirmButtonText: "OK",
+              confirmButtonColor: "#332d2d"
+            }).then(() => {
+              searchInput.value = '';
+              searchButton.click();
             });
           }
         });

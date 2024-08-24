@@ -12,8 +12,8 @@ user.get('/login', userController.login);
 user.post('/login', userController.loginPost);
 
 // will handle google auth routes
-user.get('/auth/google',userController.googleAuth)
-user.get('/auth/google/callback',userController.googleAuthCallback)
+user.get('/auth/google', userController.googleAuth)
+user.get('/auth/google/callback', userController.googleAuthCallback)
 
 // will handle user signup route
 user.get('/signup', userController.signup);

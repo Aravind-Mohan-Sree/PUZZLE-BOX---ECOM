@@ -1,5 +1,3 @@
-const mongoose = require('mongoose');
-
 // will redirect to admin login page
 const admin = (req, res) => {
   res.redirect('/admin/login');
