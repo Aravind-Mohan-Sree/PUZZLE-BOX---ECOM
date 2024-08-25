@@ -109,6 +109,9 @@
               window.location.href = data.url;
             }
           })
+          .catch(err => {
+            console.log(err);
+          })
       });
 
       // script for toggling password visibility

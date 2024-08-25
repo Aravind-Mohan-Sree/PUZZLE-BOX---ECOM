@@ -20,7 +20,7 @@ admin.post('/customers', customerController.customerPost);
 
 // will handle admin category route
 admin.get('/categories', categoryController.category);
-// admin.post('/categories', categoryController.categoryPost);
+admin.post('/categories', categoryController.categoryPost);
 
 // will handle admin logout route
 admin.post('/logout', adminController.logout);

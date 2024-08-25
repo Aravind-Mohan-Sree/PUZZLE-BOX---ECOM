@@ -3,12 +3,12 @@
   .table-responsive {
     overflow: auto;
     height: 100vh;
-    padding-bottom: 75px;
+    padding-bottom: 4.6875rem;
   }
 
   .table thead th {
     position: sticky;
-    background-color: #332d2d;
+    background-color: rgb(51, 45, 45);
     top: 0;
     z-index: 1;
   }
@@ -20,6 +20,18 @@
   .status {
     display: block !important;
     width: 3.75rem;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
   }
 </style>
 
@@ -37,6 +49,7 @@
             <th>Name</th>
             <th>Phone</th>
             <th>Joined</th>
+            <th>Last Updated</th>
             <th>Status</th>
             <th>Actions</th>
           </tr>
@@ -63,10 +76,18 @@
               </td>
               <td>
                 <p class="fw-normal mb-1">
-                  <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(0, -9) %>
+                  <%= new Date(user.createdAt).toDateString() %>
                 </p>
                 <p class="fw-normal mb-0">
-                  <%= user.createdAt.toString().slice(0, user.createdAt.toString().indexOf('G')).slice(-9) %>
+                  <%= new Date(user.createdAt).toTimeString().slice(0, 8) %>
+                </p>
+              </td>
+              <td>
+                <p class="fw-normal mb-1 updated-date">
+                  <%= new Date(user.updatedAt).toDateString() %>
+                </p>
+                <p class="fw-normal mb-0 updated-time">
+                  <%= new Date(user.updatedAt).toTimeString().slice(0, 8) %>
                 </p>
               </td>
               <td>
@@ -77,7 +98,7 @@
               </td>
               <td>
                 <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold action-button"
-                  data-mdb-ripple-color="dark">
+                  data-mdb-ripple-color="dark" data-user-id="<%= user._id %>">
                   <i class="user-icon fa-duotone fa-solid <%= user.isBlocked ? 'fa-user-slash' : 'fa-user' %> fa-xl"
                     style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
                 </button>
@@ -98,7 +119,7 @@
 
         // dynamically adds padding to table container
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;        
+        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;
 
         // using fetch to block/unblock users        
         document.addEventListener('DOMContentLoaded', function () {
@@ -112,9 +133,9 @@
               const row = event.target.closest('tr');
 
               // Find the element within the same row
-              const emailElement = row.querySelector('.email');
-              const email = emailElement.textContent.trim();
-
+              const userId = this.getAttribute('data-user-id');
+              const dateElement = row.querySelector('.updated-date');
+              const timeElement = row.querySelector('.updated-time');
               const statusElement = row.querySelector('.status');
               const iconElement = row.querySelector('.user-icon');
 
@@ -123,7 +144,7 @@
                 headers: {
                   'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ userId })
               }).then(response => response.json())
                 .then(data => {
                   if (data.error) {
@@ -131,14 +152,24 @@
                       title: 'Error!',
                       text: 'Something went wrong. Try again',
                       icon: 'error',
-                      confirmButtonText: 'OK'
+                      confirmButtonText: 'OK',
+                      allowOutsideClick: false,
+                      customClass: {
+                        container: 'swal-css'
+                      }
                     });
                   } else if (data.isBlocked) {
+                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
                     statusElement.innerText = 'Blocked';
                     statusElement.classList.add('badge-danger');
 
                     iconElement.classList.add('fa-user-slash');
                   } else {
+                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
                     statusElement.innerText = 'Active';
                     statusElement.classList.remove('badge-danger');
                     statusElement.classList.add('badge-success');
@@ -146,6 +177,9 @@
                     iconElement.classList.remove('fa-user-slash');
                     iconElement.classList.add('fa-user');
                   }
+                })
+                .catch(err => {
+                  console.log(err);
                 })
             });
           });
@@ -181,7 +215,10 @@
               title: "Sorry",
               text: "No customers found",
               confirmButtonText: "OK",
-              confirmButtonColor: "#332d2d"
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
             }).then(() => {
               searchInput.value = '';
               searchButton.click();
