@@ -1,10 +1,18 @@
-const mongoose = require('mongoose');
 const userSchema = require('../../model/userSchema');
 
 // will render customers list
 const customer = async (req, res) => {
   try {
-    const users = await userSchema.find();
+    let users;
+
+    if (req.query.searchTerm) {
+      // Use a case-insensitive regex to search for the term in the 'name' field
+      const regex = new RegExp(req.query.searchTerm, 'i');
+      
+      users = await userSchema.find({name: regex});
+    } else {
+      users = await userSchema.find();
+    }  
 
     // sorting users based on created date
     users.sort((a, b) => b.createdAt - a.createdAt);

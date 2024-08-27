@@ -1,5 +1,9 @@
 <!-- styles -->
 <style>
+  #scrollContainer {
+    max-height: calc(100% - 300px) !important;
+  }
+
   .page-intro {
     background-color: white;
     width: 100vw;
@@ -33,7 +37,7 @@
     }
 
     .mdb-page-content {
-      padding-left: 0px;
+      padding-left: 0;
     }
 
     #toggler {
@@ -110,6 +114,14 @@
     color: #000000;
     box-shadow: none;
   }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent !important;
+  }
 </style>
 
 <!-- Sidenav -->
@@ -141,37 +153,45 @@
   <div id="scrollContainer">
     <ul class="sidenav-menu">
       <li class="sidenav-item">
-        <a class="sidenav-link" href="/">
+        <a class="sidenav-link" href="/admin/dashboard" id="dashboard">
           <i class="fa-duotone fa-solid fa-gauge-high fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Dashboard</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link" href="/admin/categories">
+        <a class="sidenav-link" href="/admin/sales-report" id="salesReport">
+          <i class="fa-duotone fa-solid fa-file-invoice fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Sales Report</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link" href="/admin/categories" id="categories">
           <i class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Categories</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link">
+        <a class="sidenav-link" id="products" href="/admin/products">
           <i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Products</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link" href="/admin/customers">
+        <a class="sidenav-link" href="/admin/customers" id="customers">
           <i class="fa-duotone fa-solid fa-user fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Customers</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link">
+        <a class="sidenav-link" id="orders" href="/admin/orders">
           <i class="fa-duotone fa-solid fa-cart-shopping fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Orders</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link">
+        <a class="sidenav-link" id="coupons" href="/admin/coupons">
           <i class="fa-duotone fa-solid fa-ticket fa-xl pe-3"
-            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Coupon</a>
+            style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Coupons</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link">
+        <a class="sidenav-link" id="offers" href="/admin/offers">
+          <i class="fa-duotone fa-solid fa-badge-percent fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i></i>Offers</a>
+      </li>
+      <li class="sidenav-item">
+        <a class="sidenav-link" id="banner" href="/admin/banner">
           <i class="fa-duotone fa-solid fa-presentation-screen fa-xl pe-3"
             style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Banner</a>
       </li>

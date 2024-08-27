@@ -25,6 +25,10 @@
     color: rgb(51, 45, 45);
     background-color: rgb(255, 255, 255);
   }
+
+  #customers {
+    background-color: rgba(51, 45, 45, .05);
+  }
 </style>
 
 <!-- navbar included -->
@@ -190,43 +194,13 @@
         });
 
         // for searching customers
-        const searchButton = document.getElementById('search-button');
-        const searchInput = document.getElementById('search-input');
-        const tableRows = document.querySelectorAll('tbody tr');
+        document.addEventListener('DOMContentLoaded', function () {
+          const searchButton = document.getElementById('search-button');
+          
+          searchButton.addEventListener('click', function () {
+            const searchTerm = document.getElementById('search-input').value;
 
-        // Add event listener to the search input
-        searchButton.addEventListener('click', function () {
-          const searchTerm = searchInput.value.toLowerCase();
-          let flag = 1;
-
-          tableRows.forEach(row => {
-            // Get user name from the current row
-            const name = row.querySelector('.name').innerText.toLowerCase();
-
-            // Check if the search term is in the name
-            if (name.includes(searchTerm)) {
-              flag = 0;
-
-              row.style.display = ''; // Show the row
-            } else {
-              row.style.display = 'none'; // Hide the row
-            }
+            window.location.href = `/admin/customers?searchTerm=${searchTerm}`;
           });
-
-          if (flag) {
-            Swal.fire({
-              icon: "warning",
-              title: "Sorry",
-              text: "No customers found",
-              confirmButtonText: "OK",
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
-              }
-            }).then(() => {
-              searchInput.value = '';
-              searchButton.click();
-            });
-          }
         });
       </script>
