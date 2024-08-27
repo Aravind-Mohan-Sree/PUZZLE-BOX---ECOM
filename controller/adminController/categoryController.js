@@ -3,7 +3,16 @@ const categorySchema = require('../../model/categorySchema');
 // will render admin category page
 const category = async (req, res) => {
   try {
-    const categories = await categorySchema.find();
+    let categories;
+
+    if (req.query.searchTerm) {
+      // Use a case-insensitive regex to search for the term in the 'name' field
+      const regex = new RegExp(req.query.searchTerm, 'i');
+      
+      categories = await categorySchema.find({categoryName: regex});
+    } else {
+      categories = await categorySchema.find();
+    }
 
     // sorting categories based on created date
     categories.sort((a, b) => b.createdAt - a.createdAt);
@@ -26,7 +35,7 @@ const categoryPost = async (req, res) => {
         res.json({ add: true });
       } else if (req.body.status) {
         const category = await categorySchema.findById(req.body.categoryId);
-        
+
         await categorySchema.updateOne({ _id: category._id }, { isActive: category.isActive ? false : true });
 
         const updatedCategory = await categorySchema.findById(category._id);

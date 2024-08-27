@@ -1,0 +1,177 @@
+<!-- styles -->
+<style>
+  .datatable {
+    padding-top: 4.4375rem;
+    padding-bottom: 75px;
+  }
+
+  .datatable thead .fixed-cell {
+    color: rgb(255, 255, 255);
+    background-color: #332d2d;
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+  <!-- sidenav included -->
+  <%- include('sidenav') %>
+
+    <div id="datatable-fixed" data-mdb-max-height="500" data-mdb-fixed-header="true"
+      class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true">
+      <div class="datatable-inner table-responsive ps ps--active-y"
+        style="overflow: auto; position: relative; max-height: 500px;">
+        <table class="table datatable-table">
+          <thead class="datatable-header">
+            <tr>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_0"
+                  class="datatable-sort-icon fas fa-arrow-up" style="transform: rotate(0deg);"></i>
+                Name</th>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_1"
+                  class="datatable-sort-icon fas fa-arrow-up" style="transform: rotate(0deg);"></i>
+                Position</th>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_2"
+                  class="datatable-sort-icon fas fa-arrow-up active" style="transform: rotate(0deg);"></i> Office</th>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_3"
+                  class="datatable-sort-icon fas fa-arrow-up" style="transform: rotate(0deg);"></i>
+                Age</th>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_4"
+                  class="datatable-sort-icon fas fa-arrow-up" style="transform: rotate(0deg);"></i>
+                Start date</th>
+              <th style="cursor: pointer;" scope="col" class="fixed-cell"><i data-mdb-sort="field_5"
+                  class="datatable-sort-icon fas fa-arrow-up" style="transform: rotate(0deg);"></i>
+                Salary</th>
+            </tr>
+          </thead>
+          <tbody class="datatable-body">
+            <tr scope="row" data-mdb-index="0">
+              <td style="" class="" data-mdb-field="field_0" false="">Tiger Nixon</td>
+              <td style="" class="" data-mdb-field="field_1" false="">System Architect</td>
+              <td style="" class="" data-mdb-field="field_2" false="">Edinburgh</td>
+              <td style="" class="" data-mdb-field="field_3" false="">61</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2011/04/25</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$320,800</td>
+            </tr>
+            <tr scope="row" data-mdb-index="3">
+              <td style="" class="" data-mdb-field="field_0" false="">Cedric Kelly</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Senior Javascript Developer
+              </td>
+              <td style="" class="" data-mdb-field="field_2" false="">Edinburgh</td>
+              <td style="" class="" data-mdb-field="field_3" false="">22</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2012/03/29</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$433,060</td>
+            </tr>
+            <tr scope="row" data-mdb-index="9">
+              <td style="" class="" data-mdb-field="field_0" false="">Sonya Frost</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Software Engineer</td>
+              <td style="" class="" data-mdb-field="field_2" false="">Edinburgh</td>
+              <td style="" class="" data-mdb-field="field_3" false="">23</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2008/12/13</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$103,600</td>
+            </tr>
+            <tr scope="row" data-mdb-index="11">
+              <td style="" class="" data-mdb-field="field_0" false="">Quinn Flynn</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Support Lead</td>
+              <td style="" class="" data-mdb-field="field_2" false="">Edinburgh</td>
+              <td style="" class="" data-mdb-field="field_3" false="">22</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2013/03/03</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$342,000</td>
+            </tr>
+            <tr scope="row" data-mdb-index="10">
+              <td style="" class="" data-mdb-field="field_0" false="">Jena Gaines</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Office Manager</td>
+              <td style="" class="" data-mdb-field="field_2" false="">London</td>
+              <td style="" class="" data-mdb-field="field_3" false="">30</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2008/12/19</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$90,560</td>
+            </tr>
+            <tr scope="row" data-mdb-index="13">
+              <td style="" class="" data-mdb-field="field_0" false="">Haley Kennedy</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Senior Marketing Designer</td>
+              <td style="" class="" data-mdb-field="field_2" false="">London</td>
+              <td style="" class="" data-mdb-field="field_3" false="">43</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2012/12/18</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$313,500</td>
+            </tr>
+            <tr scope="row" data-mdb-index="5">
+              <td style="" class="" data-mdb-field="field_0" false="">Brielle Williamson</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Integration Specialist</td>
+              <td style="" class="" data-mdb-field="field_2" false="">New York</td>
+              <td style="" class="" data-mdb-field="field_3" false="">61</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2012/12/02</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$372,000</td>
+            </tr>
+            <tr scope="row" data-mdb-index="2">
+              <td style="" class="" data-mdb-field="field_0" false="">Ashton Cox</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Junior Technical Author</td>
+              <td style="" class="" data-mdb-field="field_2" false="">San Francisco</td>
+              <td style="" class="" data-mdb-field="field_3" false="">66</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2009/01/12</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$86,000</td>
+            </tr>
+            <tr scope="row" data-mdb-index="6">
+              <td style="" class="" data-mdb-field="field_0" false="">Herrod Chandler</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Sales Assistant</td>
+              <td style="" class="" data-mdb-field="field_2" false="">San Francisco</td>
+              <td style="" class="" data-mdb-field="field_3" false="">59</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2012/08/06</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$137,500</td>
+            </tr>
+            <tr scope="row" data-mdb-index="8">
+              <td style="" class="" data-mdb-field="field_0" false="">Colleen Hurst</td>
+              <td style="" class="" data-mdb-field="field_1" false="">Javascript Developer</td>
+              <td style="" class="" data-mdb-field="field_2" false="">San Francisco</td>
+              <td style="" class="" data-mdb-field="field_3" false="">39</td>
+              <td style="" class="" data-mdb-field="field_4" false="">2009/09/15</td>
+              <td style="" class="" data-mdb-field="field_5" false="">$205,500</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="ps__rail-x" style="left: 0px; bottom: 0px;">
+          <div class="ps__thumb-x" tabindex="0" style="left: 0px; width: 0px;"></div>
+        </div>
+        <div class="ps__rail-y" style="top: 0px; height: 460px; right: 0px;">
+          <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 336px;"></div>
+        </div>
+      </div>
+
+      <div class="datatable-pagination">
+        <div class="datatable-select-wrapper">
+          <p class="datatable-select-text">Rows per page:</p>
+          <div id="select-wrapper-625710" class="select-wrapper">
+            <div class="form-outline" data-mdb-input-init="" data-mdb-input-initialized="true">
+              <input class="form-control select-input placeholder-active active" type="text" role="listbox"
+                aria-multiselectable="false" aria-disabled="false" aria-haspopup="true" aria-expanded="false"
+                readonly="true"><span class="select-arrow"></span>
+              <div class="form-notch">
+                <div class="form-notch-leading" style="width: 9px;"></div>
+                <div class="form-notch-middle" style="width: 0px;"></div>
+                <div class="form-notch-trailing"></div>
+              </div>
+              <div class="form-label select-fake-value">10</div>
+            </div><select name="entries" class="datatable-select select select-initialized"
+              data-mdb-select-initialized="true">
+              <option value="10" selected="">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="200">200</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="datatable-pagination-nav">1 - 10 of 14</div>\
+
+        <div class="datatable-pagination-buttons">
+          <button data-mdb-ripple-color="dark" data-mdb-ripple-init=""
+            class="btn btn-link datatable-pagination-button datatable-pagination-left" disabled="true"><i
+              class="fa fa-chevron-left"></i></button>
+          <button data-mdb-ripple-color="dark" data-mdb-ripple-init=""
+            class="btn btn-link datatable-pagination-button datatable-pagination-right"><i
+              class="fa fa-chevron-right"></i></button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- footer included -->
+    <%- include('footer') %>

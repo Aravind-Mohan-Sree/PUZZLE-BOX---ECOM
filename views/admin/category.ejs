@@ -1,20 +1,8 @@
 <!-- styles -->
 <style>
-  .table-responsive {
-    overflow: auto;
-    height: 100vh;
-    padding-bottom: 4.6875rem;
-  }
-
-  .table thead th {
-    position: sticky;
+  .datatable thead {
+    color: rgb(255, 255, 255);
     background-color: #332d2d;
-    top: 0;
-    z-index: 1;
-  }
-
-  .action-button {
-    width: 3.75rem;
   }
 
   .status {
@@ -61,81 +49,90 @@
   <!-- sidenav included -->
   <%- include('sidenav') %>
 
-    <!-- category table container -->
-    <div class="table-responsive">
-      <table class="table table-bordered align-middle mb-0 bg-white">
-        <thead class="text-white">
-          <tr>
-            <th>Category Name</th>
-            <th>Added On</th>
-            <th>Last Updated</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% categories.forEach(category=> { %>
-            <tr>
-              <td>
-                <p class="fw-bold mb-1 name">
-                  <%= category.categoryName %>
-                </p>
-              </td>
-              <td>
-                <p class="fw-normal mb-1">
-                  <%= new Date(category.createdAt).toDateString() %>
-                </p>
-                <p class="fw-normal mb-0">
-                  <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
-                </p>
-              </td>
-              <td>
-                <p class="fw-normal mb-1 updated-date">
-                  <%= new Date(category.updatedAt).toDateString() %>
-                </p>
-                <p class="fw-normal mb-0 updated-time">
-                  <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
-                </p>
-              </td>
-              <td>
-                <span
-                  class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-                  <%= category.isActive ? 'Active' : 'Inactive' %>
-                </span>
-              </td>
-              <td>
-                <!-- active/inactive button -->
-                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
-                  data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                  <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon"
-                    style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                </button>
-
-                <!-- edit button -->
-                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button"
-                  data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                  <i class="fa-duotone fa-solid fa-pen-to-square fa-xl"
-                    style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                </button>
-
-                <!-- delete button -->
-                <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button"
-                  data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                  <i class="fa-duotone fa-solid fa-trash fa-xl"
-                    style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                </button>
-              </td>
-            </tr>
-            <% }) %> %>
-        </tbody>
-      </table>
+    <!-- add category button -->
+    <div id="add-category" class="text-center mb-3">
+      <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
+          style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
+        category</button>
     </div>
 
-    <!-- add category button -->
-    <button id="add-category" class="btn btn-dark position-fixed end-0 me-5"><i
-        class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
-        style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
-      category</button>
+    <!-- category table container -->
+    <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover"
+      data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+      <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
+        <table class="table datatable-table" id="exampleTable">
+          <thead class="datatable-header">
+            <tr>
+              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0"
+                  class="datatable-sort-icon fas fa-arrow-up"></i> Category Name</th>
+              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1"
+                  class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
+              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2"
+                  class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
+              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3"
+                  class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4"
+                  class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
+            </tr>
+          </thead>
+          <tbody class="datatable-body">
+            <% categories.forEach(category=> { %>
+              <tr>
+                <td style="" class="" data-mdb-field="field_0" false="">
+                  <p class="fw-bold mb-1 name">
+                    <%= category.categoryName %>
+                  </p>
+                </td>
+                <td style="" class="" data-mdb-field="field_1" false="">
+                  <p class="fw-normal mb-1">
+                    <%= new Date(category.createdAt).toDateString() %>
+                  </p>
+                  <p class="fw-normal mb-0">
+                    <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
+                  </p>
+                </td>
+                <td style="" class="" data-mdb-field="field_2" false="">
+                  <p class="fw-normal mb-1 updated-date">
+                    <%= new Date(category.updatedAt).toDateString() %>
+                  </p>
+                  <p class="fw-normal mb-0 updated-time">
+                    <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+                  </p>
+                </td>
+                <td style="" class="" data-mdb-field="field_3" false="">
+                  <span
+                    class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
+                    <%= category.isActive ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+                <td style="" class="" data-mdb-field="field_4" false="">
+                  <!-- active/inactive button -->
+                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
+                    data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                    <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon"
+                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+                  </button>
+
+                  <!-- edit button -->
+                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button"
+                    data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                    <i class="fa-duotone fa-solid fa-pen-to-square fa-xl"
+                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+                  </button>
+
+                  <!-- delete button -->
+                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button"
+                    data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                    <i class="fa-duotone fa-solid fa-trash fa-xl"
+                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+                  </button>
+                </td>
+              </tr>
+              <% }) %> %>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
     <!-- footer included -->
     <%- include('footer') %>
@@ -145,13 +142,13 @@
         // after redirection, remove the query parameter from the URL
         window.history.replaceState(null, null, window.location.pathname);
 
-        // dynamically adds padding to table container
+        // dynamically adds padding to add category button
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementsByClassName('table-responsive')[0].style.paddingTop = `${navHeight2 - 1}px`;
+        document.getElementById('add-category').style.paddingTop = `${navHeight2 + 20}px`;
 
-        // dynamically adds bottom to add category button
-        const footerHeight2 = document.getElementById('footer').offsetHeight;
-        document.getElementById('add-category').style.bottom = `${footerHeight2 + 30}px`;
+        // dynamically adds padding to table container
+        const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+        document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
         // using fetch to add category
         document.getElementById('add-category').addEventListener('click', function () {
@@ -207,173 +204,187 @@
 
         // using fetch to active/inactive category        
         document.addEventListener('DOMContentLoaded', function () {
-          // Select all action buttons
-          const actionButtons = document.querySelectorAll('.status-button');
+          const datatableBody = document.querySelector('.datatable-body');
 
-          // Add click event listener to each button
-          actionButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-              // Traverse up to the row element (tr)
+          if (datatableBody) {
+            datatableBody.addEventListener('click', function (event) {
+              const statusButton = event.target.closest('.status-button');
               const row = event.target.closest('tr');
 
-              // Find the element within the same row
-              const categoryId = this.getAttribute('data-db-categoryId');
-              const dateElement = row.querySelector('.updated-date');
-              const timeElement = row.querySelector('.updated-time');
-              const statusElement = row.querySelector('.status');
-              const iconElement = row.querySelector('.status-icon');
+              if (statusButton) {
+                // Find the element within the same row
+                const categoryId = statusButton.getAttribute('data-db-categoryId');
+                const dateElement = row.querySelector('.updated-date');
+                const timeElement = row.querySelector('.updated-time');
+                const statusElement = row.querySelector('.status');
+                const iconElement = row.querySelector('.status-icon');
 
-              fetch('/admin/categories', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ status: true, categoryId })
-              }).then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Something went wrong. Try again',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else if (data.isActive) {
-                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+                fetch('/admin/categories', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ status: true, categoryId })
+                }).then(response => response.json())
+                  .then(data => {
+                    if (data.error) {
+                      Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong. Try again',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        customClass: {
+                          container: 'swal-css'
+                        }
+                      });
+                    } else if (data.isActive) {
+                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
 
-                    statusElement.innerText = 'Active';
-                    statusElement.classList.remove('badge-danger');
-                    statusElement.classList.add('badge-success');
+                      statusElement.innerText = 'Active';
+                      statusElement.classList.remove('badge-danger');
+                      statusElement.classList.add('badge-success');
 
-                    iconElement.classList.remove('fa-circle-xmark');
-                    iconElement.classList.add('fa-circle-check');
-                  } else {
-                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+                      iconElement.classList.remove('fa-circle-xmark');
+                      iconElement.classList.add('fa-circle-check');
+                    } else {
+                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
 
-                    statusElement.innerText = 'Inactive';
-                    statusElement.classList.add('badge-danger');
+                      statusElement.innerText = 'Inactive';
+                      statusElement.classList.add('badge-danger');
 
-                    iconElement.classList.add('fa-circle-xmark');
+                      iconElement.classList.add('fa-circle-xmark');
+                    }
+                  }).catch(err => {
+                    console.log(err);
+                  })
+              }
+            });
+          }
+        });
+
+        // using fetch to edit category       
+        document.addEventListener('DOMContentLoaded', function () {
+          const datatableBody = document.querySelector('.datatable-body');
+
+          if (datatableBody) {
+            datatableBody.addEventListener('click', function (event) {
+              const editButton = event.target.closest('.edit-button');
+              const row = event.target.closest('tr');
+
+              if (editButton) {
+                // Find the element within the same row
+                const categoryId = editButton.getAttribute('data-db-categoryId');
+                const dateElement = row.querySelector('.updated-date');
+                const timeElement = row.querySelector('.updated-time');
+                const nameElement = row.querySelector('.name');
+
+                Swal.fire({
+                  title: "Edit Category",
+                  input: "text",
+                  inputLabel: "Enter the category name below",
+                  inputPlaceholder: nameElement.innerText,
+                  showCancelButton: true,
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  },
+                  inputValidator: (value) => {
+                    if (!value) {
+                      return "Please enter something";
+                    }
+                  }
+                }).then(result => {
+                  if (result.value) {
+                    const newCategoryName = result.value;
+
+                    fetch('/admin/categories', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ categoryId, newCategoryName })
+                    }).then(response => response.json())
+                      .then(data => {
+                        if (data.error) {
+                          Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Try again',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false,
+                            customClass: {
+                              container: 'swal-css'
+                            }
+                          });
+                        } else {
+                          dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                          timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
+                          nameElement.innerText = newCategoryName;
+                        }
+                      }).catch(err => {
+                        console.log(err);
+                      })
                   }
                 }).catch(err => {
                   console.log(err);
                 })
+              }
             });
-          });
-        });
-
-        // using fetch to edit category        
-        document.addEventListener('DOMContentLoaded', function () {
-          // Select all action buttons
-          const actionButtons = document.querySelectorAll('.edit-button');
-
-          // Add click event listener to each button
-          actionButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-              // Traverse up to the row element (tr)
-              const row = event.target.closest('tr');
-
-              // Find the element within the same row
-              const categoryId = this.getAttribute('data-db-categoryId');
-              const dateElement = row.querySelector('.updated-date');
-              const timeElement = row.querySelector('.updated-time');
-              const nameElement = row.querySelector('.name');
-
-              Swal.fire({
-                title: "Edit Category",
-                input: "text",
-                inputLabel: "Enter the category name below",
-                inputPlaceholder: nameElement.innerText,
-                showCancelButton: true,
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                },
-                inputValidator: (value) => {
-                  if (!value) {
-                    return "Please enter something";
-                  }
-                }
-              }).then(result => {
-                if (result.value) {
-                  const newCategoryName = result.value;
-
-                  fetch('/admin/categories', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ categoryId, newCategoryName })
-                  }).then(response => response.json())
-                    .then(data => {
-                      if (data.error) {
-                        Swal.fire({
-                          title: 'Error!',
-                          text: 'Something went wrong. Try again',
-                          icon: 'error',
-                          confirmButtonText: 'OK',
-                          allowOutsideClick: false,
-                          customClass: {
-                            container: 'swal-css'
-                          }
-                        });
-                      } else {
-                        dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                        timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                        nameElement.innerText = newCategoryName;
-                      }
-                    }).catch(err => {
-                      console.log(err);
-                    })
-                }
-              }).catch(err => {
-                console.log(err);
-              })
-            });
-          });
+          }
         });
 
         // using fetch to delete category
         document.addEventListener('DOMContentLoaded', function () {
-          // Select all action buttons
-          const actionButtons = document.querySelectorAll('.delete-button');
+          const datatableBody = document.querySelector('.datatable-body');
 
-          // Add click event listener to each button
-          actionButtons.forEach(button => {
-            button.addEventListener('click', function (event) {
-              // Traverse up to the row element (tr)
-              const row = event.target.closest('tr');
+          if (datatableBody) {
+            datatableBody.addEventListener('click', function (event) {
+              const deleteButton = event.target.closest('.delete-button');
 
-              // Find the element within the same row
-              const categoryId = this.getAttribute('data-db-categoryId');
+              if (deleteButton) {
+                const categoryId = deleteButton.getAttribute('data-db-categoryId');
 
-              Swal.fire({
-                title: "Are you sure?",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonText: "Yes",
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  fetch('/admin/categories', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ delete: true, categoryId })
-                  }).then(response => response.json())
-                    .then(data => {
-                      if (data.error) {
+                Swal.fire({
+                  title: "Are you sure?",
+                  icon: "question",
+                  showCancelButton: true,
+                  confirmButtonText: "Yes",
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    fetch('/admin/categories', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ delete: true, categoryId })
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        if (data.error) {
+                          Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Try again',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false,
+                            customClass: {
+                              container: 'swal-css'
+                            }
+                          });
+                        } else {
+                          window.location.reload();
+                        }
+                      })
+                      .catch(err => {
+                        console.error('Fetch error:', err);
                         Swal.fire({
                           title: 'Error!',
                           text: 'Something went wrong. Try again',
@@ -384,58 +395,24 @@
                             container: 'swal-css'
                           }
                         });
-                      } else {
-                        window.location.reload();
-                      }
-                    }).catch(err => {
-                      console.log(err);
-                    })
-                }
-              }).catch(err => {
-                console.log(err);
-              })
+                      });
+                  }
+                }).catch(err => {
+                  console.error('Swal error:', err);
+                });
+              }
             });
-          });
+          }
         });
 
         // for searching categories
-        const searchButton = document.getElementById('search-button');
-        const searchInput = document.getElementById('search-input');
-        const tableRows = document.querySelectorAll('tbody tr');
+        document.addEventListener('DOMContentLoaded', function () {
+          const searchButton = document.getElementById('search-button');
+          
+          searchButton.addEventListener('click', function () {
+            const searchTerm = document.getElementById('search-input').value;
 
-        // Add event listener to the search input
-        searchButton.addEventListener('click', function () {
-          const searchTerm = searchInput.value.toLowerCase();
-          let flag = 1;
-
-          tableRows.forEach(row => {
-            // Get category name from the current row
-            const categoryName = row.querySelector('.name').innerText.toLowerCase();
-
-            // Check if the search term is in the category name
-            if (categoryName.includes(searchTerm)) {
-              flag = 0;
-
-              row.style.display = ''; // Show the row
-            } else {
-              row.style.display = 'none'; // Hide the row
-            }
+            window.location.href = `/admin/categories?searchTerm=${searchTerm}`;
           });
-
-          if (flag) {
-            Swal.fire({
-              icon: "warning",
-              title: "Sorry",
-              text: "No category found",
-              confirmButtonText: "OK",
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
-              }
-            }).then(() => {
-              searchInput.value = '';
-              searchButton.click();
-            });
-          }
-        });        
+        });
       </script>
