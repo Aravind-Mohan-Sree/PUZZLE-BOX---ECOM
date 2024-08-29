@@ -21,7 +21,8 @@ admin.post('/categories', categoryController.categoryPost);
 
 // will handle admin products route
 admin.get('/products', productController.product);
-// admin.post('/products', productController.);
+// admin.post('/products', productController.productPost);
+admin.get('/add-product', productController.addProduct);
 
 // will handle admin customers route
 admin.get('/customers', customerController.customer);

@@ -1,0 +1,323 @@
+<!-- styles -->
+<style>
+  .product-details-container {
+    background-image: url('/image/box-open-full.svg');
+    background-size: contain;
+    background-attachment: fixed;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-top: 100px;
+    padding-bottom: 110px;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    caret-color: rgb(255, 255, 255);
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent !important;
+  }
+
+  #products {
+    background-color: rgba(51, 45, 45, .05);
+  }
+
+  input {
+    background-color: #eeeeee !important;
+    border: solid 2px #332e2e !important;
+  }
+
+  .input-group>.input-group-text {
+    border: solid 2px #332e2e !important;
+    height: 2.3112rem;
+  }
+
+  .input-group>#inputGroup-sizing-sm1 {
+    background-color: #eeeeee;
+  }
+
+  .input-group>.form-control {
+    height: 2.3112rem;
+  }
+
+  .input-group>.form-control:focus {
+    box-shadow: none !important;
+    border: solid 2px #332e2e !important;
+  }
+
+  .form-control {
+    border: solid 2px #332e2e !important;
+  }
+
+  .form-control:focus {
+    box-shadow: none !important;
+    border: solid 2px #332e2e !important;
+  }
+
+  textarea {
+    background-color: #eeeeee !important;
+  }
+
+  small {
+    display: none;
+    font-size: .75rem;
+  }
+
+  #category-select {
+    background-color: #eeeeee;
+    cursor: pointer !important;
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+  <!-- sidenav included -->
+  <%- include('sidenav') %>
+
+    <!-- product details container -->
+    <div class="container product-details-container bg-image">
+      <div class="row gy-4 px-3">
+        <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+          <label class="w-100 text-dark mb-2" for="">Product Name<span class="text-danger">*</span></label>
+          <input id="name-input" class="w-100 form-control" type="text" placeholder="type...">
+          <small id="name-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+          <label class="w-100 text-dark mb-2" for="">Category<span class="text-danger">*</span></label>
+          <div class="input-group">
+            <select id="category-select" data-mdb-select-init class="form-control">
+              <option value="" disabled selected hidden>select an option</option>
+              <% categories.forEach(category => { %>
+                <option value=""><%= category.categoryName %></option>
+              <% }) %>
+            </select>
+            <span class="input-group-text fw-bold" id="inputGroup-sizing-sm1">▼</span>
+          </div>
+          <small id="category-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+          <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
+          <input id="price-input" class="w-100 form-control" type="text" placeholder="type...">
+          <small id="price-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+          <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
+          <input id="stock-input" class="w-100 form-control" type="text" placeholder="type...">
+          <small id="stock-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+          <label class="w-100 text-dark mb-2" for="">Discount Rate(%)<span class="text-danger">*</span></label>
+          <input id="discount-input" class="w-100 form-control" type="text" placeholder="type...">
+          <small id="discount-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+          <label class="w-100 text-dark mb-2" for="">Product Dimensions<span class="text-danger">*</span></label>
+          <div class="input-group">
+            <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">L</span>
+            <input id="length-input" type="text" class="form-control" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm" placeholder="type..." />
+            <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">W</span>
+            <input id="width-input" type="text" class="form-control" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm" placeholder="type..." />
+            <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">H</span>
+            <input id="height-input" type="text" class="form-control" aria-label="Sizing example input"
+              aria-describedby="inputGroup-sizing-sm" placeholder="type..." />
+          </div>
+          <small id="dimension-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
+          <label class="w-100 text-dark mb-2" for="">Difficulty Rate<span class="text-danger">*</span></label>
+          <input id="difficulty-input" class="w-100 form-control" type="text" placeholder="type...">
+          <small id="difficulty-alert" class="position-absolute text-danger"></small>
+        </div>
+        <div class="col-12 col-sm-8 mx-auto">
+          <label class="w-100 text-dark mb-2" for="">Product Description<span class="text-danger">*</span></label>
+          <textarea id="description-element" class="w-100 form-control" name="" id="" placeholder="type..."></textarea>
+          <small id="description-alert" class="position-absolute text-danger"></small>
+        </div>
+
+        <hr class="mt-5">
+        <button class="btn btn-dark w-75 mx-auto">please choose 3 images</button>
+
+        <div class="col-12 col-sm-4 align-content-center">
+          <small id="image-alert" class="position-absolute start-0 text-danger text-center w-100"></small>
+          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
+        </div>
+        <div class="col-12 col-sm-4 align-content-center">
+          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
+        </div>
+        <div class="col-12 col-sm-4 align-content-center">
+          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
+        </div>
+
+        <hr class="mt-3">
+        <button id="submit" type="submit" class="btn btn-dark w-50 mx-auto mb-3">submit</button>
+      </div>
+    </div>
+
+    <!-- footer included -->
+    <%- include('footer') %>
+
+      <!-- javaScript -->
+      <script>
+        // script for product details validation
+        document.getElementById('submit').addEventListener('click', function (e) {
+          e.preventDefault();
+
+          const name = document.getElementById('name-input').value;
+          const category = document.getElementById('category-select').value;
+          const price = document.getElementById('price-input').value;
+          const stock = document.getElementById('stock-input').value;
+          const discount = document.getElementById('discount-input').value;
+          const length = document.getElementById('length-input').value;
+          const width = document.getElementById('width-input').value;
+          const height = document.getElementById('height-input').value;
+          const dimension = length + '-' + width + '-' + height;
+          const difficulty = document.getElementById('difficulty-input').value;
+          const description = document.getElementById('description-element').value;
+
+          const nameAlert = document.getElementById('name-alert');
+          const categoryAlert = document.getElementById('category-alert');
+          const priceAlert = document.getElementById('price-alert');
+          const stockAlert = document.getElementById('stock-alert');
+          const discountAlert = document.getElementById('discount-alert');
+          const dimensionAlert = document.getElementById('dimension-alert');
+          const difficultyAlert = document.getElementById('difficulty-alert');
+          const descriptionAlert = document.getElementById('description-alert');
+
+          nameAlert.style.display = 'none';
+          categoryAlert.style.display = 'none';
+          priceAlert.style.display = 'none';
+          stockAlert.style.display = 'none';
+          discountAlert.style.display = 'none';
+          dimensionAlert.style.display = 'none';
+          difficultyAlert.style.display = 'none';
+          descriptionAlert.style.display = 'none';
+
+          if (name === '' || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 8) {
+            if (name === '') {
+              nameAlert.style.display = 'inline';
+              nameAlert.innerText = 'Product name is required';
+            } else if (/^\s|\s{2,}|\s$/.test(name)) {
+              nameAlert.style.display = 'inline';
+              nameAlert.innerText = `Can't contain unwanted spaces`;
+            } else {
+              nameAlert.style.display = 'inline';
+              nameAlert.innerText = `Minimum length is 8`;
+            }
+
+            nameAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (category === '') {
+            categoryAlert.style.display = 'inline';
+            categoryAlert.innerText = 'Category is required';
+            categoryAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s]/.test(price) || /\s/.test(price)) {
+            if (price === '') {
+              priceAlert.style.display = 'inline';
+              priceAlert.innerText = `Price is required`;
+            } else if (/[a-zA-Z]/.test(price) || /[^\w\s]/.test(price)) {
+              priceAlert.style.display = 'inline';
+              priceAlert.innerText = `Only numbers allowed`;
+            } else {
+              priceAlert.style.display = 'inline';
+              priceAlert.innerText = `Can't contain spaces`;
+            }
+
+            priceAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (stock === '' || /[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock) || /\s/.test(stock)) {
+            if (stock === '') {
+              stockAlert.style.display = 'inline';
+              stockAlert.innerText = `Stock is required`;
+            } else if (/[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock)) {
+              stockAlert.style.display = 'inline';
+              stockAlert.innerText = `Only numbers allowed`;
+            } else {
+              stockAlert.style.display = 'inline';
+              stockAlert.innerText = `Can't contain spaces`;
+            }
+
+            stockAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || Number(discount) > 100) {
+            if (discount === '') {
+              discountAlert.style.display = 'inline';
+              discountAlert.innerText = `Discount is required`;
+            } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
+              discountAlert.style.display = 'inline';
+              discountAlert.innerText = `Only numbers allowed`;
+            } else if (/\s/.test(discount)) {
+              discountAlert.style.display = 'inline';
+              discountAlert.innerText = `Can't contain spaces`;
+            } else {
+              discountAlert.style.display = 'inline';
+              discountAlert.innerText = `Maximum value is 100`;
+            }
+
+            discountAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (length === '' || /[a-zA-Z]/.test(length) || /[^\w\s]/.test(length) || /\s/.test(length) || width === '' || /[a-zA-Z]/.test(width) || /[^\w\s]/.test(width) || /\s/.test(width) || height === '' || /[a-zA-Z]/.test(height) || /[^\w\s]/.test(height) || /\s/.test(height)) {
+            if (length === '' || width === '' || height === '') {
+              dimensionAlert.style.display = 'inline';
+              dimensionAlert.innerText = `Dimension is required`;
+            } else if (/[a-zA-Z]/.test(length) || /[a-zA-Z]/.test(width) || /[a-zA-Z]/.test(height) || /[^\w\s]/.test(length) || /[^\w\s]/.test(width) || /[^\w\s]/.test(height)) {
+              dimensionAlert.style.display = 'inline';
+              dimensionAlert.innerText = `Only numbers allowed`;
+            } else {
+              dimensionAlert.style.display = 'inline';
+              dimensionAlert.innerText = `Can't contain spaces`;
+            }
+
+            dimensionAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (difficulty === '' || /[a-zA-Z]/.test(difficulty) || /[^\w\s]/.test(difficulty) || /\s/.test(difficulty)) {
+            if (difficulty === '') {
+              difficultyAlert.style.display = 'inline';
+              difficultyAlert.innerText = `Difficulty is required`;
+            } else if (/[a-zA-Z]/.test(difficulty) || /[^\w\s]/.test(difficulty)) {
+              difficultyAlert.style.display = 'inline';
+              difficultyAlert.innerText = `Only numbers allowed`;
+            } else {
+              difficultyAlert.style.display = 'inline';
+              difficultyAlert.innerText = `Can't contain spaces`;
+            }
+
+            difficultyAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (description === '' || /^\s|\s{2,}|\s$/.test(description) || description.replace(/\s+/g, '').length > 100) {
+            if (description === '') {
+              descriptionAlert.style.display = 'inline';
+              descriptionAlert.innerText = 'Description is required';
+            } else if (/^\s|\s{2,}|\s$/.test(description)) {
+              descriptionAlert.style.display = 'inline';
+              descriptionAlert.innerText = `Can't contain unwanted spaces`;
+            } else {
+              descriptionAlert.style.display = 'inline';
+              descriptionAlert.innerText = `Maximum length is 100`;
+            }
+
+            descriptionAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else {
+            fetch(`/check-email`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ email })
+            }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  emailAlert.style.display = 'inline';
+                  emailAlert.innerText = 'Something went wrong. Try again';
+                } else if (data.exist) {
+                  emailAlert.style.display = 'inline';
+                  emailAlert.innerText = 'Email already exist';
+                } else {
+                  this.submit();
+                }
+              }).catch(err => {
+                console.log(err);
+              });
+          }
+        });
+      </script>

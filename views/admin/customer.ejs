@@ -75,7 +75,7 @@
                 </td>
                 <td style="" class="" data-mdb-field="field_1" false="">
                   <p class="fw-normal mb-0">
-                    <%= user.phone %>
+                    <%= user.phone || '-' %>
                   </p>
                 </td>
                 <td style="" class="" data-mdb-field="field_2" false="">
@@ -108,7 +108,7 @@
                   </button>
                 </td>
               </tr>
-              <% }) %> %>
+              <% }) %>
           </tbody>
         </table>
       </div>

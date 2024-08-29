@@ -44,10 +44,10 @@
   <%- include('sidenav') %>
 
     <!-- add product button -->
-    <div id="add-category" class="text-center mb-3">
-      <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
+    <div id="add-product" class="text-center mb-3">
+      <a class="btn btn-dark" href="/admin/add-product"><i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
           style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
-        product</button>
+        product</a>
     </div>
 
     <!-- product table container -->
@@ -83,22 +83,22 @@
                     <%= product.productName %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_0" false="">
+                <td style="" class="" data-mdb-field="field_1" false="">
                   <p class="fw-bold mb-1 name">
                     <%= product.productCategory %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_0" false="">
+                <td style="" class="" data-mdb-field="field_2" false="">
                   <p class="fw-bold mb-1 name">
                     <%= product.productPrice %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_0" false="">
+                <td style="" class="" data-mdb-field="field_3" false="">
                   <p class="fw-bold mb-1 name">
                     <%= product.productQuantity %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_1" false="">
+                <td style="" class="" data-mdb-field="field_4" false="">
                   <p class="fw-normal mb-1">
                     <%= new Date(product.createdAt).toDateString() %>
                   </p>
@@ -106,7 +106,7 @@
                     <%= new Date(product.createdAt).toTimeString().slice(0, 8) %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_2" false="">
+                <td style="" class="" data-mdb-field="field_5" false="">
                   <p class="fw-normal mb-1 updated-date">
                     <%= new Date(product.updatedAt).toDateString() %>
                   </p>
@@ -114,13 +114,13 @@
                     <%= new Date(product.updatedAt).toTimeString().slice(0, 8) %>
                   </p>
                 </td>
-                <td style="" class="" data-mdb-field="field_3" false="">
+                <td style="" class="" data-mdb-field="field_6" false="">
                   <span
                     class="badge status <%= product.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
                     <%= product.isActive ? 'Active' : 'Inactive' %>
                   </span>
                 </td>
-                <td style="" class="" data-mdb-field="field_4" false="">
+                <td style="" class="" data-mdb-field="field_7" false="">
                   <!-- active/inactive button -->
                   <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
                     data-mdb-ripple-color="dark" data-db-categoryId="<%= product._id %>">
@@ -159,7 +159,7 @@
 
         // dynamically adds padding to add category button
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementById('add-category').style.paddingTop = `${navHeight2 + 20}px`;
+        document.getElementById('add-product').style.paddingTop = `${navHeight2 + 20}px`;
 
         // dynamically adds padding to table container
         const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
