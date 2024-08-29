@@ -28,11 +28,17 @@ const categoryPost = async (req, res) => {
   try {
     if (req.body.categoryName || req.body.status || req.body.newCategoryName || req.body.delete) {
       if (req.body.categoryName) {
-        await categorySchema.create({
-          categoryName: req.body.categoryName
-        });
+        const categoryExist = await categorySchema.findOne({categoryName: new RegExp(`^${req.body.categoryName}$`, 'i')});
 
-        res.json({ add: true });
+        if (categoryExist) {
+          res.json({ exist: true });
+        } else {
+          await categorySchema.create({
+            categoryName: req.body.categoryName
+          });
+
+          res.json({ add: true });
+        }
       } else if (req.body.status) {
         const category = await categorySchema.findById(req.body.categoryId);
 

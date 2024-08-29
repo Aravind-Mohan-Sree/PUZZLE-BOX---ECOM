@@ -60,6 +60,8 @@
 
   textarea {
     background-color: #eeeeee !important;
+    resize: vertical;
+    min-height: 200px !important;
   }
 
   small {
@@ -70,6 +72,57 @@
   #category-select {
     background-color: #eeeeee;
     cursor: pointer !important;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
+
+  .image-container {
+    height: 300px;
+    width: 300px;
+    overflow: hidden;
+  }
+
+  .image-preview {
+    width: 250px;
+    height: 250px;
+    object-fit: contain;
+  }
+
+  #imageContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+
+  .modal-content {
+    margin: 0;
+  }
+
+  #modalImage {
+    width: 100%;
   }
 </style>
 
@@ -92,9 +145,14 @@
           <div class="input-group">
             <select id="category-select" data-mdb-select-init class="form-control">
               <option value="" disabled selected hidden>select an option</option>
-              <% categories.forEach(category => { %>
-                <option value=""><%= category.categoryName %></option>
-              <% }) %>
+              <% if (categories.length===0) { %>
+                <option value="">-</option>
+                <% } %>
+                  <% categories.forEach(category=> { %>
+                    <option value="<%= category.categoryName %>">
+                      <%= category.categoryName %>
+                    </option>
+                    <% }) %>
             </select>
             <span class="input-group-text fw-bold" id="inputGroup-sizing-sm1">▼</span>
           </div>
@@ -142,17 +200,16 @@
         </div>
 
         <hr class="mt-5">
-        <button class="btn btn-dark w-75 mx-auto">please choose 3 images</button>
-
-        <div class="col-12 col-sm-4 align-content-center">
-          <small id="image-alert" class="position-absolute start-0 text-danger text-center w-100"></small>
-          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
-        </div>
-        <div class="col-12 col-sm-4 align-content-center">
-          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
-        </div>
-        <div class="col-12 col-sm-4 align-content-center">
-          <a href=""><img src="/image/image.svg" alt="" class="img-fluid"></a>
+        <div class="text-center mt-4">
+          <input type="file" id="product-image-upload" name="productImage" accept="image/webp" multiple class="d-none">
+          <label for="product-image-upload" class="btn btn-dark"><i class="fa-duotone fa-solid fa-upload fa-xl me-3"
+              style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>Choose
+            3 Images</label>
+          <div class="container mt-4">
+            <div id="imageContainer" class="row">
+              <!-- Image previews will be added here -->
+            </div>
+          </div>
         </div>
 
         <hr class="mt-3">
@@ -162,6 +219,25 @@
 
     <!-- footer included -->
     <%- include('footer') %>
+
+      <!-- Modal for cropping image -->
+      <div class="modal fade" id="imageModal" tabindex="1" aria-labelledby="imageModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <img id="modalImage" src="" class="img-fluid">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="cropButton" class="btn btn-primary">Crop</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- javaScript -->
       <script>
@@ -180,6 +256,7 @@
           const dimension = length + '-' + width + '-' + height;
           const difficulty = document.getElementById('difficulty-input').value;
           const description = document.getElementById('description-element').value;
+          const productImage = document.getElementById('product-image-upload').value;
 
           const nameAlert = document.getElementById('name-alert');
           const categoryAlert = document.getElementById('category-alert');
@@ -189,6 +266,7 @@
           const dimensionAlert = document.getElementById('dimension-alert');
           const difficultyAlert = document.getElementById('difficulty-alert');
           const descriptionAlert = document.getElementById('description-alert');
+          const imageAlert = document.getElementById('image-alert');
 
           nameAlert.style.display = 'none';
           categoryAlert.style.display = 'none';
@@ -198,6 +276,7 @@
           dimensionAlert.style.display = 'none';
           difficultyAlert.style.display = 'none';
           descriptionAlert.style.display = 'none';
+          imageAlert.style.display = 'none';
 
           if (name === '' || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 8) {
             if (name === '') {
@@ -297,6 +376,11 @@
             }
 
             descriptionAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          } else if (productImage === '') {
+            imageAlert.style.display = 'inline';
+            imageAlert.innerText = 'Product image is required';
+
+            imageAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
           } else {
             fetch(`/check-email`, {
               method: 'POST',
@@ -319,5 +403,147 @@
                 console.log(err);
               });
           }
+        });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+          const inputImage = document.getElementById('product-image-upload');
+          const imageContainer = document.getElementById('imageContainer');
+          let cropper;
+          let currentImageElement;
+
+          inputImage.addEventListener('change', (event) => {
+            const files = Array.from(inputImage.files);
+            const totalFiles = files.length;
+
+            inputImage.value = '';
+
+            // Check if the number of files exceeds the limit
+            if (totalFiles > 3 || imageContainer.children.length + totalFiles > 3) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Only 3 images allowed',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+
+              return;
+            }
+
+            for (const file of files) {
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                const colDiv = document.createElement('div');
+                colDiv.classList.add('col-md-4', 'mb-3', 'image-container');
+
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('img-fluid', 'img-thumbnail', 'image-preview', 'bg-dark');
+
+                const openModalButton = document.createElement('button');
+                openModalButton.classList.add('btn', 'btn-dark', 'mt-2', 'me-2');
+                openModalButton.innerText = 'Crop';
+                openModalButton.setAttribute('type', 'button');
+                openModalButton.setAttribute('data-bs-toggle', 'modal');
+                openModalButton.setAttribute('data-bs-target', '#imageModal');
+                openModalButton.addEventListener('click', () => {
+                  document.getElementById('modalImage').src = e.target.result;
+                  currentImageElement = img;
+
+                  // Initialize Cropper.js with the image
+                  if (cropper) {
+                    cropper.destroy();
+                  }
+
+                  cropper = new Cropper(document.getElementById('modalImage'), {
+                    aspectRatio: 1,
+                    viewMode: 0,
+                    autoCropArea: 1,
+                    minContainerWidth: 400,
+                    minContainerHeight: 400,
+                  });
+                });
+
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('btn', 'btn-dark', 'mt-2', 'ms-2');
+                deleteButton.innerText = 'Delete';
+                deleteButton.addEventListener('click', () => {
+                  imageContainer.removeChild(colDiv);
+                  updateFileInput();
+                });
+
+                colDiv.appendChild(img);
+                colDiv.appendChild(openModalButton);
+                colDiv.appendChild(deleteButton);
+                imageContainer.appendChild(colDiv);
+              }
+              reader.readAsDataURL(file);
+            }
+
+            updateFileInput();
+          });
+
+          // Function to crop the image and update the preview
+          function cropImage() {
+            if (!cropper) {
+              console.error('Cropper instance is not defined.');
+              return;
+            }
+
+            const canvas = cropper.getCroppedCanvas();
+            const croppedImage = canvas.toDataURL('image/png');
+
+            currentImageElement.src = croppedImage;
+
+            // Close the modal and destroy the cropper instance
+            closeCropModal();
+            updateFileInput();
+          }
+
+          // Function to properly close the crop modal and destroy the cropper instance
+          function closeCropModal() {
+            const cropModal = document.getElementById('imageModal');
+            const modalInstance = bootstrap.Modal.getInstance(cropModal);
+            modalInstance.hide();  // Properly hide the modal
+
+            if (cropper) {
+              cropper.destroy();
+              cropper = null;
+            }
+          }
+
+          // Function to update the file input with the cropped images
+          function updateFileInput() {
+            const images = imageContainer.getElementsByClassName('image-preview');
+            const dataTransfer = new DataTransfer();
+
+            for (let i = 0; i < images.length; i++) {
+              const dataURL = images[i].src;
+              const file = dataURLtoFile(dataURL, 'image' + i + '.png');
+              dataTransfer.items.add(file);
+            }
+
+            document.getElementById('product-image-upload').files = dataTransfer.files;
+          }
+
+          // Utility function to convert data URL to a File object
+          function dataURLtoFile(dataurl, filename) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new File([u8arr], filename, { type: mime });
+          }
+
+          // Attach event listeners to the crop button and modal close event
+          document.getElementById('cropButton').onclick = cropImage;
+          document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
         });
       </script>

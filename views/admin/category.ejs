@@ -194,8 +194,19 @@
                         container: 'swal-css'
                       }
                     });
+                  } else if (data.exist) {
+                    Swal.fire({
+                      title: 'Error!',
+                      text: 'Category already exist',
+                      icon: 'error',
+                      confirmButtonText: 'OK',
+                      allowOutsideClick: false,
+                      customClass: {
+                        container: 'swal-css'
+                      }
+                    });
                   } else {
-                    window.location.reload();
+                    window.location.reload();                    
                   }
                 }).catch(err => {
                   console.log(err);

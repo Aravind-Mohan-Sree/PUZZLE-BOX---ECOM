@@ -19,7 +19,7 @@ const addProduct = async (req, res) => {
 
     res.render('admin/addProduct', { title: 'Add Product', alert: req.flash('alert'), categories })
   } catch (err) {
-    console.log('Error while rendering admin product list', err);
+    console.log('Error while rendering admin add product page', err);
   }
 };
 
