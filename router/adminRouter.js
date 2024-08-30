@@ -5,6 +5,7 @@ const categoryController = require('../controller/adminController/categoryContro
 const productController = require('../controller/adminController/productController');
 const customerController = require('../controller/adminController/customerController');
 const checkAdminSession = require('../middleware/adminSession');
+const upload = require('../middleware/multer');
 
 // will handle admin login route
 admin.get('/', adminController.admin);
@@ -12,7 +13,7 @@ admin.get('/login', adminController.login);
 admin.post('/login', adminController.loginPost);
 
 // will handle admin dashboard route
-admin.get('/dashboard', checkAdminSession, adminController.dashboard);
+admin.get('/dashboard', adminController.dashboard);
 // admin.post('/dashboard', adminController.dashboardPost);
 
 // will handle admin category route
@@ -21,8 +22,15 @@ admin.post('/categories', categoryController.categoryPost);
 
 // will handle admin products route
 admin.get('/products', productController.product);
-// admin.post('/products', productController.productPost);
+admin.post('/products', productController.productPost);
+
+// will handle admin add products route
 admin.get('/add-product', productController.addProduct);
+admin.post('/add-product', upload.array('productImage', 3), productController.addProductPost);
+
+// will handle admin edit products route
+admin.get('/edit-product', productController.editProduct);
+admin.post('/edit-product', upload.array('productImage', 3), productController.editProductPost);
 
 // will handle admin customers route
 admin.get('/customers', customerController.customer);

@@ -123,21 +123,23 @@
                 <td style="" class="" data-mdb-field="field_7" false="">
                   <!-- active/inactive button -->
                   <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
-                    data-mdb-ripple-color="dark" data-db-categoryId="<%= product._id %>">
+                    data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
                     <i class="fa-duotone fa-solid <%= product.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon"
                       style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
                   </button>
 
                   <!-- edit button -->
-                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button"
-                    data-mdb-ripple-color="dark" data-db-categoryId="<%= product._id %>">
+                  <a href="/admin/edit-product?id=<%= product._id %>">
+                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button"
+                    data-mdb-ripple-color="dark">
                     <i class="fa-duotone fa-solid fa-pen-to-square fa-xl"
                       style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
                   </button>
+                  </a>
 
                   <!-- delete button -->
                   <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button"
-                    data-mdb-ripple-color="dark" data-db-categoryId="<%= product._id %>">
+                    data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
                     <i class="fa-duotone fa-solid fa-trash fa-xl"
                       style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
                   </button>
@@ -164,4 +166,147 @@
         // dynamically adds padding to table container
         const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
         document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+
+        // using fetch to active/inactive product        
+        document.addEventListener('DOMContentLoaded', function () {
+          const datatableBody = document.querySelector('.datatable-body');
+
+          if (datatableBody) {
+            datatableBody.addEventListener('click', function (event) {
+              const statusButton = event.target.closest('.status-button');
+              const row = event.target.closest('tr');
+
+              if (statusButton) {
+                // Find the element within the same row
+                const productId = statusButton.getAttribute('data-db-productId');
+                const dateElement = row.querySelector('.updated-date');
+                const timeElement = row.querySelector('.updated-time');
+                const statusElement = row.querySelector('.status');
+                const iconElement = row.querySelector('.status-icon');
+
+                fetch('/admin/products', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({ status: true, productId })
+                }).then(response => response.json())
+                  .then(data => {
+                    if (data.error) {
+                      Swal.fire({
+                        title: 'Error!',
+                        text: 'Something went wrong. Try again',
+                        icon: 'error',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        customClass: {
+                          container: 'swal-css'
+                        }
+                      });
+                    } else if (data.isActive) {
+                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
+                      statusElement.innerText = 'Active';
+                      statusElement.classList.remove('badge-danger');
+                      statusElement.classList.add('badge-success');
+
+                      iconElement.classList.remove('fa-circle-xmark');
+                      iconElement.classList.add('fa-circle-check');
+                    } else {
+                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
+                      statusElement.innerText = 'Inactive';
+                      statusElement.classList.add('badge-danger');
+
+                      iconElement.classList.add('fa-circle-xmark');
+                    }
+                  }).catch(err => {
+                    console.log(err);
+                  })
+              }
+            });
+          }
+        });
+
+        // using fetch to delete product   
+        document.addEventListener('DOMContentLoaded', function () {
+          const datatableBody = document.querySelector('.datatable-body');
+
+          if (datatableBody) {
+            datatableBody.addEventListener('click', function (event) {
+              const deleteButton = event.target.closest('.delete-button');
+
+              if (deleteButton) {
+                const productId = deleteButton.getAttribute('data-db-productId');
+
+                Swal.fire({
+                  title: "Are you sure?",
+                  icon: "question",
+                  showCancelButton: true,
+                  confirmButtonText: "Yes",
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    fetch('/admin/products', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({ delete: true, productId })
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        if (data.error) {
+                          Swal.fire({
+                            title: 'Error!',
+                            text: 'Something went wrong. Try again',
+                            icon: 'error',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false,
+                            customClass: {
+                              container: 'swal-css'
+                            }
+                          });
+                        } else {
+                          window.location.reload();
+                        }
+                      })
+                      .catch(err => {
+                        console.error('Fetch error:', err);
+
+                        Swal.fire({
+                          title: 'Error!',
+                          text: 'Something went wrong. Try again',
+                          icon: 'error',
+                          confirmButtonText: 'OK',
+                          allowOutsideClick: false,
+                          customClass: {
+                            container: 'swal-css'
+                          }
+                        });
+                      });
+                  }
+                }).catch(err => {
+                  console.error('Swal error:', err);
+                });
+              }
+            });
+          }
+        });
+
+        // for searching products
+        document.addEventListener('DOMContentLoaded', function () {
+          const searchButton = document.getElementById('search-button');
+          
+          searchButton.addEventListener('click', function () {
+            const searchTerm = document.getElementById('search-input').value;
+
+            window.location.href = `/admin/products?searchTerm=${searchTerm}`;
+          });
+        });
       </script>

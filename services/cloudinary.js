@@ -11,10 +11,13 @@ cloudinary.config({
 const uploadImage = async (imagePath) => {
   try {
     const result = await cloudinary.uploader.upload(imagePath);
+
     console.log(result);
+
     return result.secure_url;
   } catch (error) {
     console.error('Upload failed:', error);
+
     throw error;
   }
 };
@@ -23,10 +26,13 @@ const uploadImage = async (imagePath) => {
 const getAssetInfo = async (publicId) => {
   try {
     const result = await cloudinary.api.resource(publicId);
+    
     console.log(result);
+
     return result;
   } catch (error) {
     console.error('Failed to get asset info:', error);
+
     throw error;
   }
 };

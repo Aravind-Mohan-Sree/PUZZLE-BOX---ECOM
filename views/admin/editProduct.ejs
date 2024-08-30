@@ -138,26 +138,26 @@
 
     <!-- product details container -->
     <div class="container product-details-container bg-image">
-      <form action="/admin/add-product" enctype="multipart/form-data" method="post" id="form">
+      <form action="/admin/edit-product?id=<%= product._id %>" enctype="multipart/form-data" method="post" id="form">
         <div class="row gy-4 px-3">
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Product Name<span class="text-danger">*</span></label>
-            <input id="name-input" class="w-100 form-control" type="text" placeholder="type..." name="productName">
+            <input id="name-input" class="w-100 form-control" type="text" placeholder="type..." name="productName"
+              value="<%= product.productName %>">
             <small id="name-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Category<span class="text-danger">*</span></label>
             <div class="input-group">
               <select id="category-select" data-mdb-select-init class="form-control" name="productCategory">
-                <option value="" disabled selected hidden>select an option</option>
-                <% if (categories.length===0) { %>
-                  <option value="">-</option>
-                  <% } %>
-                    <% categories.forEach(category=> { %>
-                      <option value="<%= category.categoryName %>">
-                        <%= category.categoryName %>
-                      </option>
-                      <% }) %>
+                <option value="<%= product.productCategory %>" selected hidden disabled>
+                  <%= product.productCategory %>
+                </option>
+                <% categories.forEach(category=> { %>
+                  <option>
+                    <%= category.categoryName %>
+                  </option>
+                  <% }) %>
               </select>
               <span class="input-group-text fw-bold" id="inputGroup-sizing-sm1">▼</span>
             </div>
@@ -165,17 +165,20 @@
           </div>
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
-            <input id="price-input" class="w-100 form-control" type="text" placeholder="type..." name="price">
+            <input id="price-input" class="w-100 form-control" type="text" placeholder="type..." name="price"
+              value="<%= product.productPrice %>">
             <small id="price-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
-            <input id="stock-input" class="w-100 form-control" type="text" placeholder="type..." name="stock">
+            <input id="stock-input" class="w-100 form-control" type="text" placeholder="type..." name="stock"
+              value="<%= product.productQuantity %>">
             <small id="stock-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
             <label class="w-100 text-dark mb-2" for="">Discount Rate(%)<span class="text-danger">*</span></label>
-            <input id="discount-input" class="w-100 form-control" type="text" placeholder="type..." name="discount">
+            <input id="discount-input" class="w-100 form-control" type="text" placeholder="type..." name="discount"
+              value="<%= product.productDiscount %>">
             <small id="discount-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
@@ -184,46 +187,65 @@
             <div class="input-group">
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">L</span>
               <input id="length-input" type="text" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="length" />
+                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="length"
+                value="<%= product.productDimension.split('-')[0] %>" />
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">W</span>
               <input id="width-input" type="text" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="width" />
+                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="width"
+                value="<%= product.productDimension.split('-')[1] %>" />
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">H</span>
               <input id="height-input" type="text" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="height" />
+                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="height"
+                value="<%= product.productDimension.split('-')[2] %>" />
             </div>
             <small id="dimension-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
             <label class="w-100 text-dark mb-2" for="">Difficulty Rate(/10)<span class="text-danger">*</span></label>
-            <input id="difficulty-input" class="w-100 form-control" type="text" placeholder="type..." name="difficulty">
+            <input id="difficulty-input" class="w-100 form-control" type="text" placeholder="type..." name="difficulty"
+              value="<%= product.productDifficultyRate %>">
             <small id="difficulty-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-8 mx-auto">
             <label class="w-100 text-dark mb-2" for="">Product Description<span class="text-danger">*</span></label>
             <textarea id="description-element" class="w-100 form-control" name="description" id=""
-              placeholder="type..."></textarea>
+              placeholder="type..."><%= product.productDescription %></textarea>
             <small id="description-alert" class="position-absolute text-danger"></small>
           </div>
 
           <hr class="mt-5">
-          <div class="text-center mt-4">
-            <input type="file" id="product-image-upload" name="productImage" accept="image/webp" multiple
-              class="d-none">
-            <label for="product-image-upload" class="btn btn-dark"><i class="fa-duotone fa-solid fa-upload fa-xl me-3"
-                style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>Choose
-              3 Images</label>
-            <div class="container mt-4">
-              <div id="imageContainer" class="row">
-                <!-- Image previews will be added here -->
+          <div class="product-form-bottom mt-0">
+            <div class="text-center mt-4">
+              <input type="file" id="product-image-upload" name="productImage" accept="image/webp" multiple
+                class="d-none">
+              <label for="product-image-upload" class="btn btn-dark">
+                <i class="fa-duotone fa-solid fa-upload fa-xl me-3"
+                  style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>Choose
+                3 Images
+              </label>
+              <div class="container mt-4">
+                <div id="imageContainer" class="row">
+                  <% if (product.productImage && product.productImage.length> 0) { %>
+                    <% product.productImage.forEach(function(image, index) { %>
+                      <div class="col-md-3 mb-3 image-container" data-image-path="<%= image %>">
+                        <img src="<%= image %>" class="img-fluid img-thumbnail image-preview bg-dark rounded-3">
+                        <button class="btn btn-dark mt-2" type="button" id="cropButton">Crop</button>
+                        <button class="btn btn-dark mt-2 ms-3" type="button" onclick="deleteImage(this)">Remove</button>
+                      </div>
+                      <% }); %>
+                        <% } %>
+                </div>
               </div>
+              <small id="image-alert" class="position-absolute start-0 text-danger w-100"></small>
             </div>
-            <small id="image-alert" class="position-absolute start-0 text-danger w-100"></small>
+
+            <!-- hidden field for deleted images -->
+            <input type="hidden" id="deletedImages" name="deletedImages" value="">
           </div>
 
           <hr class="mt-3">
           <div class="text-center">
-            <button class="btn btn-dark" type="submit">Add</button>
+            <button class="btn btn-dark" type="submit">Update</button>
             <a href="/admin/products" class="btn btn-dark ms-3">Cancel</a>
           </div>
         </div>
@@ -254,6 +276,9 @@
 
       <!-- javaScript -->
       <script>
+        // after redirection, remove the query parameter from the URL
+        window.history.replaceState(null, null, window.location.pathname);
+
         // script for product details validation
         document.getElementById('form').addEventListener('submit', function (e) {
           e.preventDefault();
@@ -396,6 +421,7 @@
 
             imageAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
           } else {
+            document.getElementById('deletedImages').value = JSON.stringify(deletedImages);
             this.submit();
           }
         });
@@ -486,7 +512,7 @@
           });
 
           updateFileInput();
-
+          
           document.addEventListener('keydown', function (event) {
             if (!cropper) return;
 

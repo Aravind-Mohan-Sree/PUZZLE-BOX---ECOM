@@ -37,7 +37,7 @@ const schema = new mongoose.Schema({
   },
 
   productImage: {
-    type: [],
+    type: [String],
     required: true
   },
 
