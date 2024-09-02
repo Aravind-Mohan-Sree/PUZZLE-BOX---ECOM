@@ -43,6 +43,11 @@
   <!-- sidenav included -->
   <%- include('sidenav') %>
 
+    <!-- title -->
+    <h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">PRODUCTS</h2>
+    
+    <hr>
+    
     <!-- add product button -->
     <div id="add-product" class="text-center mb-3">
       <a class="btn btn-dark" href="/admin/add-product"><i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
@@ -85,7 +90,7 @@
                 </td>
                 <td style="" class="" data-mdb-field="field_1" false="">
                   <p class="fw-bold mb-1 name">
-                    <%= product.productCategory %>
+                    <%= product.productCategory.categoryName %>
                   </p>
                 </td>
                 <td style="" class="" data-mdb-field="field_2" false="">
@@ -159,9 +164,9 @@
         // after redirection, remove the query parameter from the URL
         window.history.replaceState(null, null, window.location.pathname);
 
-        // dynamically adds padding to add category button
+        // dynamically adds padding to h2 tag
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementById('add-product').style.paddingTop = `${navHeight2 + 20}px`;
+        document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
         // dynamically adds padding to table container
         const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;

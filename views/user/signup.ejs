@@ -19,6 +19,13 @@
     color: black !important;
   }
 
+  /* Hide the up/down arrows in number inputs for Chrome, Safari, Edge, Opera */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
@@ -53,7 +60,7 @@
         </div>
         <div class="col">
           <div data-mdb-input-init class="form-outline">
-            <input type="text" id="phone-input" class="form-control" name="phone" />
+            <input type="tel" inputmode="tel" id="phone-input" class="form-control" name="phone" />
             <label class="form-label" for="form3Example2">Phone</label>
           </div>
         </div>
@@ -99,8 +106,8 @@
         <!-- google signup -->
         <p>or sign up with:</p>
         <a href="/auth/google"><button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
-          <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
-        </button></a>
+            <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
+          </button></a>
       </div>
     </form>
   </div>
@@ -211,7 +218,7 @@
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({email})
+            body: JSON.stringify({ email })
           }).then(response => response.json())
             .then(data => {
               if (data.error) {

@@ -43,4 +43,4 @@ const customerPost = async (req, res) => {
 module.exports = {
   customer,
   customerPost
-};  
+};

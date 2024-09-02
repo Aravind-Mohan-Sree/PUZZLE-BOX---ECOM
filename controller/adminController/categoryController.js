@@ -37,6 +37,8 @@ const categoryPost = async (req, res) => {
             categoryName: req.body.categoryName
           });
 
+          req.flash('alert', { message: 'Category added successfully', color: 'bg-success' });
+
           res.json({ add: true });
         }
       } else if (req.body.status) {
@@ -56,6 +58,8 @@ const categoryPost = async (req, res) => {
       } else {
         await categorySchema.findByIdAndDelete(req.body.categoryId);
 
+        req.flash('alert', { message: 'Category deleted successfully', color: 'bg-success' });
+
         res.json({ delete: true });
       }
     }
@@ -68,5 +72,5 @@ const categoryPost = async (req, res) => {
 
 module.exports = {
   category,
-  categoryPost,
+  categoryPost
 };

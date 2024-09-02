@@ -53,6 +53,11 @@
   <!-- sidenav included -->
   <%- include('sidenav') %>
 
+    <!-- title -->
+    <h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CATEGORIES</h2>
+    
+    <hr>
+    
     <!-- add category button -->
     <div id="add-category" class="text-center mb-3">
       <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3"
@@ -146,9 +151,9 @@
         // after redirection, remove the query parameter from the URL
         window.history.replaceState(null, null, window.location.pathname);
 
-        // dynamically adds padding to add category button
+        // dynamically adds padding to h2 tag
         const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementById('add-category').style.paddingTop = `${navHeight2 + 20}px`;
+        document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
         // dynamically adds padding to table container
         const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
@@ -339,6 +344,16 @@
                           timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
 
                           nameElement.innerText = newCategoryName;
+
+                          Swal.fire({
+                            title: 'Success!',
+                            text: 'Category updated successfully',
+                            confirmButtonText: 'OK',
+                            allowOutsideClick: false,
+                            customClass: {
+                              container: 'swal-css'
+                            }
+                          });
                         }
                       }).catch(err => {
                         console.log(err);

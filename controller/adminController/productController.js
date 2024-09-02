@@ -11,9 +11,9 @@ const product = async (req, res) => {
       // Use a case-insensitive regex to search for the term in the 'name' field
       const regex = new RegExp(req.query.searchTerm, 'i');
 
-      products = await productSchema.find({ productName: regex });
+      products = await productSchema.find({ productName: regex }).populate('productCategory');
     } else {
-      products = await productSchema.find();
+      products = await productSchema.find().populate('productCategory');
     }
 
     // sorting categories based on created date
@@ -69,7 +69,8 @@ const addProduct = async (req, res) => {
 const addProductPost = async (req, res) => {
   try {
     // check product already exist in the product collection
-    const checkProduct = await productSchema.findOne({ productName: req.body.productName, productCategory: req.body.productCategory });
+    const category = await categorySchema.findOne({ categoryName: req.body.productCategory });
+    const checkProduct = await productSchema.findOne({ productName: req.body.productName, productCategory: category._id });
 
     const productDimension = req.body.length + '-' + req.body.width + '-' + req.body.height;
 
@@ -77,7 +78,7 @@ const addProductPost = async (req, res) => {
     let discountPrice;
 
     if (req.body.discount != 0) {
-      discountPrice = req.body.price * (1 - (req.body.discount) / 100)
+      discountPrice = Math.round(req.body.price * (1 - (req.body.discount) / 100));
     } else {
       discountPrice = req.body.price;
     }
@@ -106,7 +107,7 @@ const addProductPost = async (req, res) => {
 
       const newProduct = new productSchema({
         productName: req.body.productName,
-        productCategory: req.body.productCategory,
+        productCategory: category._id,
         productPrice: req.body.price,
         productQuantity: req.body.stock,
         productDiscount: req.body.discount,
@@ -121,7 +122,7 @@ const addProductPost = async (req, res) => {
 
       req.flash('alert', { message: 'Product added successfully', color: 'bg-success' });
     } else {
-      req.flash('alert', { message: 'Product Already exist', color: 'bg-danger' });
+      req.flash('alert', { message: 'Product already exist', color: 'bg-danger' });
     }
 
     res.redirect('/admin/products');
@@ -133,11 +134,10 @@ const addProductPost = async (req, res) => {
 // will render admin edit product page 
 const editProduct = async (req, res) => {
   try {
-    const product = await productSchema.findById(req.query.id);
-    const categories = await categorySchema.find();
+    const product = await productSchema.findById(req.query.id).populate('productCategory');
 
     if (product) {
-      res.render('admin/editProduct', { title: "Edit Product", alert: req.flash('alert'), product, categories })
+      res.render('admin/editProduct', { title: "Edit Product", alert: req.flash('alert'), product })
     } else {
       req.flash('alert', { message: 'Unable to edit the product. Try again', color: 'bg-danger' });
 
@@ -159,7 +159,7 @@ const editProductPost = async (req, res) => {
     const product = await productSchema.findById(productID);
 
     // Delete images from the cloudinary
-    await cloudinaryDrive.deleteImages(product.productImage);  
+    await cloudinaryDrive.deleteImages(product.productImage);
 
     // stores images to cloud using cloudinary
     const imageArray = [];
@@ -181,8 +181,17 @@ const editProductPost = async (req, res) => {
 
     imageArray.push(...imageUrls);
 
+    // find the productDiscount Price
+    let discountPrice;
+
+    if (req.body.discount != 0) {
+      discountPrice = Math.round(req.body.price * (1 - (req.body.discount) / 100));
+    } else {
+      discountPrice = req.body.price;
+    }
+
     // update the product using the values from form
-    productSchema.findByIdAndUpdate(productID, { productPrice: price, productQuantity: stock, productDiscount: discount, productDescription: description, productImage: imageArray })
+    productSchema.findByIdAndUpdate(productID, { productPrice: price, productQuantity: stock, productDiscount: discount, productDiscountedPrice: discountPrice, productDescription: description, productImage: imageArray })
       .then((elem) => {
         req.flash('alert', { message: 'Product updated successfully', color: 'bg-success' });
 
