@@ -71,7 +71,6 @@
 
   #category-select {
     background-color: #eeeeee;
-    cursor: pointer !important;
   }
 
   .swal-css .swal2-popup {
@@ -143,14 +142,14 @@
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Product Name<span class="text-danger">*</span></label>
             <input id="name-input" class="w-100 form-control" type="text" placeholder="type..." name="productName"
-              value="<%= product.productName %>">
+              value="<%= product.productName %>" disabled>
             <small id="name-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
             <label class="w-100 text-dark mb-2" for="">Category<span class="text-danger">*</span></label>
             <div class="input-group">
-              <select id="category-select" data-mdb-select-init class="form-control" name="productCategory">
-                <option value="<%= product.productCategory %>" selected hidden disabled>
+              <select id="category-select" data-mdb-select-init class="form-control" name="productCategory" disabled>
+                <option value="<%= product.productCategory %>" selected>
                   <%= product.productCategory %>
                 </option>
                 <% categories.forEach(category=> { %>
@@ -188,22 +187,22 @@
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">L</span>
               <input id="length-input" type="text" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="length"
-                value="<%= product.productDimension.split('-')[0] %>" />
+                value="<%= product.productDimension.split('-')[0] %>" disabled />
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">W</span>
               <input id="width-input" type="text" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="width"
-                value="<%= product.productDimension.split('-')[1] %>" />
+                value="<%= product.productDimension.split('-')[1] %>" disabled />
               <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">H</span>
               <input id="height-input" type="text" class="form-control" aria-label="Sizing example input"
                 aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="height"
-                value="<%= product.productDimension.split('-')[2] %>" />
+                value="<%= product.productDimension.split('-')[2] %>" disabled />
             </div>
             <small id="dimension-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
             <label class="w-100 text-dark mb-2" for="">Difficulty Rate(/10)<span class="text-danger">*</span></label>
             <input id="difficulty-input" class="w-100 form-control" type="text" placeholder="type..." name="difficulty"
-              value="<%= product.productDifficultyRate %>">
+              value="<%= product.productDifficultyRate %>" disabled>
             <small id="difficulty-alert" class="position-absolute text-danger"></small>
           </div>
           <div class="col-12 col-sm-8 mx-auto">
@@ -225,15 +224,7 @@
               </label>
               <div class="container mt-4">
                 <div id="imageContainer" class="row">
-                  <% if (product.productImage && product.productImage.length> 0) { %>
-                    <% product.productImage.forEach(function(image, index) { %>
-                      <div class="col-md-3 mb-3 image-container" data-image-path="<%= image %>">
-                        <img src="<%= image %>" class="img-fluid img-thumbnail image-preview bg-dark rounded-3">
-                        <button class="btn btn-dark mt-2" type="button" id="cropButton">Crop</button>
-                        <button class="btn btn-dark mt-2 ms-3" type="button" onclick="deleteImage(this)">Remove</button>
-                      </div>
-                      <% }); %>
-                        <% } %>
+                  <!-- Image previews will be added here -->
                 </div>
               </div>
               <small id="image-alert" class="position-absolute start-0 text-danger w-100"></small>
@@ -245,8 +236,8 @@
 
           <hr class="mt-3">
           <div class="text-center">
-            <button class="btn btn-dark" type="submit">Update</button>
-            <a href="/admin/products" class="btn btn-dark ms-3">Cancel</a>
+            <a href="/admin/products" class="btn btn-dark">Cancel</a>
+            <button class="btn btn-dark ms-3" type="submit">Update</button>
           </div>
         </div>
       </form>
@@ -267,8 +258,8 @@
               <img id="modalImage" src="" class="img-fluid">
             </div>
             <div class="modal-footer">
-              <button type="button" id="cropButton" class="btn btn-dark ms-auto">Apply</button>
-              <button type="button" class="btn btn-dark ms-3 me-auto" data-mdb-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-dark ms-auto" data-mdb-dismiss="modal">Close</button>
+              <button type="button" id="cropButton" class="btn btn-dark me-auto ms-3">Apply</button>
             </div>
           </div>
         </div>
@@ -421,7 +412,6 @@
 
             imageAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
           } else {
-            document.getElementById('deletedImages').value = JSON.stringify(deletedImages);
             this.submit();
           }
         });
@@ -429,15 +419,14 @@
         document.addEventListener('DOMContentLoaded', (event) => {
           const inputImage = document.getElementById('product-image-upload');
           const imageContainer = document.getElementById('imageContainer');
+          const backendImageUrls = JSON.parse('<%- JSON.stringify(product.productImage) %>');
           let cropper;
           let currentImageElement;
 
-          inputImage.addEventListener('change', (event) => {
-            const files = Array.from(inputImage.files);
-            const totalFiles = files.length;
-
+          // Function to handle change event
+          const handleChangeEvent = (files) => {
             // Check if the number of files exceeds the limit
-            if (totalFiles > 3 || imageContainer.children.length + totalFiles > 3) {
+            if (files.length > 3 || imageContainer.children.length + files.length > 3) {
               Swal.fire({
                 title: 'Error!',
                 text: 'Only 3 images allowed',
@@ -460,7 +449,7 @@
               const reader = new FileReader();
               reader.onload = (e) => {
                 const colDiv = document.createElement('div');
-                colDiv.classList.add('col-md-4', 'mb-3', 'image-container');
+                colDiv.classList.add('col-md-3', 'mb-3', 'image-container');
 
                 const img = document.createElement('img');
                 img.src = e.target.result;
@@ -481,7 +470,6 @@
                     cropper.destroy();
                   }
 
-                  const modalImage = document.getElementById('modalImage');
                   const screenWidth = window.innerWidth || document.documentElement.clientWidth;
 
                   cropper = new Cropper(document.getElementById('modalImage'), {
@@ -489,13 +477,14 @@
                     viewMode: 0,
                     autoCropArea: 1,
                     minContainerWidth: screenWidth < 400 ? screenWidth - 20 : 400,
-                    minContainerHeight: screenWidth < 400 ? screenWidth - 20 : 400
+                    minContainerHeight: screenWidth < 400 ? screenWidth - 20 : 400,
+                    quality: 1 // Set cropping quality to full
                   });
                 });
 
                 const deleteButton = document.createElement('button');
                 deleteButton.classList.add('btn', 'btn-dark', 'mt-2', 'ms-2');
-                deleteButton.innerText = 'Remove';
+                deleteButton.innerText = 'Delete';
                 deleteButton.addEventListener('click', () => {
                   imageContainer.removeChild(colDiv);
                   updateFileInput();
@@ -509,11 +498,101 @@
 
               reader.readAsDataURL(file);
             }
+
+            updateFileInput();
+          };
+
+          inputImage.addEventListener('change', (event) => {
+            handleChangeEvent(event.target.files);
           });
 
-          updateFileInput();
-          
-          document.addEventListener('keydown', function (event) {
+          // Function to automatically load backend images and trigger the change event
+          const loadBackendImages = (imageUrls) => {
+            const dataTransfer = new DataTransfer();
+
+            imageUrls.forEach((url, index) => {
+              fetch(url)
+                .then(res => res.blob())
+                .then(blob => {
+                  const file = new File([blob], `image${index}.webp`, { type: blob.type });
+                  dataTransfer.items.add(file);
+
+                  if (index === imageUrls.length - 1) {
+                    inputImage.files = dataTransfer.files;
+                    handleChangeEvent(inputImage.files); // Trigger the change event handler
+                  }
+                });
+            });
+          };
+
+          loadBackendImages(backendImageUrls);
+
+          // Function to crop the image and update the preview
+          function cropImage() {
+            if (!cropper) {
+              console.error('Cropper instance is not defined.');
+              return;
+            }
+
+            const canvas = cropper.getCroppedCanvas();
+            const croppedImage = canvas.toDataURL('image/webp'); // Changed to WebP format
+
+            currentImageElement.src = croppedImage;
+
+            // Close the modal and destroy the cropper instance
+            closeCropModal();
+            updateFileInput();
+          }
+
+          // Function to properly close the crop modal and destroy the cropper instance
+          function closeCropModal() {
+            const cropModal = document.getElementById('imageModal');
+            const modalInstance = mdb.Modal.getInstance(cropModal);
+            modalInstance.hide();  // Properly hide the modal
+
+            if (cropper) {
+              cropper.destroy();
+              cropper = null;
+            }
+          }
+
+          // Function to update the file input with the cropped images
+          function updateFileInput() {
+            // Add a slight delay before retrieving the images
+            setTimeout(() => {
+              const images = imageContainer.getElementsByClassName('image-preview');
+              const dataTransfer = new DataTransfer();
+
+              for (let i = 0; i < images.length; i++) {
+                const dataURL = images[i].src;
+                const file = dataURLtoFile(dataURL, 'image' + i + '.webp');
+                dataTransfer.items.add(file);
+              }
+
+              document.getElementById('product-image-upload').files = dataTransfer.files;
+            }, 50); // 50 milliseconds delay
+          }
+
+          // Utility function to convert data URL to a File object
+          function dataURLtoFile(dataurl, filename) {
+            const arr = dataurl.split(',');
+            const mime = arr[0].match(/:(.*?);/)[1];
+            const bstr = atob(arr[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
+            }
+            return new File([u8arr], filename, { type: mime });
+          }
+
+          // Attach event listeners to the crop button and modal close event
+          document.getElementById('cropButton').onclick = cropImage;
+          document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
+
+          // Keyboard functionality for Cropper.js
+          document.addEventListener('keydown', (event) => {
             if (!cropper) return;
 
             const moveStep = 10;  // The number of pixels to move the crop box
@@ -546,66 +625,5 @@
                 break;
             }
           });
-
-          // Function to crop the image and update the preview
-          function cropImage() {
-            if (!cropper) {
-              console.error('Cropper instance is not defined.');
-              return;
-            }
-
-            const canvas = cropper.getCroppedCanvas();
-            const croppedImage = canvas.toDataURL('image/webp');
-
-            currentImageElement.src = croppedImage;
-
-            // Close the modal and destroy the cropper instance
-            closeCropModal();
-            updateFileInput();
-          }
-
-          // Function to properly close the crop modal and destroy the cropper instance
-          function closeCropModal() {
-            const cropModal = document.getElementById('imageModal');
-            const modalInstance = mdb.Modal.getInstance(cropModal);
-            modalInstance.hide();  // Properly hide the modal
-
-            if (cropper) {
-              cropper.destroy();
-              cropper = null;
-            }
-          }
-
-          // Function to update the file input with the cropped images
-          function updateFileInput() {
-            const images = imageContainer.getElementsByClassName('image-preview');
-            const dataTransfer = new DataTransfer();
-
-            for (let i = 0; i < images.length; i++) {
-              const dataURL = images[i].src;
-              const file = dataURLtoFile(dataURL, 'image' + i + '.webp');
-              dataTransfer.items.add(file);
-            }
-
-            document.getElementById('product-image-upload').files = dataTransfer.files;
-          }
-
-          // Utility function to convert data URL to a File object
-          function dataURLtoFile(dataurl, filename) {
-            const arr = dataurl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-              u8arr[n] = bstr.charCodeAt(n);
-            }
-
-            return new File([u8arr], filename, { type: mime });
-          }
-
-          // Attach event listeners to the crop button and modal close event
-          document.getElementById('cropButton').onclick = cropImage;
-          document.getElementById('imageModal').addEventListener('hidden.mdb.modal', closeCropModal);
         });
       </script>

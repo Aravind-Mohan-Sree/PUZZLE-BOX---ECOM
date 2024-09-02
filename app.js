@@ -49,6 +49,7 @@ app.use('/style', express.static(path.join(__dirname, 'public', 'style')));
 app.use('/image', express.static(path.join(__dirname, 'public', 'image')));
 app.use('/sweetalert', express.static(path.join(__dirname, 'node_modules', 'sweetalert2', 'dist')));
 app.use('/mdb-ui-kit-pro', express.static(path.join(__dirname, 'node_modules', 'mdb-ui-kit-pro')));
+app.use('/cropperjs', express.static(path.join(__dirname, 'node_modules', 'cropperjs')));
 
 // will parse incoming request bodies and can be used for further processing
 app.use(express.json());

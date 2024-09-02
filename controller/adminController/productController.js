@@ -1,6 +1,6 @@
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
-const cloudinaryUpload = require('../../services/cloudinary');
+const cloudinaryDrive = require('../../services/cloudinary');
 
 // will render admin product list
 const product = async (req, res) => {
@@ -38,7 +38,11 @@ const productPost = async (req, res) => {
 
         res.json({ lastUpdated: updatedProduct.updatedAt, isActive: updatedProduct.isActive });
       } else {
-        await productSchema.findByIdAndDelete(req.body.productId);
+        const product = await productSchema.findByIdAndDelete(req.body.productId);
+
+        await cloudinaryDrive.deleteImages(product.productImage);
+
+        req.flash('alert', { message: 'Product deleted successfully', color: 'bg-success' });
 
         res.json({ delete: true });
       }
@@ -65,12 +69,7 @@ const addProduct = async (req, res) => {
 const addProductPost = async (req, res) => {
   try {
     // check product already exist in the product collection
-    const checkProduct = await productSchema.findOne({
-      $or: [
-        { productName: req.body.productName },
-        { productCategory: req.body.productCategory }
-      ]
-    });    
+    const checkProduct = await productSchema.findOne({ productName: req.body.productName, productCategory: req.body.productCategory });
 
     const productDimension = req.body.length + '-' + req.body.width + '-' + req.body.height;
 
@@ -85,12 +84,12 @@ const addProductPost = async (req, res) => {
 
     // if product not exist then product is added to collection
     if (!checkProduct) {
+      // stores images to cloud using cloudinary
       const imageArray = [];
 
-      // stores images to cloud using cloudinary
       const uploadPromises = req.files.map(async (img) => {
         try {
-          const imageUrl = await cloudinaryUpload.uploadImage(img.path);
+          const imageUrl = await cloudinaryDrive.uploadImages(img.path);
 
           return imageUrl;
         } catch (error) {
@@ -115,7 +114,7 @@ const addProductPost = async (req, res) => {
         productDifficultyRate: req.body.difficulty,
         productDescription: req.body.description,
         productDiscountedPrice: discountPrice,
-        productImage: imageArray,
+        productImage: imageArray
       })
 
       await newProduct.save();
@@ -152,43 +151,55 @@ const editProduct = async (req, res) => {
 // update the product based on the admin edit
 const editProductPost = async (req, res) => {
   try {
-    const { productPrice, productDescription, productQuantity, productCategory } = req.body;
+    const { price, stock, discount, description } = req.body;
 
     // get the id of the product
     const productID = req.query.id;
 
-    // Delete images from the backend
-    const imagesToDelete = JSON.parse(req.body.deletedImages || '[]');
+    const product = await productSchema.findById(productID);
 
-    // Remove deleted images from DB
-    if (imagesToDelete.length > 0) {
-      await productSchema.findByIdAndUpdate(productID, {
-        $pull: { productImage: { $in: imagesToDelete } }
-      });
-    }
+    // Delete images from the cloudinary
+    await cloudinaryDrive.deleteImages(product.productImage);  
 
-    // Add new image paths to DB
-    if (req.files && req.files.length > 0) {
-      const imagePaths = req.files.map(file => file.path.replace(/\\/g, '/'));
-      await productSchema.findByIdAndUpdate(productID, {
-        $push: { productImage: { $each: imagePaths } }
-      });
-    }
+    // stores images to cloud using cloudinary
+    const imageArray = [];
+
+    const uploadPromises = req.files.map(async (img) => {
+      try {
+        const imageUrl = await cloudinaryDrive.uploadImages(img.path);
+
+        return imageUrl;
+      } catch (error) {
+        console.error('Error uploading image:', error);
+
+        return null;
+      }
+    });
+
+    // Wait for all uploads to complete
+    const imageUrls = await Promise.all(uploadPromises);
+
+    imageArray.push(...imageUrls);
 
     // update the product using the values from form
-    productSchema.findByIdAndUpdate(productID, { productPrice: productPrice, productDescription: productDescription, productQuantity: productQuantity })
+    productSchema.findByIdAndUpdate(productID, { productPrice: price, productQuantity: stock, productDiscount: discount, productDescription: description, productImage: imageArray })
       .then((elem) => {
-        req.flash('errorMessage', 'Product Updated successfully');
-        res.redirect('/admin/products')
+        req.flash('alert', { message: 'Product updated successfully', color: 'bg-success' });
+
+        res.redirect('/admin/products');
       }).catch((err) => {
         console.log(`Error while updating the product ${err}`);
-        req.flash('errorMessage', 'Product is not updated')
-        res.redirect('/admin/products')
+
+        req.flash('alert', { message: 'Product is not updated', color: 'bg-danger' });
+
+        res.redirect('/admin/products');
       })
   } catch (err) {
     console.log(`Error during updating the product on database ${err}`);
-    req.flash('errorMessage', 'Oops the action is not completed')
-    res.redirect('/admin/products')
+
+    req.flash('alert', { message: 'Oops the action is not completed', color: 'bg-danger' });
+
+    res.redirect('/admin/products');
   }
 };
 
