@@ -1,6 +1,54 @@
+<style>
+  .home-container {
+    flex-grow: 1;
+    padding-top: 6.25rem;
+    padding-bottom: 6.875rem;
+  }
+</style>
+
+<!-- --------------------------- navbar included --------------------------- -->
 <%- include('navbar') %>
 
-<script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
-</script>
+  <!-- --------------------------- home container ---------------------------- -->
+  <div class="home-container">
+    <!-- ---------------------------- hero section ----------------------------- -->
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-7 align-content-center">
+            <div class="text-center ps-5 mb-4"><i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl display-1" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i></div>
+            <h1>Connecting Minds, One Puzzle at a Time</h1>
+            <p class="mt-4 mb-5">Enjoy our premium puzzles designed for all skill levels. Connect with loved ones and enhance your problem-solving skills today!</p>
+            <div>
+              <button class="btn btn-dark btn-lg">Shop Now</button>
+              <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl ms-5" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i>
+            </div>
+            <div class="row mt-5">
+              <div class="col border-end me-4">
+                <h3>7+</h3>
+                <p>Different categories</p>
+              </div>
+              <div class="col border-end me-4">
+                <h3>200+</h3>
+                <p>High-quality products</p>
+              </div>
+              <div class="col">
+                <h3>1200+</h3>
+                <p>Happy customers</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-5 hero-image">
+            <img src="\image\hero-image.webp" alt="" class="img-fluid rounded-9">
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </div>
+
+  <script>
+    // after redirection, remove the query parameter from the URL
+    window.history.replaceState(null, null, window.location.pathname);
+  </script>

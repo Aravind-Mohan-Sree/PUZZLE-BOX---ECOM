@@ -56,12 +56,12 @@
     </div>
 
     <!-- product table container -->
-    <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover"
+    <div data-mdb-datatable-init class="datatable datatable-bordered datatable-hover"
       data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
       <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
         <table class="table datatable-table" id="exampleTable">
           <thead class="datatable-header">
-            <tr>
+            <tr scope="row">
               <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0"
                   class="datatable-sort-icon fas fa-arrow-up"></i> Name</th>
               <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1"
@@ -91,7 +91,7 @@
                 <td style="" class="" data-mdb-field="field_1" false="">
                   <p class="fw-bold mb-1 name">
                     <%= product.productCategory.categoryName %>
-                  </p>
+                  </p>  
                 </td>
                 <td style="" class="" data-mdb-field="field_2" false="">
                   <p class="fw-bold mb-1 name">
