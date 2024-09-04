@@ -43,222 +43,221 @@
 <!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- form container -->
-  <div class="d-flex vh-100 form-container justify-content-center align-items-center">
-    <!-- signup form -->
-    <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3"
-      method="post" action="/signup">
-      <h3 class="text-center mb-4 text-dark fw-bold">CREATE A NEW ACCOUNT!</h3>
-      <!-- name and phone input -->
-      <div class="row mb-4">
-        <div class="col">
-          <div data-mdb-input-init class="form-outline">
-            <input type="text" id="name-input" class="form-control" name="name" />
-            <label class="form-label" for="form3Example1">Name</label>
-          </div>
-          <small id="name-phone-alert" class="position-absolute text-danger"></small>
+<!-- form container -->
+<div class="d-flex vh-100 form-container justify-content-center align-items-center">
+  <!-- signup form -->
+  <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3" method="post" action="/signup">
+    <h3 class="text-center mb-4 text-dark fw-bold">CREATE A NEW ACCOUNT!</h3>
+    <!-- name and phone input -->
+    <div class="row mb-4">
+      <div class="col">
+        <div data-mdb-input-init class="form-outline">
+          <input type="text" id="name-input" class="form-control" name="name" />
+          <label class="form-label" for="form3Example1">Name</label>
         </div>
-        <div class="col">
-          <div data-mdb-input-init class="form-outline">
-            <input type="tel" inputmode="tel" id="phone-input" class="form-control" name="phone" />
-            <label class="form-label" for="form3Example2">Phone</label>
-          </div>
+        <small id="name-phone-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col">
+        <div data-mdb-input-init class="form-outline">
+          <input type="tel" inputmode="tel" id="phone-input" class="form-control" name="phone" />
+          <label class="form-label" for="form3Example2">Phone</label>
         </div>
       </div>
+    </div>
 
-      <!-- Email input -->
-      <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" id="email-input" class="form-control" name="email" />
-        <label class="form-label" for="form3Example3">Email</label>
-        <small id="email-alert" class="position-absolute text-danger"></small>
+    <!-- Email input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+      <input type="text" id="email-input" class="form-control" name="email" />
+      <label class="form-label" for="form3Example3">Email</label>
+      <small id="email-alert" class="position-absolute text-danger"></small>
+    </div>
+
+    <!-- Password input -->
+    <div id="password1" class="input-group mb-4">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="password-input1" type="password" class="form-control" name="password" />
+        <label class="form-label" for="form1">Password</label>
+        <small id="password-alert1" class="position-absolute text-danger"></small>
       </div>
+      <button data-mdb-ripple-init id="password-button1" type="button" class="btn btn-dark shadow-0 w-25">
+        <i id="eye1" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
+    </div>
 
-      <!-- Password input -->
-      <div id="password1" class="input-group mb-4">
-        <div class="form-outline" data-mdb-input-init>
-          <input id="password-input1" type="password" class="form-control" name="password" />
-          <label class="form-label" for="form1">Password</label>
-          <small id="password-alert1" class="position-absolute text-danger"></small>
-        </div>
-        <button data-mdb-ripple-init id="password-button1" type="button" class="btn btn-dark shadow-0 w-25">
-          <i id="eye1" class="fa-duotone fa-eye-slash fa-lg"
-            style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
-        </button>
+    <div class="input-group mb-4">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="password-input2" type="password" class="form-control" name="confirmPassword" />
+        <label class="form-label" for="form1">Confirm Password</label>
+        <small id="password-alert2" class="position-absolute text-danger"></small>
       </div>
+      <button data-mdb-ripple-init id="password-button2" type="button" class="btn btn-dark shadow-0 w-25">
+        <i id="eye2" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
+    </div>
 
-      <div class="input-group mb-4">
-        <div class="form-outline" data-mdb-input-init>
-          <input id="password-input2" type="password" class="form-control" name="confirmPassword" />
-          <label class="form-label" for="form1">Confirm Password</label>
-          <small id="password-alert2" class="position-absolute text-danger"></small>
-        </div>
-        <button data-mdb-ripple-init id="password-button2" type="button" class="btn btn-dark shadow-0 w-25">
-          <i id="eye2" class="fa-duotone fa-eye-slash fa-lg"
-            style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
-        </button>
-      </div>
+    <!-- submit button -->
+    <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="sign up">
 
-      <!-- submit button -->
-      <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="sign up">
+    <div class="text-center text-dark mt-4">
+      <p>Already a member? <a href="/login" class="text-dark text-decoration-underline" id="signup">Log In</a></p>
+      <!-- google signup -->
+      <p>or sign up with:</p>
+      <a href="/auth/google"><button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
+          <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
+        </button></a>
+    </div>
+  </form>
+</div>
 
-      <div class="text-center text-dark mt-4">
-        <p>Already a member? <a href="/login" class="text-dark text-decoration-underline" id="signup">Log In</a></p>
-        <!-- google signup -->
-        <p>or sign up with:</p>
-        <a href="/auth/google"><button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
-            <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
-          </button></a>
-      </div>
-    </form>
-  </div>
+<!-- footer included -->
+<%- include('footer') %>
 
-  <!-- footer included -->
-  <%- include('footer') %>
+<!-- javaScript -->
+<script>
+  // script for form validation
+  document.getElementById('form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-    <!-- javaScript -->
-    <script>
-      // script for form validation
-      document.getElementById('form').addEventListener('submit', function (e) {
-        e.preventDefault();
+    const name = document.getElementById('name-input').value;
+    const phone = document.getElementById('phone-input').value;
+    const email = document.getElementById('email-input').value.toLowerCase();
+    const password = document.getElementById('password-input1').value;
+    const confirmPassword = document.getElementById('password-input2').value;
 
-        const name = document.getElementById('name-input').value;
-        const phone = document.getElementById('phone-input').value;
-        const email = document.getElementById('email-input').value.toLowerCase();
-        const password = document.getElementById('password-input1').value;
-        const confirmPassword = document.getElementById('password-input2').value;
+    const namePhoneAlert = document.getElementById('name-phone-alert');
+    const emailAlert = document.getElementById('email-alert');
+    const passwordAlert1 = document.getElementById('password-alert1');
+    const passwordAlert2 = document.getElementById('password-alert2');
 
-        const namePhoneAlert = document.getElementById('name-phone-alert');
-        const emailAlert = document.getElementById('email-alert');
-        const passwordAlert1 = document.getElementById('password-alert1');
-        const passwordAlert2 = document.getElementById('password-alert2');
+    namePhoneAlert.style.display = 'none';
+    emailAlert.style.display = 'none';
+    passwordAlert1.style.display = 'none';
+    passwordAlert2.style.display = 'none';
 
-        namePhoneAlert.style.display = 'none';
-        emailAlert.style.display = 'none';
-        passwordAlert1.style.display = 'none';
-        passwordAlert2.style.display = 'none';
-
-        if (name === '' || /[^\w\s]/.test(name) || /\d/.test(name) || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 3 || name.replace(/\s+/g, '').length > 15) {
-          if (name === '') {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = 'Name is required';
-          } else if (/[^\w\s]/.test(name)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Name can't contain special characters`;
-          } else if (/\d/.test(name)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Name can't contain numbers`;
-          } else if (/^\s|\s{2,}|\s$/.test(name)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Name can't contain unwanted spaces`;
-          } else if (name.replace(/\s+/g, '').length < 3) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Name minimum length is 3`;
-          } else {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Name maximum length is 15`;
-          }
-        } else if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
-          if (phone === '') {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Phone is required`;
-          } else if (/[a-zA-Z]/.test(phone)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Phone can't contain alphabets`;
-          } else if (/[^\w\s]/.test(phone)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Phone can't contain special characters`;
-          } else if (/\s/.test(phone)) {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Phone can't contain spaces`;
-          } else {
-            namePhoneAlert.style.display = 'inline';
-            namePhoneAlert.innerText = `Phone length must be 10`;
-          }
-        } else if (email === '' || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
-          if (email === '') {
+    if (name === '' || /[^\w\s]/.test(name) || /\d/.test(name) || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 3 || name.replace(/\s+/g, '').length > 15) {
+      if (name === '') {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = 'Name is required';
+      } else if (/[^\w\s]/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Name can't contain special characters`;
+      } else if (/\d/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Name can't contain numbers`;
+      } else if (/^\s|\s{2,}|\s$/.test(name)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Name can't contain unwanted spaces`;
+      } else if (name.replace(/\s+/g, '').length < 3) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Name minimum length is 3`;
+      } else {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Name maximum length is 15`;
+      }
+    } else if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+      if (phone === '') {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone is required`;
+      } else if (/[a-zA-Z]/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone can't contain alphabets`;
+      } else if (/[^\w\s]/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone can't contain special characters`;
+      } else if (/\s/.test(phone)) {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone can't contain spaces`;
+      } else {
+        namePhoneAlert.style.display = 'inline';
+        namePhoneAlert.innerText = `Phone length must be 10`;
+      }
+    } else if (email === '' || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+      if (email === '') {
+        emailAlert.style.display = 'inline';
+        emailAlert.innerText = `Email is required`;
+      } else if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+        emailAlert.style.display = 'inline';
+        emailAlert.innerText = `Email format is invalid`;
+      }
+    } else if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
+      passwordAlert1.style.width = window.getComputedStyle(document.getElementById('password1')).width;
+      if (password === '') {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password is required`;
+      } else if (!/[a-z]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must be case-sensitive`;
+      } else if (!/[A-Z]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must be case-sensitive`;
+      } else if (!/[^\w\s]/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must contain a special character`;
+      } else if (!/\d/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password must contain a number`;
+      } else if (/\s/.test(password)) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password can't contain spaces`;
+      } else if (password.length < 8) {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password minimum length is 8`;
+      } else {
+        passwordAlert1.style.display = 'inline';
+        passwordAlert1.innerText = `Password maximum length is 30`;
+      }
+    } else if (password !== confirmPassword) {
+      passwordAlert2.style.display = 'inline';
+      passwordAlert2.innerText = `Passwords mismatch`;
+    } else {
+      fetch(`/check-email`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email
+          })
+        }).then(response => response.json())
+        .then(data => {
+          if (data.error) {
             emailAlert.style.display = 'inline';
-            emailAlert.innerText = `Email is required`;
-          } else if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+            emailAlert.innerText = 'Something went wrong. Try again';
+          } else if (data.exist) {
             emailAlert.style.display = 'inline';
-            emailAlert.innerText = `Email format is invalid`;
-          }
-        } else if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
-          passwordAlert1.style.width = window.getComputedStyle(document.getElementById('password1')).width;
-          if (password === '') {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password is required`;
-          } else if (!/[a-z]/.test(password)) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password must be case-sensitive`;
-          } else if (!/[A-Z]/.test(password)) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password must be case-sensitive`;
-          } else if (!/[^\w\s]/.test(password)) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password must contain a special character`;
-          } else if (!/\d/.test(password)) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password must contain a number`;
-          } else if (/\s/.test(password)) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password can't contain spaces`;
-          } else if (password.length < 8) {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password minimum length is 8`;
+            emailAlert.innerText = 'Email already exist';
           } else {
-            passwordAlert1.style.display = 'inline';
-            passwordAlert1.innerText = `Password maximum length is 30`;
+            this.submit();
           }
-        } else if (password !== confirmPassword) {
-          passwordAlert2.style.display = 'inline';
-          passwordAlert2.innerText = `Passwords mismatch`;
-        } else {
-          fetch(`/check-email`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email })
-          }).then(response => response.json())
-            .then(data => {
-              if (data.error) {
-                emailAlert.style.display = 'inline';
-                emailAlert.innerText = 'Something went wrong. Try again';
-              } else if (data.exist) {
-                emailAlert.style.display = 'inline';
-                emailAlert.innerText = 'Email already exist';
-              } else {
-                this.submit();
-              }
-            }).catch(err => {
-              console.log(err);
-            });
-        }
-      });
-
-      // will focus on all input elements with value when page shows
-      window.addEventListener('pageshow', function (event) {
-        const inputs = document.querySelectorAll('input');
-
-        inputs.forEach(ele => {
-          if (ele.value !== '' && ele.value !== 'sign up') ele.focus();
+        }).catch(err => {
+          console.log(err);
         });
-      });
+    }
+  });
 
-      // script for toggling password visibility
-      document.getElementById('password-button1').addEventListener('click', function (e) {
-        const type = document.getElementById('password-input1').getAttribute('type') === 'password' ? 'text' : 'password';
+  // will focus on all input elements with value when page shows
+  window.addEventListener('pageshow', function(event) {
+    const inputs = document.querySelectorAll('input');
 
-        document.getElementById('password-input1').setAttribute('type', type);
-        document.getElementById('eye1').classList.toggle('fa-eye');
-        document.getElementById('eye1').classList.toggle('fa-eye-slash');
-      });
+    inputs.forEach(ele => {
+      if (ele.value !== '' && ele.value !== 'sign up') ele.focus();
+    });
+  });
 
-      document.getElementById('password-button2').addEventListener('click', function (e) {
-        const type = document.getElementById('password-input2').getAttribute('type') === 'password' ? 'text' : 'password';
+  // script for toggling password visibility
+  document.getElementById('password-button1').addEventListener('click', function(e) {
+    const type = document.getElementById('password-input1').getAttribute('type') === 'password' ? 'text' : 'password';
 
-        document.getElementById('password-input2').setAttribute('type', type);
-        document.getElementById('eye2').classList.toggle('fa-eye');
-        document.getElementById('eye2').classList.toggle('fa-eye-slash');
-      });
-    </script>
+    document.getElementById('password-input1').setAttribute('type', type);
+    document.getElementById('eye1').classList.toggle('fa-eye');
+    document.getElementById('eye1').classList.toggle('fa-eye-slash');
+  });
+
+  document.getElementById('password-button2').addEventListener('click', function(e) {
+    const type = document.getElementById('password-input2').getAttribute('type') === 'password' ? 'text' : 'password';
+
+    document.getElementById('password-input2').setAttribute('type', type);
+    document.getElementById('eye2').classList.toggle('fa-eye');
+    document.getElementById('eye2').classList.toggle('fa-eye-slash');
+  });
+</script>

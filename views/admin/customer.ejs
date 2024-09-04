@@ -34,178 +34,170 @@
 <!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- sidenav included -->
-  <%- include('sidenav') %>
+<!-- sidenav included -->
+<%- include('sidenav') %>
 
-    <!-- title -->
-    <h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CUSTOMERS</h2>
-    
-    <hr>
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CUSTOMERS</h2>
 
-    <!-- users table container -->
-    <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover"
-      data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
-      <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
-        <table class="table datatable-table" id="exampleTable">
-          <thead class="datatable-header">
-            <tr>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Name</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Phone</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Joined</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Action</th>
-            </tr>
-          </thead>
-          <tbody class="datatable-body">
-            <% users.forEach(user=> { %>
-              <tr>
-                <td style="" class="" data-mdb-field="field_0" false="">
-                  <div class="d-flex align-items-center">
-                    <div>
-                      <p class="fw-bold mb-1 name">
-                        <%= user.name %>
-                      </p>
-                      <p class="text-muted mb-0 email">
-                        <%= user.email %>
-                      </p>
-                    </div>
-                  </div>
-                </td>
-                <td style="" class="" data-mdb-field="field_1" false="">
-                  <p class="fw-normal mb-0">
-                    <%= user.phone || '-' %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_2" false="">
-                  <p class="fw-normal mb-1">
-                    <%= new Date(user.createdAt).toDateString() %>
-                  </p>
-                  <p class="fw-normal mb-0">
-                    <%= new Date(user.createdAt).toTimeString().slice(0, 8) %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_3" false="">
-                  <p class="fw-normal mb-1 updated-date">
-                    <%= new Date(user.updatedAt).toDateString() %>
-                  </p>
-                  <p class="fw-normal mb-0 updated-time">
-                    <%= new Date(user.updatedAt).toTimeString().slice(0, 8) %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_4" false="">
-                  <span
-                    class="badge status <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
-                    <%= user.isBlocked ? 'Blocked' : 'Active' %>
-                  </span>
-                </td>
-                <td style="" class="" data-mdb-field="field_5" false="">
-                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
-                    data-mdb-ripple-color="dark" data-user-id="<%= user._id %>">
-                    <i class="user-icon fa-duotone fa-solid <%= user.isBlocked ? 'fa-user-slash' : 'fa-user' %> fa-xl"
-                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                  </button>
-                </td>
-              </tr>
-              <% }) %>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<hr>
 
-    <!-- footer included -->
-    <%- include('footer') %>
+<!-- users table container -->
+<div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+  <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
+    <table class="table datatable-table" id="exampleTable">
+      <thead class="datatable-header">
+        <tr>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Name</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Phone</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Joined</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Action</th>
+        </tr>
+      </thead>
+      <tbody class="datatable-body">
+        <% users.forEach(user=> { %>
+        <tr>
+          <td style="" class="" data-mdb-field="field_0" false="">
+            <div class="d-flex align-items-center">
+              <div>
+                <p class="fw-bold mb-1 name">
+                  <%= user.name %>
+                </p>
+                <p class="text-muted mb-0 email">
+                  <%= user.email %>
+                </p>
+              </div>
+            </div>
+          </td>
+          <td style="" class="" data-mdb-field="field_1" false="">
+            <p class="fw-normal mb-0">
+              <%= user.phone || '-' %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_2" false="">
+            <p class="fw-normal mb-1">
+              <%= new Date(user.createdAt).toDateString() %>
+            </p>
+            <p class="fw-normal mb-0">
+              <%= new Date(user.createdAt).toTimeString().slice(0, 8) %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_3" false="">
+            <p class="fw-normal mb-1 updated-date">
+              <%= new Date(user.updatedAt).toDateString() %>
+            </p>
+            <p class="fw-normal mb-0 updated-time">
+              <%= new Date(user.updatedAt).toTimeString().slice(0, 8) %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_4" false="">
+            <span class="badge status <%= user.isBlocked ? 'badge-danger' : 'badge-success' %> rounded-pill d-inline">
+              <%= user.isBlocked ? 'Blocked' : 'Active' %>
+            </span>
+          </td>
+          <td style="" class="" data-mdb-field="field_5" false="">
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-user-id="<%= user._id %>">
+              <i class="user-icon fa-duotone fa-solid <%= user.isBlocked ? 'fa-user-slash' : 'fa-user' %> fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+            </button>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-      <!-- javaScript -->
-      <script>
-        // after redirection, remove the query parameter from the URL
-        window.history.replaceState(null, null, window.location.pathname);
+<!-- footer included -->
+<%- include('footer') %>
 
-        // dynamically adds padding to table container
-        const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
 
-        document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
-        document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+  // dynamically adds padding to table container
+  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
 
-        // using fetch to block/unblock users        
-        document.addEventListener('DOMContentLoaded', function () {
-          const datatableBody = document.querySelector('.datatable-body');
+  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-          if (datatableBody) {
-            datatableBody.addEventListener('click', function (event) {
-              const statusButton = event.target.closest('.status-button');
-              const row = event.target.closest('tr');
+  // using fetch to block/unblock users        
+  document.addEventListener('DOMContentLoaded', function() {
+    const datatableBody = document.querySelector('.datatable-body');
 
-              if (statusButton) {
-                // Find the element within the same row
-                const userId = statusButton.getAttribute('data-user-id');
-                const dateElement = row.querySelector('.updated-date');
-                const timeElement = row.querySelector('.updated-time');
-                const statusElement = row.querySelector('.status');
-                const iconElement = row.querySelector('.user-icon');
+    if (datatableBody) {
+      datatableBody.addEventListener('click', function(event) {
+        const statusButton = event.target.closest('.status-button');
+        const row = event.target.closest('tr');
 
-                fetch('/admin/customers', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ userId })
-                }).then(response => response.json())
-                  .then(data => {
-                    if (data.error) {
-                      Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong. Try again',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        allowOutsideClick: false,
-                        customClass: {
-                          container: 'swal-css'
-                        }
-                      });
-                    } else if (data.isBlocked) {
-                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+        if (statusButton) {
+          // Find the element within the same row
+          const userId = statusButton.getAttribute('data-user-id');
+          const dateElement = row.querySelector('.updated-date');
+          const timeElement = row.querySelector('.updated-time');
+          const statusElement = row.querySelector('.status');
+          const iconElement = row.querySelector('.user-icon');
 
-                      statusElement.innerText = 'Blocked';
-                      statusElement.classList.add('badge-danger');
+          fetch('/admin/customers', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                userId
+              })
+            }).then(response => response.json())
+            .then(data => {
+              if (data.error) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: 'Something went wrong. Try again',
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                });
+              } else if (data.isBlocked) {
+                dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
 
-                      iconElement.classList.add('fa-user-slash');
-                    } else {
-                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+                statusElement.innerText = 'Blocked';
+                statusElement.classList.add('badge-danger');
 
-                      statusElement.innerText = 'Active';
-                      statusElement.classList.remove('badge-danger');
-                      statusElement.classList.add('badge-success');
+                iconElement.classList.add('fa-user-slash');
+              } else {
+                dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
 
-                      iconElement.classList.remove('fa-user-slash');
-                      iconElement.classList.add('fa-user');
-                    }
-                  })
-                  .catch(err => {
-                    console.log(err);
-                  })
+                statusElement.innerText = 'Active';
+                statusElement.classList.remove('badge-danger');
+                statusElement.classList.add('badge-success');
+
+                iconElement.classList.remove('fa-user-slash');
+                iconElement.classList.add('fa-user');
               }
-            });
-          }
-        });
+            })
+            .catch(err => {
+              console.log(err);
+            })
+        }
+      });
+    }
+  });
 
-        // for searching customers
-        document.addEventListener('DOMContentLoaded', function () {
-          const searchButton = document.getElementById('search-button');
-          
-          searchButton.addEventListener('click', function () {
-            const searchTerm = document.getElementById('search-input').value;
+  // for searching customers
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchButton = document.getElementById('search-button');
 
-            window.location.href = `/admin/customers?searchTerm=${searchTerm}`;
-          });
-        });
-      </script>
+    searchButton.addEventListener('click', function() {
+      const searchTerm = document.getElementById('search-input').value;
+
+      window.location.href = `/admin/customers?searchTerm=${searchTerm}`;
+    });
+  });
+</script>

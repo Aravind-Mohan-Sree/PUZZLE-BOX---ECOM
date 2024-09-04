@@ -40,278 +40,267 @@
 <!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- sidenav included -->
-  <%- include('sidenav') %>
+<!-- sidenav included -->
+<%- include('sidenav') %>
 
-    <!-- title -->
-    <h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">PRODUCTS</h2>
-    
-    <hr>
-    
-    <!-- add product button -->
-    <div id="add-product" class="text-center mb-3">
-      <a class="btn btn-dark" href="/admin/add-product"><i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3"
-          style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
-        product</a>
-    </div>
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">PRODUCTS</h2>
 
-    <!-- product table container -->
-    <div data-mdb-datatable-init class="datatable datatable-bordered datatable-hover"
-      data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
-      <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
-        <table class="table datatable-table" id="exampleTable">
-          <thead class="datatable-header">
-            <tr scope="row">
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Name</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Category</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Price</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Stock</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_5"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_6"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
-              <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_7"
-                  class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
-            </tr>
-          </thead>
-          <tbody class="datatable-body">
-            <% products.forEach(product=> { %>
-              <tr>
-                <td style="" class="" data-mdb-field="field_0" false="">
-                  <p class="fw-bold mb-1 name">
-                    <%= product.productName %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_1" false="">
-                  <p class="fw-bold mb-1 name">
-                    <%= product.productCategory.categoryName %>
-                  </p>  
-                </td>
-                <td style="" class="" data-mdb-field="field_2" false="">
-                  <p class="fw-bold mb-1 name">
-                    <%= product.productPrice %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_3" false="">
-                  <p class="fw-bold mb-1 name">
-                    <%= product.productQuantity %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_4" false="">
-                  <p class="fw-normal mb-1">
-                    <%= new Date(product.createdAt).toDateString() %>
-                  </p>
-                  <p class="fw-normal mb-0">
-                    <%= new Date(product.createdAt).toTimeString().slice(0, 8) %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_5" false="">
-                  <p class="fw-normal mb-1 updated-date">
-                    <%= new Date(product.updatedAt).toDateString() %>
-                  </p>
-                  <p class="fw-normal mb-0 updated-time">
-                    <%= new Date(product.updatedAt).toTimeString().slice(0, 8) %>
-                  </p>
-                </td>
-                <td style="" class="" data-mdb-field="field_6" false="">
-                  <span
-                    class="badge status <%= product.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-                    <%= product.isActive ? 'Active' : 'Inactive' %>
-                  </span>
-                </td>
-                <td style="" class="" data-mdb-field="field_7" false="">
-                  <!-- active/inactive button -->
-                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button"
-                    data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
-                    <i class="fa-duotone fa-solid <%= product.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon"
-                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                  </button>
+<hr>
 
-                  <!-- edit button -->
-                  <a href="/admin/edit-product?id=<%= product._id %>">
-                    <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button"
-                    data-mdb-ripple-color="dark">
-                    <i class="fa-duotone fa-solid fa-pen-to-square fa-xl"
-                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                  </button>
-                  </a>
+<!-- add product button -->
+<div id="add-product" class="text-center mb-3">
+  <a class="btn btn-dark" href="/admin/add-product"><i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
+    product</a>
+</div>
 
-                  <!-- delete button -->
-                  <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button"
-                    data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
-                    <i class="fa-duotone fa-solid fa-trash fa-xl"
-                      style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                  </button>
-                </td>
-              </tr>
-              <% }) %> %>
-          </tbody>
-        </table>
-      </div>
-    </div>
+<!-- product table container -->
+<div data-mdb-datatable-init class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+  <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
+    <table class="table datatable-table" id="exampleTable">
+      <thead class="datatable-header">
+        <tr scope="row">
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Name</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Category</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Price</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Stock</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_5" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_6" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_7" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody class="datatable-body">
+        <% products.forEach(product=> { %>
+        <tr>
+          <td style="" class="" data-mdb-field="field_0" false="">
+            <p class="fw-bold mb-1 name">
+              <%= product.productName %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_1" false="">
+            <p class="fw-bold mb-1 name">
+              <%= product.productCategory.categoryName %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_2" false="">
+            <p class="fw-bold mb-1 name">
+              <%= product.productPrice %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_3" false="">
+            <p class="fw-bold mb-1 name">
+              <%= product.productQuantity %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_4" false="">
+            <p class="fw-normal mb-1">
+              <%= new Date(product.createdAt).toDateString() %>
+            </p>
+            <p class="fw-normal mb-0">
+              <%= new Date(product.createdAt).toTimeString().slice(0, 8) %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_5" false="">
+            <p class="fw-normal mb-1 updated-date">
+              <%= new Date(product.updatedAt).toDateString() %>
+            </p>
+            <p class="fw-normal mb-0 updated-time">
+              <%= new Date(product.updatedAt).toTimeString().slice(0, 8) %>
+            </p>
+          </td>
+          <td style="" class="" data-mdb-field="field_6" false="">
+            <span class="badge status <%= product.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
+              <%= product.isActive ? 'Active' : 'Inactive' %>
+            </span>
+          </td>
+          <td style="" class="" data-mdb-field="field_7" false="">
+            <!-- active/inactive button -->
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
+              <i class="fa-duotone fa-solid <%= product.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+            </button>
 
-    <!-- footer included -->
-    <%- include('footer') %>
+            <!-- edit button -->
+            <a href="/admin/edit-product?id=<%= product._id %>">
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark">
+                <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+              </button>
+            </a>
 
-      <!-- javaScript -->
-      <script>
-        // after redirection, remove the query parameter from the URL
-        window.history.replaceState(null, null, window.location.pathname);
+            <!-- delete button -->
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-productId="<%= product._id %>">
+              <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+            </button>
+          </td>
+        </tr>
+        <% }) %> %>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-        // dynamically adds padding to h2 tag
-        const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-        document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+<!-- footer included -->
+<%- include('footer') %>
 
-        // dynamically adds padding to table container
-        const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
-        document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
 
-        // using fetch to active/inactive product        
-        document.addEventListener('DOMContentLoaded', function () {
-          const datatableBody = document.querySelector('.datatable-body');
+  // dynamically adds padding to h2 tag
+  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
-          if (datatableBody) {
-            datatableBody.addEventListener('click', function (event) {
-              const statusButton = event.target.closest('.status-button');
-              const row = event.target.closest('tr');
+  // dynamically adds padding to table container
+  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-              if (statusButton) {
-                // Find the element within the same row
-                const productId = statusButton.getAttribute('data-db-productId');
-                const dateElement = row.querySelector('.updated-date');
-                const timeElement = row.querySelector('.updated-time');
-                const statusElement = row.querySelector('.status');
-                const iconElement = row.querySelector('.status-icon');
+  // using fetch to active/inactive product        
+  document.addEventListener('DOMContentLoaded', function() {
+    const datatableBody = document.querySelector('.datatable-body');
 
-                fetch('/admin/products', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({ status: true, productId })
-                }).then(response => response.json())
-                  .then(data => {
-                    if (data.error) {
-                      Swal.fire({
-                        title: 'Error!',
-                        text: 'Something went wrong. Try again',
-                        icon: 'error',
-                        confirmButtonText: 'OK',
-                        allowOutsideClick: false,
-                        customClass: {
-                          container: 'swal-css'
-                        }
-                      });
-                    } else if (data.isActive) {
-                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+    if (datatableBody) {
+      datatableBody.addEventListener('click', function(event) {
+        const statusButton = event.target.closest('.status-button');
+        const row = event.target.closest('tr');
 
-                      statusElement.innerText = 'Active';
-                      statusElement.classList.remove('badge-danger');
-                      statusElement.classList.add('badge-success');
+        if (statusButton) {
+          // Find the element within the same row
+          const productId = statusButton.getAttribute('data-db-productId');
+          const dateElement = row.querySelector('.updated-date');
+          const timeElement = row.querySelector('.updated-time');
+          const statusElement = row.querySelector('.status');
+          const iconElement = row.querySelector('.status-icon');
 
-                      iconElement.classList.remove('fa-circle-xmark');
-                      iconElement.classList.add('fa-circle-check');
-                    } else {
-                      dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                      timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                      statusElement.innerText = 'Inactive';
-                      statusElement.classList.add('badge-danger');
-
-                      iconElement.classList.add('fa-circle-xmark');
-                    }
-                  }).catch(err => {
-                    console.log(err);
-                  })
-              }
-            });
-          }
-        });
-
-        // using fetch to delete product   
-        document.addEventListener('DOMContentLoaded', function () {
-          const datatableBody = document.querySelector('.datatable-body');
-
-          if (datatableBody) {
-            datatableBody.addEventListener('click', function (event) {
-              const deleteButton = event.target.closest('.delete-button');
-
-              if (deleteButton) {
-                const productId = deleteButton.getAttribute('data-db-productId');
-
+          fetch('/admin/products', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                status: true,
+                productId
+              })
+            }).then(response => response.json())
+            .then(data => {
+              if (data.error) {
                 Swal.fire({
-                  title: "Are you sure?",
-                  icon: "question",
-                  showCancelButton: true,
-                  confirmButtonText: "Yes",
+                  title: 'Error!',
+                  text: 'Something went wrong. Try again',
+                  icon: 'error',
+                  confirmButtonText: 'OK',
                   allowOutsideClick: false,
                   customClass: {
                     container: 'swal-css'
                   }
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    fetch('/admin/products', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify({ delete: true, productId })
-                    })
-                      .then(response => response.json())
-                      .then(data => {
-                        if (data.error) {
-                          Swal.fire({
-                            title: 'Error!',
-                            text: 'Something went wrong. Try again',
-                            icon: 'error',
-                            confirmButtonText: 'OK',
-                            allowOutsideClick: false,
-                            customClass: {
-                              container: 'swal-css'
-                            }
-                          });
-                        } else {
-                          window.location.reload();
-                        }
-                      })
-                      .catch(err => {
-                        console.error('Fetch error:', err);
-
-                        Swal.fire({
-                          title: 'Error!',
-                          text: 'Something went wrong. Try again',
-                          icon: 'error',
-                          confirmButtonText: 'OK',
-                          allowOutsideClick: false,
-                          customClass: {
-                            container: 'swal-css'
-                          }
-                        });
-                      });
-                  }
-                }).catch(err => {
-                  console.error('Swal error:', err);
                 });
+              } else if (data.isActive) {
+                dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
+                statusElement.innerText = 'Active';
+                statusElement.classList.remove('badge-danger');
+                statusElement.classList.add('badge-success');
+
+                iconElement.classList.remove('fa-circle-xmark');
+                iconElement.classList.add('fa-circle-check');
+              } else {
+                dateElement.innerText = new Date(data.lastUpdated).toDateString();
+                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
+
+                statusElement.innerText = 'Inactive';
+                statusElement.classList.add('badge-danger');
+
+                iconElement.classList.add('fa-circle-xmark');
               }
-            });
-          }
-        });
+            }).catch(err => {
+              console.log(err);
+            })
+        }
+      });
+    }
+  });
 
-        // for searching products
-        document.addEventListener('DOMContentLoaded', function () {
-          const searchButton = document.getElementById('search-button');
-          
-          searchButton.addEventListener('click', function () {
-            const searchTerm = document.getElementById('search-input').value;
+  // using fetch to delete product   
+  document.addEventListener('DOMContentLoaded', function() {
+    const datatableBody = document.querySelector('.datatable-body');
 
-            window.location.href = `/admin/products?searchTerm=${searchTerm}`;
+    if (datatableBody) {
+      datatableBody.addEventListener('click', function(event) {
+        const deleteButton = event.target.closest('.delete-button');
+
+        if (deleteButton) {
+          const productId = deleteButton.getAttribute('data-db-productId');
+
+          Swal.fire({
+            title: "Are you sure?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch('/admin/products', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    delete: true,
+                    productId
+                  })
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.error) {
+                    Swal.fire({
+                      title: 'Error!',
+                      text: 'Something went wrong. Try again',
+                      icon: 'error',
+                      confirmButtonText: 'OK',
+                      allowOutsideClick: false,
+                      customClass: {
+                        container: 'swal-css'
+                      }
+                    });
+                  } else {
+                    window.location.reload();
+                  }
+                })
+                .catch(err => {
+                  console.error('Fetch error:', err);
+
+                  Swal.fire({
+                    title: 'Error!',
+                    text: 'Something went wrong. Try again',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    customClass: {
+                      container: 'swal-css'
+                    }
+                  });
+                });
+            }
+          }).catch(err => {
+            console.error('Swal error:', err);
           });
-        });
-      </script>
+        }
+      });
+    }
+  });
+
+  // for searching products
+  document.addEventListener('DOMContentLoaded', function() {
+    const searchButton = document.getElementById('search-button');
+
+    searchButton.addEventListener('click', function() {
+      const searchTerm = document.getElementById('search-input').value;
+
+      window.location.href = `/admin/products?searchTerm=${searchTerm}`;
+    });
+  });
+</script>

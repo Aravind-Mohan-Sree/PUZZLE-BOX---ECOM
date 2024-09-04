@@ -1,54 +1,152 @@
+<!-- ------------------------------- styles -------------------------------- -->
 <style>
   .home-container {
     flex-grow: 1;
     padding-top: 6.25rem;
     padding-bottom: 6.875rem;
   }
+
+  @media (max-width: 47.9988em) {
+    .hero-image {
+      background-image: url('/image/hero-image.webp');
+      border-radius: 24px;
+      background-color: rgba(0, 0, 0, 0.5);
+      background-blend-mode: overlay;
+      color: white;
+    }
+
+    .hero-image button {
+      background-color: rgb(255, 255, 255);
+      color: rgb(0, 0, 0);
+    }
+
+    .hero-image button:hover {
+      background-color: rgb(255, 255, 255);
+      color: rgb(0, 0, 0);
+    }
+
+    .hero-image div {
+      backdrop-filter: blur(4px);
+    }
+  }
 </style>
+<!-- ----------------------------------------------------------------------- -->
 
 <!-- --------------------------- navbar included --------------------------- -->
 <%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
 
-  <!-- --------------------------- home container ---------------------------- -->
-  <div class="home-container">
-    <!-- ---------------------------- hero section ----------------------------- -->
-    <section>
-      <div class="container">
-        <div class="row">
-          <div class="col-7 align-content-center">
-            <div class="text-center ps-5 mb-4"><i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl display-1" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i></div>
-            <h1>Connecting Minds, One Puzzle at a Time</h1>
-            <p class="mt-4 mb-5">Enjoy our premium puzzles designed for all skill levels. Connect with loved ones and enhance your problem-solving skills today!</p>
-            <div>
-              <button class="btn btn-dark btn-lg">Shop Now</button>
-              <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl ms-5" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i>
+<!-- --------------------------- home container ---------------------------- -->
+<div class="home-container">
+  <!-- ---------------------------- hero section ----------------------------- -->
+  <section>
+    <div class="container px-4 px-sm-0">
+      <div class="row align-items-lg-end align-items-md-center hero-image bg-image">
+        <div class="col-12 col-md-7 col-lg-7 p-4">
+          <div class="text-xl-center text-md-end text-center ps-5 mb-4"><i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl display-1" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i></div>
+            <h1 class=" fw-semibold">Connecting Minds, One Puzzle at a Time...</h1>
+              <p class=" mt-4 mb-5">Enjoy our premium puzzles designed for all skill levels. Connect with loved ones
+                and
+                enhance your problem-solving skills today!</p>
+              <div>
+                <button class="btn btn-dark btn-lg mx-auto mx-md-0 d-block d-md-inline">Shop Now</button>
+                <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl ms-5" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i>
             </div>
-            <div class="row mt-5">
-              <div class="col border-end me-4">
-                <h3>7+</h3>
-                <p>Different categories</p>
+            <div class=" row mt-5">
+                  <div class="col me-1">
+                    <h3 class="border-end mb-0 pb-2">7+</h3>
+                    <p class="border-end pe-2">Different categories</p>
+                  </div>
+                  <div class="col me-1 mb-3">
+                    <h3 class="border-end mb-0 pb-2">200+</h3>
+                    <p class="border-end pe-2">High-quality products</p>
+                  </div>
+                  <div class="col">
+                    <h3 class="mb-0 pb-2">1200+</h3>
+                    <p>Happy customers</p>
+                  </div>
               </div>
-              <div class="col border-end me-4">
-                <h3>200+</h3>
-                <p>High-quality products</p>
-              </div>
-              <div class="col">
-                <h3>1200+</h3>
-                <p>Happy customers</p>
-              </div>
-            </div>
           </div>
-          <div class="col-5 hero-image">
+          <div class="col-12 col-md-5 col-lg-5 d-none d-md-block p-4">
             <img src="\image\hero-image.webp" alt="" class="img-fluid rounded-9">
           </div>
         </div>
       </div>
-    </section>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
 
+  <!-- ------------------------------- divider ------------------------------- -->
+  <hr class="container mt-5">
+  <!-- ----------------------------------------------------------------------- -->
 
-  </div>
+  <!-- ------------------------ new arrivals section ------------------------- -->
+  <section>
+    <div class="container pt-5 px-4 px-sm-2">
+      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">NEW ARRIVALS</h2>
+      <div class="row mt-5">
+        <% latestProducts.forEach(product=> { %>
+        <div class="col-lg-3 col-md-12 mb-4">
+          <div class="card shadow-l hover-shadow badge-light">
+            <div class="bg-image hover-zoom ripple" data-mdb-ripple-color="light">
+              <img src="<%= product.productImage[0] %>" class="w-100" />
+              <a href="#!">
+                <div class="mask">
+                  <div class="d-flex justify-content-start align-items-end h-100">
+                    <h5>
+                      <span class="badge ms-2 p-1 <% if (product.productDifficultyRate > 6) { %>
+                          badge-danger
+                        <% } else if (product.productDifficultyRate > 3) { %>
+                          badge-primary
+                        <% } else { %>
+                          badge-success
+                        <% } %>">
+                        <% if (product.productDifficultyRate> 6) { %>
+                        Hard
+                        <% } else if (product.productDifficultyRate> 3) { %>
+                        Medium
+                        <% } else { %>
+                        Easy
+                        <% } %>
+                      </span><span class="badge badge-light ms-2 p-1"><%= product.productDiscount !== 0 ? '-' + product.productDiscount + '%' : '' %></span>
+                    </h5>
+                  </div>
+                </div>
+              </a>
+            </div>
+            <div class="card-body">
+              <a href="" class="text-reset">
+                <h5 class="card-title mb-3 text-dark">
+                  <%= product.productName %>
+                </h5>
+              </a>
+              <h6 class="mb-4 mt-3">
+                <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+              </h6>
+              <div class="row">
+                <div class="col-2">
+                  <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+                </div>
+                <div class="col">
+                  <i class="fa-duotone fa-solid fa-cart-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
 
-  <script>
-    // after redirection, remove the query parameter from the URL
-    window.history.replaceState(null, null, window.location.pathname);
-  </script>
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
+</script>
+<!-- ----------------------------------------------------------------------- -->

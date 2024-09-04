@@ -36,99 +36,101 @@
 <!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- form container -->
-  <div class="d-flex vh-100 form-container justify-content-center align-items-center">
-    <!-- signup form -->
-    <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3">
-      <h3 class="text-center mb-4 text-dark fw-bold">ADMIN LOGIN!</h3>
+<!-- form container -->
+<div class="d-flex vh-100 form-container justify-content-center align-items-center">
+  <!-- signup form -->
+  <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3">
+    <h3 class="text-center mb-4 text-dark fw-bold">ADMIN LOGIN!</h3>
 
-      <!-- Email input -->
-      <div data-mdb-input-init class="form-outline mb-4">
-        <input type="text" id="email-input" class="form-control" name="email" />
-        <label class="form-label" for="form3Example3">Email</label>
-        <small id="email-alert" class="position-absolute text-danger"></small>
+    <!-- Email input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+      <input type="text" id="email-input" class="form-control" name="email" />
+      <label class="form-label" for="form3Example3">Email</label>
+      <small id="email-alert" class="position-absolute text-danger"></small>
+    </div>
+
+    <!-- Password input -->
+    <div id="password" class="input-group mb-4">
+      <div class="form-outline" data-mdb-input-init>
+        <input id="password-input" type="password" class="form-control" name="password" />
+        <label class="form-label" for="form1">Password</label>
+        <small id="password-alert" class="position-absolute text-danger"></small>
       </div>
+      <button data-mdb-ripple-init id="password-button" type="button" class="btn btn-dark shadow-0">
+        <i id="eye1" class="fa-duotone fa-eye-slash fa-lg" style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+      </button>
+    </div>
 
-      <!-- Password input -->
-      <div id="password" class="input-group mb-4">
-        <div class="form-outline" data-mdb-input-init>
-          <input id="password-input" type="password" class="form-control" name="password" />
-          <label class="form-label" for="form1">Password</label>
-          <small id="password-alert" class="position-absolute text-danger"></small>
-        </div>
-        <button data-mdb-ripple-init id="password-button" type="button" class="btn btn-dark shadow-0">
-          <i id="eye1" class="fa-duotone fa-eye-slash fa-lg"
-            style="--fa-primary-color: #ffffff; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
-        </button>
-      </div>
+    <!-- submit button -->
+    <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="log in">
+  </form>
+</div>
 
-      <!-- submit button -->
-      <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="log in">
-    </form>
-  </div>
+<!-- footer included -->
+<%- include('footer') %>
 
-  <!-- footer included -->
-  <%- include('footer') %>
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
 
-    <!-- javaScript -->
-    <script>
-      // after redirection, remove the query parameter from the URL
-      window.history.replaceState(null, null, window.location.pathname);
+  // using fetch to validate form
+  document.getElementById('form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-      // using fetch to validate form
-      document.getElementById('form').addEventListener('submit', function (e) {
-        e.preventDefault();
+    const email = document.getElementById('email-input').value;
+    const password = document.getElementById('password-input').value;
 
-        const email = document.getElementById('email-input').value;
-        const password = document.getElementById('password-input').value;
+    const emailAlert = document.getElementById('email-alert');
+    const passwordAlert = document.getElementById('password-alert');
 
-        const emailAlert = document.getElementById('email-alert');
-        const passwordAlert = document.getElementById('password-alert');
+    emailAlert.style.display = 'none';
+    passwordAlert.style.display = 'none';
 
-        emailAlert.style.display = 'none';
-        passwordAlert.style.display = 'none';
+    fetch(`/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          passwordAlert.style.display = 'inline';
+          passwordAlert.innerText = 'Something went wrong. Try again';
+        } else if (data.wrongEmail) {
+          emailAlert.style.display = 'inline';
+          emailAlert.innerText = 'Wrong email';
+        } else if (data.wrongPassword) {
+          passwordAlert.style.display = 'inline';
+          passwordAlert.innerText = 'Wrong password';
+        } else {
+          window.location.href = data.url;
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  });
 
-        fetch(`/admin/login`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, password })
-        }).then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              passwordAlert.style.display = 'inline';
-              passwordAlert.innerText = 'Something went wrong. Try again';
-            } else if (data.wrongEmail) {
-              emailAlert.style.display = 'inline';
-              emailAlert.innerText = 'Wrong email';
-            } else if (data.wrongPassword) {
-              passwordAlert.style.display = 'inline';
-              passwordAlert.innerText = 'Wrong password';
-            } else {
-              window.location.href = data.url;
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          })
-      });
+  // script for toggling password visibility
+  document.getElementById('password-button').addEventListener('click', function(e) {
+    const type = document.getElementById('password-input').getAttribute('type') === 'password' ? 'text' : 'password';
 
-      // script for toggling password visibility
-      document.getElementById('password-button').addEventListener('click', function (e) {
-        const type = document.getElementById('password-input').getAttribute('type') === 'password' ? 'text' : 'password';
+    document.getElementById('password-input').setAttribute('type', type);
+    document.getElementById('eye1').classList.toggle('fa-eye');
+    document.getElementById('eye1').classList.toggle('fa-eye-slash');
+  });
 
-        document.getElementById('password-input').setAttribute('type', type);
-        document.getElementById('eye1').classList.toggle('fa-eye');
-        document.getElementById('eye1').classList.toggle('fa-eye-slash');
-      });
+  // will focus on all input elements with value when page shows
+  window.addEventListener('pageshow', function(event) {
+    const inputs = document.querySelectorAll('input');
 
-      // will focus on all input elements with value when page shows
-      window.addEventListener('pageshow', function (event) {
-        const inputs = document.querySelectorAll('input');
-
-        inputs.forEach(ele => {
-          if (ele.value !== '' && ele.value !== 'log in') ele.focus();
-        });
-      });
-    </script>
+    inputs.forEach(ele => {
+      if (ele.value !== '' && ele.value !== 'log in') ele.focus();
+    });
+  });
+</script>

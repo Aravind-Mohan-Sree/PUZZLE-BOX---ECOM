@@ -139,456 +139,460 @@
 <!-- navbar included -->
 <%- include('navbar') %>
 
-  <!-- sidenav included -->
-  <%- include('sidenav') %>
+<!-- sidenav included -->
+<%- include('sidenav') %>
 
-    <!-- title -->
-    <div class="container product-details-container bg-image">
-      <h2 class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">UPDATE PRODUCT</h2>
-      
-      <hr>
-      
-      <!-- product details container -->
-      <form action="/admin/edit-product?id=<%= product._id %>" enctype="multipart/form-data" method="post" id="form" novalidate>
-        <div class="row gy-4 px-3">
-          <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
-            <label class="w-100 text-dark mb-2" for="">Product Name<span class="text-danger">*</span></label>
-            <input id="name-input" class="w-100 form-control" type="text" placeholder="type..." name="productName"
-              value="<%= product.productName %>" disabled>
-            <small id="name-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
-            <label class="w-100 text-dark mb-2" for="">Category<span class="text-danger">*</span></label>
-            <div class="input-group">
-              <select id="category-select" data-mdb-select-init class="form-control" name="productCategory" disabled>
-                <option value="<%= product.productCategory.categoryName %>" selected>
-                  <%= product.productCategory.categoryName %>
-                </option>
-              </select>
-              <span class="input-group-text fw-bold" id="inputGroup-sizing-sm1">▼</span>
-            </div>
-            <small id="category-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
-            <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
-            <input id="price-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="price"
-              value="<%= product.productPrice %>">
-            <small id="price-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
-            <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
-            <input id="stock-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="stock"
-              value="<%= product.productQuantity %>">
-            <small id="stock-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
-            <label class="w-100 text-dark mb-2" for="">Discount Rate(%)<span class="text-danger">*</span></label>
-            <input id="discount-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="discount"
-              value="<%= product.productDiscount %>">
-            <small id="discount-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
-            <label class="w-100 text-dark mb-2" for="">Product Dimensions(in cm)<span
-                class="text-danger">*</span></label>
-            <div class="input-group">
-              <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">L</span>
-              <input id="length-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="length"
-                value="<%= product.productDimension.split('-')[0] %>" disabled />
-              <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">W</span>
-              <input id="width-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="width"
-                value="<%= product.productDimension.split('-')[1] %>" disabled />
-              <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">H</span>
-              <input id="height-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input"
-                aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="height"
-                value="<%= product.productDimension.split('-')[2] %>" disabled />
-            </div>
-            <small id="dimension-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
-            <label class="w-100 text-dark mb-2" for="">Difficulty Rate(-/10)<span class="text-danger">*</span></label>
-            <input id="difficulty-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="difficulty"
-              value="<%= product.productDifficultyRate %>" disabled>
-            <small id="difficulty-alert" class="position-absolute text-danger"></small>
-          </div>
-          <div class="col-12 col-sm-8 mx-auto">
-            <label class="w-100 text-dark mb-2" for="">Product Description<span class="text-danger">*</span></label>
-            <textarea id="description-element" class="w-100 form-control" name="description" id=""
-              placeholder="type..."><%= product.productDescription %></textarea>
-            <small id="description-alert" class="position-absolute text-danger"></small>
-          </div>
+<!-- title -->
+<div class="container product-details-container bg-image">
+  <h2 class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">UPDATE PRODUCT</h2>
 
-          <hr class="mt-5 pt-1">
-          <div class="product-form-bottom mt-0">
-            <div class="text-center mt-4">
-              <input type="file" id="product-image-upload" name="productImage" accept="image/webp" multiple
-                class="d-none">
-              <label for="product-image-upload" class="btn btn-dark">
-                <i class="fa-duotone fa-solid fa-upload fa-xl me-3"
-                  style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>Choose
-                3 Images
-              </label>
-              <div class="container mt-4">
-                <div id="imageContainer" class="row">
-                  <!-- Image previews will be added here -->
-                </div>
-              </div>
-              <small id="image-alert" class="position-absolute start-0 text-danger w-100"></small>
-            </div>
+  <hr>
 
-            <!-- hidden field for deleted images -->
-            <input type="hidden" id="deletedImages" name="deletedImages" value="">
-          </div>
-
-          <hr class="mt-3">
-          <div class="text-center">
-            <a href="/admin/products" class="btn btn-dark">Cancel</a>
-            <button class="btn btn-dark ms-3" type="submit">Update</button>
-          </div>
+  <!-- product details container -->
+  <form action="/admin/edit-product?id=<%= product._id %>" enctype="multipart/form-data" method="post" id="form" novalidate>
+    <div class="row gy-4 px-3">
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Product Name<span class="text-danger">*</span></label>
+        <input id="name-input" class="w-100 form-control" type="text" placeholder="type..." name="productName" value="<%= product.productName %>" disabled>
+        <small id="name-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Category<span class="text-danger">*</span></label>
+        <div class="input-group">
+          <select id="category-select" data-mdb-select-init class="form-control" name="productCategory" disabled>
+            <option value="<%= product.productCategory.categoryName %>" selected>
+              <%= product.productCategory.categoryName %>
+            </option>
+          </select>
+          <span class="input-group-text fw-bold" id="inputGroup-sizing-sm1">▼</span>
         </div>
-      </form>
-    </div>
-
-    <!-- footer included -->
-    <%- include('footer') %>
-
-      <!-- Modal for cropping image -->
-      <div class="modal fade" id="imageModal" tabindex="1" aria-labelledby="imageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
-              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body mx-auto px-0">
-              <img id="modalImage" src="" class="img-fluid">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-dark ms-auto" data-mdb-dismiss="modal">Close</button>
-              <button type="button" id="cropButton" class="btn btn-dark me-auto ms-3">Apply</button>
-            </div>
-          </div>
+        <small id="category-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
+        <input id="price-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="price" value="<%= product.productPrice %>">
+        <small id="price-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
+        <input id="stock-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="stock" value="<%= product.productQuantity %>">
+        <small id="stock-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+        <label class="w-100 text-dark mb-2" for="">Discount Rate(%)<span class="text-danger">*</span></label>
+        <input id="discount-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="discount" value="<%= product.productDiscount %>">
+        <small id="discount-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
+        <label class="w-100 text-dark mb-2" for="">Product Dimensions(in cm)<span class="text-danger">*</span></label>
+        <div class="input-group">
+          <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">L</span>
+          <input id="length-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="length" value="<%= product.productDimension.split('-')[0] %>" disabled />
+          <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">W</span>
+          <input id="width-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="width" value="<%= product.productDimension.split('-')[1] %>" disabled />
+          <span class="input-group-text fw-bold badge-dark" id="inputGroup-sizing-sm">H</span>
+          <input id="height-input" type="tel" inputmode="tel" class="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm" placeholder="type..." name="height" value="<%= product.productDimension.split('-')[2] %>" disabled />
         </div>
+        <small id="dimension-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
+        <label class="w-100 text-dark mb-2" for="">Difficulty Rate(-/10)<span class="text-danger">*</span></label>
+        <input id="difficulty-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="difficulty" value="<%= product.productDifficultyRate %>" disabled>
+        <small id="difficulty-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-8 mx-auto">
+        <label class="w-100 text-dark mb-2" for="">Product Description<span class="text-danger">*</span></label>
+        <textarea id="description-element" class="w-100 form-control" name="description" id="" placeholder="type..."><%= product.productDescription %></textarea>
+        <small id="description-alert" class="position-absolute text-danger"></small>
       </div>
 
-      <!-- javaScript -->
-      <script>
-        // after redirection, remove the query parameter from the URL
-        window.history.replaceState(null, null, window.location.pathname);
+      <hr class="mt-5 pt-1">
+      <div class="product-form-bottom mt-0">
+        <div class="text-center mt-4">
+          <input type="file" id="product-image-upload" name="productImage" accept="image/webp" multiple class="d-none">
+          <label for="product-image-upload" class="btn btn-dark">
+            <i class="fa-duotone fa-solid fa-upload fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>Choose
+            3 Images
+          </label>
+          <div class="container mt-4">
+            <div id="imageContainer" class="row">
+              <!-- Image previews will be added here -->
+            </div>
+          </div>
+          <small id="image-alert" class="position-absolute start-0 text-danger w-100"></small>
+        </div>
 
-        // script for product details validation
-        document.getElementById('form').addEventListener('submit', function (e) {
-          e.preventDefault();
+        <!-- hidden field for deleted images -->
+        <input type="hidden" id="deletedImages" name="deletedImages" value="">
+      </div>
 
-          const name = document.getElementById('name-input').value;
-          const category = document.getElementById('category-select').value;
-          const price = document.getElementById('price-input').value;
-          const stock = document.getElementById('stock-input').value;
-          const discount = document.getElementById('discount-input').value;
-          const length = document.getElementById('length-input').value;
-          const width = document.getElementById('width-input').value;
-          const height = document.getElementById('height-input').value;
-          const difficulty = document.getElementById('difficulty-input').value;
-          const description = document.getElementById('description-element').value;
+      <hr class="mt-3">
+      <div class="text-center">
+        <a href="/admin/products" class="btn btn-dark">Cancel</a>
+        <button class="btn btn-dark ms-3" type="submit">Update</button>
+      </div>
+    </div>
+  </form>
+</div>
 
-          const imageContainer = document.getElementById('imageContainer');
-          const productImages = imageContainer.querySelectorAll('div');
+<!-- footer included -->
+<%- include('footer') %>
 
-          const nameAlert = document.getElementById('name-alert');
-          const categoryAlert = document.getElementById('category-alert');
-          const priceAlert = document.getElementById('price-alert');
-          const stockAlert = document.getElementById('stock-alert');
-          const discountAlert = document.getElementById('discount-alert');
-          const dimensionAlert = document.getElementById('dimension-alert');
-          const difficultyAlert = document.getElementById('difficulty-alert');
-          const descriptionAlert = document.getElementById('description-alert');
-          const imageAlert = document.getElementById('image-alert');
+<!-- Modal for cropping image -->
+<div class="modal fade" id="imageModal" tabindex="1" aria-labelledby="imageModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="imageModalLabel">Crop Image</h5>
+        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body mx-auto px-0">
+        <img id="modalImage" src="" class="img-fluid">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-dark ms-auto" data-mdb-dismiss="modal">Close</button>
+        <button type="button" id="cropButton" class="btn btn-dark me-auto ms-3">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-          nameAlert.style.display = 'none';
-          categoryAlert.style.display = 'none';
-          priceAlert.style.display = 'none';
-          stockAlert.style.display = 'none';
-          discountAlert.style.display = 'none';
-          dimensionAlert.style.display = 'none';
-          difficultyAlert.style.display = 'none';
-          descriptionAlert.style.display = 'none';
-          imageAlert.style.display = 'none';
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
 
-          if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
-            if (price === '') {
-              priceAlert.style.display = 'inline';
-              priceAlert.innerText = `Price is required`;
-            } else if (/[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price)) {
-              priceAlert.style.display = 'inline';
-              priceAlert.innerText = `Input is not valid`;
-            } else {
-              priceAlert.style.display = 'inline';
-              priceAlert.innerText = `Can't contain spaces`;
-            }
+  // script for product details validation
+  document.getElementById('form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-            priceAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else if (stock === '' || /[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock) || /\s/.test(stock)) {
-            if (stock === '') {
-              stockAlert.style.display = 'inline';
-              console.log(stock);
-              stockAlert.innerText = `Stock is required`;
-            } else if (/[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock)) {
-              stockAlert.style.display = 'inline';
-              stockAlert.innerText = `Input is not valid`;
-            } else {
-              stockAlert.style.display = 'inline';
-              stockAlert.innerText = `Can't contain spaces`;
-            }
+    const name = document.getElementById('name-input').value;
+    const category = document.getElementById('category-select').value;
+    const price = document.getElementById('price-input').value;
+    const stock = document.getElementById('stock-input').value;
+    const discount = document.getElementById('discount-input').value;
+    const length = document.getElementById('length-input').value;
+    const width = document.getElementById('width-input').value;
+    const height = document.getElementById('height-input').value;
+    const difficulty = document.getElementById('difficulty-input').value;
+    const description = document.getElementById('description-element').value;
 
-            stockAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 100) {
-            if (discount === '') {
-              discountAlert.style.display = 'inline';
-              discountAlert.innerText = `Discount is required`;
-            } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
-              discountAlert.style.display = 'inline';
-              discountAlert.innerText = `Input is not valid`;
-            } else if (/\s/.test(discount)) {
-              discountAlert.style.display = 'inline';
-              discountAlert.innerText = `Can't contain spaces`;
-            } else {
-              discountAlert.style.display = 'inline';
-              discountAlert.innerText = `Maximum value is 100`;
-            }
+    const imageContainer = document.getElementById('imageContainer');
+    const productImages = imageContainer.querySelectorAll('div');
 
-            discountAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else if (description === '' || /^\s|\s{2,}|\s$/.test(description) || description.replace(/\s+/g, '').length > 500) {
-            if (description === '') {
-              descriptionAlert.style.display = 'inline';
-              descriptionAlert.innerText = 'Description is required';
-            } else if (/^\s|\s{2,}|\s$/.test(description)) {
-              descriptionAlert.style.display = 'inline';
-              descriptionAlert.innerText = `Can't contain unwanted spaces`;
-            } else {
-              descriptionAlert.style.display = 'inline';
-              descriptionAlert.innerText = `Maximum length is 500`;
-            }
+    const nameAlert = document.getElementById('name-alert');
+    const categoryAlert = document.getElementById('category-alert');
+    const priceAlert = document.getElementById('price-alert');
+    const stockAlert = document.getElementById('stock-alert');
+    const discountAlert = document.getElementById('discount-alert');
+    const dimensionAlert = document.getElementById('dimension-alert');
+    const difficultyAlert = document.getElementById('difficulty-alert');
+    const descriptionAlert = document.getElementById('description-alert');
+    const imageAlert = document.getElementById('image-alert');
 
-            descriptionAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else if (productImages.length < 3) {
-            imageAlert.style.display = 'inline';
-            imageAlert.innerText = 'Product image is required';
+    nameAlert.style.display = 'none';
+    categoryAlert.style.display = 'none';
+    priceAlert.style.display = 'none';
+    stockAlert.style.display = 'none';
+    discountAlert.style.display = 'none';
+    dimensionAlert.style.display = 'none';
+    difficultyAlert.style.display = 'none';
+    descriptionAlert.style.display = 'none';
+    imageAlert.style.display = 'none';
 
-            imageAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          } else {
-            this.submit();
+    if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
+      if (price === '') {
+        priceAlert.style.display = 'inline';
+        priceAlert.innerText = `Price is required`;
+      } else if (/[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price)) {
+        priceAlert.style.display = 'inline';
+        priceAlert.innerText = `Input is not valid`;
+      } else {
+        priceAlert.style.display = 'inline';
+        priceAlert.innerText = `Can't contain spaces`;
+      }
+
+      priceAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else if (stock === '' || /[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock) || /\s/.test(stock)) {
+      if (stock === '') {
+        stockAlert.style.display = 'inline';
+        console.log(stock);
+        stockAlert.innerText = `Stock is required`;
+      } else if (/[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock)) {
+        stockAlert.style.display = 'inline';
+        stockAlert.innerText = `Input is not valid`;
+      } else {
+        stockAlert.style.display = 'inline';
+        stockAlert.innerText = `Can't contain spaces`;
+      }
+
+      stockAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 100) {
+      if (discount === '') {
+        discountAlert.style.display = 'inline';
+        discountAlert.innerText = `Discount is required`;
+      } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
+        discountAlert.style.display = 'inline';
+        discountAlert.innerText = `Input is not valid`;
+      } else if (/\s/.test(discount)) {
+        discountAlert.style.display = 'inline';
+        discountAlert.innerText = `Can't contain spaces`;
+      } else {
+        discountAlert.style.display = 'inline';
+        discountAlert.innerText = `Maximum value is 100`;
+      }
+
+      discountAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else if (description === '' || /^\s|\s{2,}|\s$/.test(description) || description.replace(/\s+/g, '').length > 500) {
+      if (description === '') {
+        descriptionAlert.style.display = 'inline';
+        descriptionAlert.innerText = 'Description is required';
+      } else if (/^\s|\s{2,}|\s$/.test(description)) {
+        descriptionAlert.style.display = 'inline';
+        descriptionAlert.innerText = `Can't contain unwanted spaces`;
+      } else {
+        descriptionAlert.style.display = 'inline';
+        descriptionAlert.innerText = `Maximum length is 500`;
+      }
+
+      descriptionAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else if (productImages.length < 3) {
+      imageAlert.style.display = 'inline';
+      imageAlert.innerText = 'Product image is required';
+
+      imageAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    } else {
+      this.submit();
+    }
+  });
+
+  document.addEventListener('DOMContentLoaded', (event) => {
+    const inputImage = document.getElementById('product-image-upload');
+    const imageContainer = document.getElementById('imageContainer');
+    const backendImageUrls = JSON.parse('<%- JSON.stringify(product.productImage) %>');
+    let cropper;
+    let currentImageElement;
+
+    // Function to handle change event
+    const handleChangeEvent = (files) => {
+      // Check if the number of files exceeds the limit
+      if (files.length > 3 || imageContainer.children.length + files.length > 3) {
+        Swal.fire({
+          title: 'Error!',
+          text: 'Only 3 images allowed',
+          icon: 'error',
+          confirmButtonText: 'OK',
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then(result => {
+          if (result.isConfirmed) {
+            inputImage.value = '';
           }
         });
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-          const inputImage = document.getElementById('product-image-upload');
-          const imageContainer = document.getElementById('imageContainer');
-          const backendImageUrls = JSON.parse('<%- JSON.stringify(product.productImage) %>');
-          let cropper;
-          let currentImageElement;
+        return;
+      }
 
-          // Function to handle change event
-          const handleChangeEvent = (files) => {
-            // Check if the number of files exceeds the limit
-            if (files.length > 3 || imageContainer.children.length + files.length > 3) {
-              Swal.fire({
-                title: 'Error!',
-                text: 'Only 3 images allowed',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              }).then(result => {
-                if (result.isConfirmed) {
-                  inputImage.value = '';
-                }
-              });
+      for (const file of files) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const colDiv = document.createElement('div');
+          colDiv.classList.add('col-md-3', 'mb-3', 'image-container');
 
-              return;
-            }
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('img-fluid', 'img-thumbnail', 'image-preview', 'bg-dark', 'rounded-3');
 
-            for (const file of files) {
-              const reader = new FileReader();
-              reader.onload = (e) => {
-                const colDiv = document.createElement('div');
-                colDiv.classList.add('col-md-3', 'mb-3', 'image-container');
+          const openModalButton = document.createElement('button');
+          openModalButton.classList.add('btn', 'btn-dark', 'mt-2', 'me-2');
+          openModalButton.innerText = 'Crop';
+          openModalButton.setAttribute('type', 'button');
+          openModalButton.setAttribute('data-mdb-toggle', 'modal');
+          openModalButton.setAttribute('data-mdb-target', '#imageModal');
+          openModalButton.addEventListener('click', () => {
+            document.getElementById('modalImage').src = e.target.result;
+            currentImageElement = img;
 
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.classList.add('img-fluid', 'img-thumbnail', 'image-preview', 'bg-dark', 'rounded-3');
-
-                const openModalButton = document.createElement('button');
-                openModalButton.classList.add('btn', 'btn-dark', 'mt-2', 'me-2');
-                openModalButton.innerText = 'Crop';
-                openModalButton.setAttribute('type', 'button');
-                openModalButton.setAttribute('data-mdb-toggle', 'modal');
-                openModalButton.setAttribute('data-mdb-target', '#imageModal');
-                openModalButton.addEventListener('click', () => {
-                  document.getElementById('modalImage').src = e.target.result;
-                  currentImageElement = img;
-
-                  // Initialize Cropper.js with the image
-                  if (cropper) {
-                    cropper.destroy();
-                  }
-
-                  const screenWidth = window.innerWidth || document.documentElement.clientWidth;
-
-                  cropper = new Cropper(document.getElementById('modalImage'), {
-                    aspectRatio: 1,
-                    viewMode: 0,
-                    autoCropArea: 1,
-                    minContainerWidth: screenWidth < 400 ? screenWidth - 20 : 400,
-                    minContainerHeight: screenWidth < 400 ? screenWidth - 20 : 400,
-                    quality: 1 // Set cropping quality to full
-                  });
-                });
-
-                const deleteButton = document.createElement('button');
-                deleteButton.classList.add('btn', 'btn-dark', 'mt-2', 'ms-2');
-                deleteButton.innerText = 'Delete';
-                deleteButton.addEventListener('click', () => {
-                  imageContainer.removeChild(colDiv);
-                  updateFileInput();
-                });
-
-                colDiv.appendChild(img);
-                colDiv.appendChild(openModalButton);
-                colDiv.appendChild(deleteButton);
-                imageContainer.appendChild(colDiv);
-              }
-
-              reader.readAsDataURL(file);
-            }
-
-            updateFileInput();
-          };
-
-          inputImage.addEventListener('change', (event) => {
-            handleChangeEvent(event.target.files);
-          });
-
-          // Function to automatically load backend images and trigger the change event
-          const loadBackendImages = (imageUrls) => {
-            const dataTransfer = new DataTransfer();
-
-            imageUrls.forEach((url, index) => {
-              fetch(url)
-                .then(res => res.blob())
-                .then(blob => {
-                  const file = new File([blob], `image${index}.webp`, { type: blob.type });
-                  dataTransfer.items.add(file);
-
-                  if (index === imageUrls.length - 1) {
-                    inputImage.files = dataTransfer.files;
-                    handleChangeEvent(inputImage.files); // Trigger the change event handler
-                  }
-                });
-            });
-          };
-
-          loadBackendImages(backendImageUrls);
-
-          // Function to crop the image and update the preview
-          function cropImage() {
-            if (!cropper) {
-              console.error('Cropper instance is not defined.');
-              return;
-            }
-
-            const canvas = cropper.getCroppedCanvas();
-            const croppedImage = canvas.toDataURL('image/webp'); // Changed to WebP format
-
-            currentImageElement.src = croppedImage;
-
-            // Close the modal and destroy the cropper instance
-            closeCropModal();
-            updateFileInput();
-          }
-
-          // Function to properly close the crop modal and destroy the cropper instance
-          function closeCropModal() {
-            const cropModal = document.getElementById('imageModal');
-            const modalInstance = mdb.Modal.getInstance(cropModal);
-            modalInstance.hide();  // Properly hide the modal
-
+            // Initialize Cropper.js with the image
             if (cropper) {
               cropper.destroy();
-              cropper = null;
             }
-          }
 
-          // Function to update the file input with the cropped images
-          function updateFileInput() {
-            // Add a slight delay before retrieving the images
-            setTimeout(() => {
-              const images = imageContainer.getElementsByClassName('image-preview');
-              const dataTransfer = new DataTransfer();
+            const screenWidth = window.innerWidth || document.documentElement.clientWidth;
 
-              for (let i = 0; i < images.length; i++) {
-                const dataURL = images[i].src;
-                const file = dataURLtoFile(dataURL, 'image' + i + '.webp');
-                dataTransfer.items.add(file);
-              }
+            cropper = new Cropper(document.getElementById('modalImage'), {
+              aspectRatio: 1,
+              viewMode: 0,
+              autoCropArea: 1,
+              minContainerWidth: screenWidth < 400 ? screenWidth - 20 : 400,
+              minContainerHeight: screenWidth < 400 ? screenWidth - 20 : 400,
+              quality: 1 // Set cropping quality to full
+            });
+          });
 
-              document.getElementById('product-image-upload').files = dataTransfer.files;
-            }, 50); // 50 milliseconds delay
-          }
+          const deleteButton = document.createElement('button');
+          deleteButton.classList.add('btn', 'btn-dark', 'mt-2', 'ms-2');
+          deleteButton.innerText = 'Delete';
+          deleteButton.addEventListener('click', () => {
+            imageContainer.removeChild(colDiv);
+            updateFileInput();
+          });
 
-          // Utility function to convert data URL to a File object
-          function dataURLtoFile(dataurl, filename) {
-            const arr = dataurl.split(',');
-            const mime = arr[0].match(/:(.*?);/)[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
+          colDiv.appendChild(img);
+          colDiv.appendChild(openModalButton);
+          colDiv.appendChild(deleteButton);
+          imageContainer.appendChild(colDiv);
+        }
 
-            while (n--) {
-              u8arr[n] = bstr.charCodeAt(n);
-            }
-            return new File([u8arr], filename, { type: mime });
-          }
+        reader.readAsDataURL(file);
+      }
 
-          // Attach event listeners to the crop button and modal close event
-          document.getElementById('cropButton').onclick = cropImage;
-          document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
+      updateFileInput();
+    };
 
-          // Keyboard functionality for Cropper.js
-          document.addEventListener('keydown', (event) => {
-            if (!cropper) return;
+    inputImage.addEventListener('change', (event) => {
+      handleChangeEvent(event.target.files);
+    });
 
-            const moveStep = 10;  // The number of pixels to move the crop box
+    // Function to automatically load backend images and trigger the change event
+    const loadBackendImages = (imageUrls) => {
+      const dataTransfer = new DataTransfer();
 
-            switch (event.key) {
-              case 'ArrowLeft':
-                cropper.move(-moveStep, 0);
-                break;
-              case 'ArrowRight':
-                cropper.move(moveStep, 0);
-                break;
-              case 'ArrowUp':
-                cropper.move(0, -moveStep);
-                break;
-              case 'ArrowDown':
-                cropper.move(0, moveStep);
-                break;
-              case '+':
-              case '=':
-                cropper.zoom(0.1);  // Zoom in
-                break;
-              case '-':
-                cropper.zoom(-0.1);  // Zoom out
-                break;
-              case 'r':
-              case 'R':
-                cropper.reset();  // Reset the crop box position and size
-                break;
-              default:
-                break;
+      imageUrls.forEach((url, index) => {
+        fetch(url)
+          .then(res => res.blob())
+          .then(blob => {
+            const file = new File([blob], `image${index}.webp`, {
+              type: blob.type
+            });
+            dataTransfer.items.add(file);
+
+            if (index === imageUrls.length - 1) {
+              inputImage.files = dataTransfer.files;
+              handleChangeEvent(inputImage.files); // Trigger the change event handler
             }
           });
-        });
-      </script>
+      });
+    };
+
+    loadBackendImages(backendImageUrls);
+
+    // Function to crop the image and update the preview
+    function cropImage() {
+      if (!cropper) {
+        console.error('Cropper instance is not defined.');
+        return;
+      }
+
+      const canvas = cropper.getCroppedCanvas();
+      const croppedImage = canvas.toDataURL('image/webp'); // Changed to WebP format
+
+      currentImageElement.src = croppedImage;
+
+      // Close the modal and destroy the cropper instance
+      closeCropModal();
+      updateFileInput();
+    }
+
+    // Function to properly close the crop modal and destroy the cropper instance
+    function closeCropModal() {
+      const cropModal = document.getElementById('imageModal');
+      const modalInstance = mdb.Modal.getInstance(cropModal);
+      modalInstance.hide(); // Properly hide the modal
+
+      if (cropper) {
+        cropper.destroy();
+        cropper = null;
+      }
+    }
+
+    // Function to update the file input with the cropped images
+    function updateFileInput() {
+      // Add a slight delay before retrieving the images
+      setTimeout(() => {
+        const images = imageContainer.getElementsByClassName('image-preview');
+        const dataTransfer = new DataTransfer();
+
+        for (let i = 0; i < images.length; i++) {
+          const dataURL = images[i].src;
+          const file = dataURLtoFile(dataURL, 'image' + i + '.webp');
+          dataTransfer.items.add(file);
+        }
+
+        document.getElementById('product-image-upload').files = dataTransfer.files;
+      }, 50); // 50 milliseconds delay
+    }
+
+    // Utility function to convert data URL to a File object
+    function dataURLtoFile(dataurl, filename) {
+      const arr = dataurl.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], filename, {
+        type: mime
+      });
+    }
+
+    // Attach event listeners to the crop button and modal close event
+    document.getElementById('cropButton').onclick = cropImage;
+    document.getElementById('imageModal').addEventListener('hidden.bs.modal', closeCropModal);
+
+    // Keyboard functionality for Cropper.js
+    document.addEventListener('keydown', (event) => {
+      if (!cropper) return;
+
+      const moveStep = 10; // The number of pixels to move the crop box
+
+      switch (event.key) {
+        case 'ArrowLeft':
+          cropper.move(-moveStep, 0);
+          break;
+        case 'ArrowRight':
+          cropper.move(moveStep, 0);
+          break;
+        case 'ArrowUp':
+          cropper.move(0, -moveStep);
+          break;
+        case 'ArrowDown':
+          cropper.move(0, moveStep);
+          break;
+        case '+':
+        case '=':
+          cropper.zoom(0.1); // Zoom in
+          break;
+        case '-':
+          cropper.zoom(-0.1); // Zoom out
+          break;
+        case 'r':
+        case 'R':
+          cropper.reset(); // Reset the crop box position and size
+          break;
+        default:
+          break;
+      }
+    });
+  });
+</script>

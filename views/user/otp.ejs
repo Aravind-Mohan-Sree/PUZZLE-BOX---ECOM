@@ -58,229 +58,225 @@
 <!-- navbar -->
 <%- include('navbar') %>
 
-  <!-- OTP container -->
-  <div class="otp-container container-fluid d-flex justify-content-center align-items-center">
-    <!-- OTP form -->
-    <form id="form" method="post" action="/otp" class="otp-form shadow-1-strong rounded-9">
-      <i class="fa-duotone fa-solid fa-envelope-circle-check fa-2xl text-center w-100"
-        style="--fa-primary-color: #000000; --fa-secondary-color: #808080; --fa-secondary-opacity: 1;"></i>
-      <h3 class="text-center mt-3 mb-0 fw-bold text-dark">Enter the OTP</h3>
-      <small class="d-block text-center mb-2">send to *****@gmail.com<small></small></small>
-      <div class="row d-flex mb-3">
-        <div class="px-2" id="otp">
-          <input type="text" id="first" maxlength="1">
-          <input type="text" id="second" maxlength="1">
-          <input type="text" id="third" maxlength="1">
-          <input type="text" id="fourth" maxlength="1">
-          <input type="text" id="fifth" maxlength="1">
-          <input type="text" id="sixth" maxlength="1">
-        </div>
+<!-- OTP container -->
+<div class="otp-container container-fluid d-flex justify-content-center align-items-center">
+  <!-- OTP form -->
+  <form id="form" method="post" action="/otp" class="otp-form shadow-1-strong rounded-9">
+    <i class="fa-duotone fa-solid fa-envelope-circle-check fa-2xl text-center w-100" style="--fa-primary-color: #000000; --fa-secondary-color: #808080; --fa-secondary-opacity: 1;"></i>
+    <h3 class="text-center mt-3 mb-0 fw-bold text-dark">Enter the OTP</h3>
+    <small class="d-block text-center mb-2">send to *****@gmail.com<small></small></small>
+    <div class="row d-flex mb-3">
+      <div class="px-2" id="otp">
+        <input type="text" id="first" maxlength="1">
+        <input type="text" id="second" maxlength="1">
+        <input type="text" id="third" maxlength="1">
+        <input type="text" id="fourth" maxlength="1">
+        <input type="text" id="fifth" maxlength="1">
+        <input type="text" id="sixth" maxlength="1">
       </div>
-      <input data-mdb-ripple-init class="btn btn-dark btn-block h-auto" type="submit" value="SUBMIT">
-      <small id="otp-alert" class="position-absolute start-0 w-100 text-center pt-1"></small>
-      <small id="resend-otp-timer" class="text-center mt-4 mb-0">Resend OTP in: <strong
-          id="timer">00:00</strong></small>
-      <span id="resend-otp" class="justify-content-center mt-4"><a id="resend-otp-link" href="#"
-          class="text-center text-dark text-decoration-underline">Resend
-          OTP</a></span>
-      <span class="d-flex justify-content-center"><a id="cancel" href="/login"
-          class="text-center text-decoration-underline text-dark mb-1">cancel</a></span>
-    </form>
-  </div>
+    </div>
+    <input data-mdb-ripple-init class="btn btn-dark btn-block h-auto" type="submit" value="SUBMIT">
+    <small id="otp-alert" class="position-absolute start-0 w-100 text-center pt-1"></small>
+    <small id="resend-otp-timer" class="text-center mt-4 mb-0">Resend OTP in: <strong id="timer">00:00</strong></small>
+    <span id="resend-otp" class="justify-content-center mt-4"><a id="resend-otp-link" href="#" class="text-center text-dark text-decoration-underline">Resend
+        OTP</a></span>
+    <span class="d-flex justify-content-center"><a id="cancel" href="/login" class="text-center text-decoration-underline text-dark mb-1">cancel</a></span>
+  </form>
+</div>
 
-  <!-- footer -->
-  <%- include('footer') %>
+<!-- footer -->
+<%- include('footer') %>
 
-    <!-- javaScript -->
-    <script>
-      // allows to dynamically change input focus on OTP form
-      document.addEventListener("DOMContentLoaded", function (event) {
-        function OTPInput() {
-          const inputs = document.querySelectorAll("#otp > *[id]");
+<!-- javaScript -->
+<script>
+  // allows to dynamically change input focus on OTP form
+  document.addEventListener("DOMContentLoaded", function(event) {
+    function OTPInput() {
+      const inputs = document.querySelectorAll("#otp > *[id]");
 
-          for (let i = 0; i < inputs.length; i++) {
-            inputs[i].addEventListener("input", function (e) {
-              // Remove non-digit characters
-              this.value = this.value.replace(/[^0-9]/g, '');
+      for (let i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener("input", function(e) {
+          // Remove non-digit characters
+          this.value = this.value.replace(/[^0-9]/g, '');
 
-              // Move to next input if current is filled
-              if (this.value.length === 1) {
-                if (i !== inputs.length - 1) inputs[i + 1].focus();
-              }
-            });
-
-            inputs[i].addEventListener("keydown", function (e) {
-              // Handle backspace
-              if (e.key === "Backspace") {
-                if (this.value.length === 0 && i !== 0) {
-                  e.preventDefault();
-                  inputs[i - 1].focus();
-                  inputs[i - 1].value = '';
-                }
-              }
-
-              // Prevent default on arrow keys to stop cursor movement
-              if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
-                e.preventDefault();
-              }
-            });
-
-            // Prevent paste except in the first input
-            inputs[i].addEventListener("paste", function (e) {
-              if (i !== 0) {
-                e.preventDefault();
-              } else {
-                // Allow paste only in the first input
-                e.preventDefault();
-                const pastedData = e.clipboardData.getData('text');
-                const otpRegex = /^\d{6}$/;  // Assumes 6-digit OTP
-                if (otpRegex.test(pastedData)) {
-                  for (let j = 0; j < inputs.length; j++) {
-                    inputs[j].value = pastedData[j] || '';
-                  }
-                  inputs[inputs.length - 1].focus();
-                }
-              }
-            });
+          // Move to next input if current is filled
+          if (this.value.length === 1) {
+            if (i !== inputs.length - 1) inputs[i + 1].focus();
           }
-        }
+        });
 
-        OTPInput();
-      });
-
-      // function uses fetch to update expiry time of OTP
-      function updateExpiry() {
-        const expiryTime = 40000; // 2 mins in millisecond
-        const currentTime = Date.now();
-        const resendOtpTimer = document.getElementById('resend-otp-timer');
-        const resendOtp = document.getElementById('resend-otp');
-        const timer = document.getElementById('timer');
-        const otpAlert = document.getElementById('otp-alert');
-
-        fetch(`/otp-timer?currentTime=${currentTime}&expiryTime=${expiryTime}`, {
-          method: 'GET'
-        }).then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              otpAlert.style.display = 'inline';
-              otpAlert.classList.add('text-danger');
-              otpAlert.innerText = 'Something went wrong. Try again';
-            } else {
-              let time = expiryTime - data.timeDifference;
-
-              const intervalId = setInterval(() => {
-                const minutes = Math.floor(time / 60000);
-                const seconds = Math.floor((time % 60000) / 1000);
-
-                // Format the time as MM:SS
-                const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-                // Update the timer display
-                timer.innerText = formattedTime;
-
-                // Decrease timer by 1 second
-                time -= 1000;
-
-                // Check if the timer has reached 0
-                if (time < 0) {
-                  fetch(`/otp-timer?time=${time}`, {
-                    method: 'GET'
-                  }).catch(err => {
-                    console.error(err);
-                  });
-
-                  otpAlert.style.display = 'inline';
-                  otpAlert.classList.add('text-danger');
-                  otpAlert.innerText = 'OTP expired';
-                  resendOtpTimer.style.display = 'none';
-                  resendOtp.style.display = 'flex';
-
-                  clearInterval(intervalId);
-                }
-              }, 1000);
+        inputs[i].addEventListener("keydown", function(e) {
+          // Handle backspace
+          if (e.key === "Backspace") {
+            if (this.value.length === 0 && i !== 0) {
+              e.preventDefault();
+              inputs[i - 1].focus();
+              inputs[i - 1].value = '';
             }
-          }).catch(err => {
-            console.log(err);
-          });
-      };
+          }
 
-      updateExpiry();
+          // Prevent default on arrow keys to stop cursor movement
+          if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+            e.preventDefault();
+          }
+        });
 
-      // using fetch to validate OTP
-      document.getElementById('form').addEventListener('submit', function (e) {
-        e.preventDefault();
+        // Prevent paste except in the first input
+        inputs[i].addEventListener("paste", function(e) {
+          if (i !== 0) {
+            e.preventDefault();
+          } else {
+            // Allow paste only in the first input
+            e.preventDefault();
+            const pastedData = e.clipboardData.getData('text');
+            const otpRegex = /^\d{6}$/; // Assumes 6-digit OTP
+            if (otpRegex.test(pastedData)) {
+              for (let j = 0; j < inputs.length; j++) {
+                inputs[j].value = pastedData[j] || '';
+              }
+              inputs[inputs.length - 1].focus();
+            }
+          }
+        });
+      }
+    }
 
-        const first = document.getElementById('first').value;
-        const second = document.getElementById('second').value;
-        const third = document.getElementById('third').value;
-        const fourth = document.getElementById('fourth').value;
-        const fifth = document.getElementById('fifth').value;
-        const sixth = document.getElementById('sixth').value;
+    OTPInput();
+  });
 
-        const otpAlert = document.getElementById('otp-alert');
+  // function uses fetch to update expiry time of OTP
+  function updateExpiry() {
+    const expiryTime = 40000; // 2 mins in millisecond
+    const currentTime = Date.now();
+    const resendOtpTimer = document.getElementById('resend-otp-timer');
+    const resendOtp = document.getElementById('resend-otp');
+    const timer = document.getElementById('timer');
+    const otpAlert = document.getElementById('otp-alert');
 
-        const otp = first + second + third + fourth + fifth + sixth ? first + second + third + fourth + fifth + sixth : '0';
+    fetch(`/otp-timer?currentTime=${currentTime}&expiryTime=${expiryTime}`, {
+        method: 'GET'
+      }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          otpAlert.style.display = 'inline';
+          otpAlert.classList.add('text-danger');
+          otpAlert.innerText = 'Something went wrong. Try again';
+        } else {
+          let time = expiryTime - data.timeDifference;
 
-        fetch(`/check-otp/${otp}`, {
-          method: 'GET'
-        }).then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              otpAlert.style.display = 'inline';
-              otpAlert.classList.add('text-danger');
-              otpAlert.innerText = 'Something went wrong. Try again';
-            } else if (data.otpExpired) {
+          const intervalId = setInterval(() => {
+            const minutes = Math.floor(time / 60000);
+            const seconds = Math.floor((time % 60000) / 1000);
+
+            // Format the time as MM:SS
+            const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Update the timer display
+            timer.innerText = formattedTime;
+
+            // Decrease timer by 1 second
+            time -= 1000;
+
+            // Check if the timer has reached 0
+            if (time < 0) {
+              fetch(`/otp-timer?time=${time}`, {
+                method: 'GET'
+              }).catch(err => {
+                console.error(err);
+              });
+
               otpAlert.style.display = 'inline';
               otpAlert.classList.add('text-danger');
               otpAlert.innerText = 'OTP expired';
-            } else if (data.valid) {
-              this.submit();
-            } else {
-              if (otp.length === 6) {
-                otpAlert.style.display = 'inline';
-                otpAlert.classList.add('text-danger');
-                otpAlert.innerText = 'Invalid OTP';
-              } else {
-                otpAlert.style.display = 'inline';
-                otpAlert.classList.add('text-danger');
-                otpAlert.innerText = 'Enter 6 digits';
-              }
+              resendOtpTimer.style.display = 'none';
+              resendOtp.style.display = 'flex';
+
+              clearInterval(intervalId);
             }
-          }).catch(err => {
-            console.log(err);
-          });
-      });
-
-      // using fetch to resend OTP
-      document.getElementById('resend-otp-link').addEventListener('click', function () {
-        const otpAlert = document.getElementById('otp-alert');
-        const resendOtpTimer = document.getElementById('resend-otp-timer');
-        const resendOtp = document.getElementById('resend-otp');
-        const otp = document.getElementById('otp');
-        const inputs = otp.getElementsByTagName('input');
-
-        for (const ele of inputs) {
-          ele.value = '';
+          }, 1000);
         }
-
-        fetch('/resend-otp', {
-          method: 'GET'
-        }).then(response => response.json())
-          .then(data => {
-            updateExpiry();
-
-            resendOtpTimer.style.display = 'block';
-            resendOtp.style.display = 'none';
-
-            if (data.success) {
-              otpAlert.innerText = 'OTP resend successful';
-              otpAlert.classList.remove('text-danger');
-              otpAlert.classList.add('text-success');
-            } else {
-              otpAlert.innerText = 'Something went wrong. Try again';
-            }
-          }).catch(err => {
-            console.log(err);
-          })
+      }).catch(err => {
+        console.log(err);
       });
-    </script>
+  };
+
+  updateExpiry();
+
+  // using fetch to validate OTP
+  document.getElementById('form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const first = document.getElementById('first').value;
+    const second = document.getElementById('second').value;
+    const third = document.getElementById('third').value;
+    const fourth = document.getElementById('fourth').value;
+    const fifth = document.getElementById('fifth').value;
+    const sixth = document.getElementById('sixth').value;
+
+    const otpAlert = document.getElementById('otp-alert');
+
+    const otp = first + second + third + fourth + fifth + sixth ? first + second + third + fourth + fifth + sixth : '0';
+
+    fetch(`/check-otp/${otp}`, {
+        method: 'GET'
+      }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          otpAlert.style.display = 'inline';
+          otpAlert.classList.add('text-danger');
+          otpAlert.innerText = 'Something went wrong. Try again';
+        } else if (data.otpExpired) {
+          otpAlert.style.display = 'inline';
+          otpAlert.classList.add('text-danger');
+          otpAlert.innerText = 'OTP expired';
+        } else if (data.valid) {
+          this.submit();
+        } else {
+          if (otp.length === 6) {
+            otpAlert.style.display = 'inline';
+            otpAlert.classList.add('text-danger');
+            otpAlert.innerText = 'Invalid OTP';
+          } else {
+            otpAlert.style.display = 'inline';
+            otpAlert.classList.add('text-danger');
+            otpAlert.innerText = 'Enter 6 digits';
+          }
+        }
+      }).catch(err => {
+        console.log(err);
+      });
+  });
+
+  // using fetch to resend OTP
+  document.getElementById('resend-otp-link').addEventListener('click', function() {
+    const otpAlert = document.getElementById('otp-alert');
+    const resendOtpTimer = document.getElementById('resend-otp-timer');
+    const resendOtp = document.getElementById('resend-otp');
+    const otp = document.getElementById('otp');
+    const inputs = otp.getElementsByTagName('input');
+
+    for (const ele of inputs) {
+      ele.value = '';
+    }
+
+    fetch('/resend-otp', {
+        method: 'GET'
+      }).then(response => response.json())
+      .then(data => {
+        updateExpiry();
+
+        resendOtpTimer.style.display = 'block';
+        resendOtp.style.display = 'none';
+
+        if (data.success) {
+          otpAlert.innerText = 'OTP resend successful';
+          otpAlert.classList.remove('text-danger');
+          otpAlert.classList.add('text-success');
+        } else {
+          otpAlert.innerText = 'Something went wrong. Try again';
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+  });
+</script>

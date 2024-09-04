@@ -62,25 +62,21 @@
       <!-- Icons -->
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="#">
-          <i class="fa-duotone fa-solid fa-heart fa-xl"
-            style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-heart fa-xl" style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification bg-white text-black"><%= user ? '0' : '' %></span>
         </a>
       </li>
 
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="#">
-          <i class="fa-duotone fa-solid fa-cart-shopping fa-lg"
-            style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-cart-shopping fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification bg-white text-black"><%= user ? '0' : '' %></span>
         </a>
       </li>
 
       <li class="nav-item me-3 me-lg-0 dropdown">
-        <a data-mdb-dropdown-init class="nav-link" href="#" id="navbarDropdown" role="button" aria-expanded="false"
-          data-mdb-toggle="dropdown">
-          <i class="fa-duotone fa-solid fa-user fa-lg"
-            style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
+        <a data-mdb-dropdown-init class="nav-link" href="#" id="navbarDropdown" role="button" aria-expanded="false" data-mdb-toggle="dropdown">
+          <i class="fa-duotone fa-solid fa-user fa-lg" style="--fa-primary-color: #ffa914; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>
           <span class="badge rounded-pill badge-notification text-white <%= user ? 'bg-success' : 'bg-danger' %>">
             <%= user ? '✓' : '✕' %>
           </span>
@@ -94,17 +90,14 @@
           </li>
           <li>
             <form method="<%= user ? 'post' : 'get' %>" action="<%= user ? '/logout' : '/login' %>">
-              <input class="p-1 w-100 hover-shadow <%= user ? 'bg-danger' : 'bg-secondary' %>"
-                type="submit" value="<%= user ? 'Logout' : 'Login' %>">
+              <input class="p-1 w-100 hover-shadow <%= user ? 'bg-danger' : 'bg-secondary' %>" type="submit" value="<%= user ? 'Logout' : 'Login' %>">
             </form>
           </li>
         </ul>
       </li>
     </ul>
     <!-- navbar collapse button -->
-    <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarTogglerDemo02"
-      data-mdb-toggle="collapse" aria-controls="navbarTogglerDemo02" aria-expanded="false"
-      aria-label="Toggle navigation">
+    <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarTogglerDemo02" data-mdb-toggle="collapse" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
       <i id="toggler-icon" class="fa-regular fa-bars fa-lg" style="color: #000000;"></i>
     </button>
     <!-- nav links -->
@@ -115,8 +108,7 @@
         </li>
         <!-- Dropdown -->
         <li class="nav-item dropdown">
-          <a data-mdb-dropdown-init class="nav-link active dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button"
-            aria-expanded="false" data-mdb-toggle="dropdown">
+          <a data-mdb-dropdown-init class="nav-link active dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" aria-expanded="false" data-mdb-toggle="dropdown">
             Categories
           </a>
           <!-- dropdown links -->
@@ -146,8 +138,7 @@
           <label class="form-label" for="form1">Search</label>
         </div>
         <button data-mdb-ripple-init id="search-button" type="button" class="btn btn-dark shadow-0">
-          <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl"
-            style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
+          <i class="fa-duotone fa-solid fa-magnifying-glass fa-xl" style="--fa-primary-color: #ffa200; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>
         </button>
       </form>
     </div>
@@ -157,34 +148,36 @@
 <!-- alert box included -->
 <%- include('alert') %>
 
-  <!-- javaScript -->
-  <script>
-    // for changing navbar toggler icon
-    document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function () {
-      const collapse = document.getElementsByClassName('navbar-collapse')[0];
-      const togglerIcon = document.getElementById('toggler-icon');
+<!-- javaScript -->
+<script>
+  // for changing navbar toggler icon
+  document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function() {
+    const collapse = document.getElementsByClassName('navbar-collapse')[0];
+    const togglerIcon = document.getElementById('toggler-icon');
 
-      // create a mutation observer to watch for class changes
-      const observer = new MutationObserver(mutationsList => {
-        for (const mutation of mutationsList) {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            // check if the class is present
-            if (collapse.classList.contains('show')) {
-              togglerIcon.classList.add('fa-xmark-large');
-              observer.disconnect();
-            } else {
-              togglerIcon.classList.remove('fa-xmark-large');
-            }
+    // create a mutation observer to watch for class changes
+    const observer = new MutationObserver(mutationsList => {
+      for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          // check if the class is present
+          if (collapse.classList.contains('show')) {
+            togglerIcon.classList.add('fa-xmark-large');
+            observer.disconnect();
+          } else {
+            togglerIcon.classList.remove('fa-xmark-large');
           }
         }
-      });
-
-      // start observing the target node for configured mutations
-      observer.observe(collapse, { attributes: true });
+      }
     });
 
-    // will clear search input value when page shows
-    window.addEventListener('pageshow', function (event) {
-      document.getElementById('search-input').value = '';
+    // start observing the target node for configured mutations
+    observer.observe(collapse, {
+      attributes: true
     });
-  </script>
+  });
+
+  // will clear search input value when page shows
+  window.addEventListener('pageshow', function(event) {
+    document.getElementById('search-input').value = '';
+  });
+</script>
