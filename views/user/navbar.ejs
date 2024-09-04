@@ -113,15 +113,11 @@
           </a>
           <!-- dropdown links -->
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li>
-              <a class="dropdown-item" href="#">Action</a>
+            <% activeCategoryNames.forEach(categoryName => { %>
+            <li class="nav-item border-bottom px-3 hover-shadow">
+              <a class="nav-link active" href="#"><%= categoryName %></a>
             </li>
-            <li>
-              <a class="dropdown-item" href="#">Another action</a>
-            </li>
-            <li>
-              <a class="dropdown-item" href="#">Something else here</a>
-            </li>
+            <% }) %>
           </ul>
         </li>
         <li class="nav-item">

@@ -9,18 +9,19 @@ const home = async (req, res) => {
       req.flash('alert', { message: 'Login successful!', color: 'bg-success' });
     }
 
-    const products = await productSchema.find({ isActive: true })
-      .populate({
-        path: 'productCategory',
-        match: { isActive: true }
-      })
+    const activeProducts = await productSchema.find({
+      isActive: true,
+      productCategory: {
+        $in: await categorySchema.find({ isActive: true }).select('_id')
+      }
+    }).populate('productCategory');
 
-    const activeProducts = products.filter(product => product.productCategory !== null);
-      
+    const activeCategoryNames = Array.from(new Set(activeProducts.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
     const latestProducts = activeProducts.sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
-    const topProducts = activeProducts.sort((a, b) => a.productName - b.productName).slice(0, 4);
+    const topProducts = activeProducts.sort((a, b) => a.productName.localeCompare(b.productName)).slice(0, 4);
 
-    res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, latestProducts, topProducts });
+    res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, activeProducts, latestProducts, topProducts, activeCategoryNames });
   } catch (err) {
     console.log('Error while rendering user home page', err);
   }
