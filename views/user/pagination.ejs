@@ -1,0 +1,35 @@
+<!-- ----------------------------- pagination ------------------------------ -->
+<nav aria-label="Page navigation example" class="mt-5">
+  <ul class="pagination justify-content-center">
+    <li class="page-item">
+      <a class="page-link" href="#" onclick="previousPage('<%= parseInt(currentPage) %>')">Previous</a>
+    </li>
+    <% for(let i = 1; i <= pageNumber; i++) { %>
+    <li class="page-item">
+      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+    </li>
+    <% } %>
+    <li class="page-item">
+      <a class="page-link" href="#" onclick="nextPage('<%= parseInt(currentPage) %>','<%= pageNumber %>')">Next</a>
+    </li>
+  </ul>
+</nav>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  // next page
+  function nextPage(currentPage, totalPage) {
+    if (Number(currentPage) < Number(totalPage)) {
+      window.location.href = `?page=${Number(currentPage)+1}`
+    }
+  }
+
+  // previous page
+  function previousPage(currentPage) {
+    if ((Number(currentPage) - 1) != 0) {
+      window.location.href = `?page=${Number(currentPage)-1}`
+    }
+  }
+</script>
+<!-- ----------------------------------------------------------------------- -->

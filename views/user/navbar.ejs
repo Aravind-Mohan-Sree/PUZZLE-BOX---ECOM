@@ -51,6 +51,40 @@
     color: #000000;
     box-shadow: none;
   }
+
+  #category-list {
+    max-width: 12rem;
+    max-height: 11.375rem;
+    overflow-y: scroll;
+    padding: .3125rem;
+  }
+
+  #category-list>li:first-child {
+    border-top: 1px solid #e0e0e0;
+  }
+
+  #nav-links {
+    position: relative;
+  }
+
+  #nav-links::after {
+    content: '';
+    position: absolute;
+    background-color: #000000;
+    width: 0;
+    height: .5px;
+    left: 0;
+    bottom: -1  px;
+  }
+
+  #nav-links:hover::after {
+    width: 100%;
+    transition: all 250ms linear;
+  }
+
+  .nav-link-underline {
+    border-bottom: 1px solid #000;
+  }
 </style>
 
 <!-- navbar -->
@@ -103,27 +137,27 @@
     <!-- nav links -->
     <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
       <ul class="navbar-nav me-auto ms-lg-5 mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Explore</a>
+        <li class="nav-item <%= content === 'explore' ? 'nav-link-underline' : '' %>" id="nav-links">
+          <a class="nav-link active" aria-current="page" href="/products">Explore</a>
         </li>
         <!-- Dropdown -->
-        <li class="nav-item dropdown">
+        <li class="nav-item dropdown <%= content === 'category' ? 'nav-link-underline' : '' %>" id="nav-links">
           <a data-mdb-dropdown-init class="nav-link active dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" aria-expanded="false" data-mdb-toggle="dropdown">
             Categories
           </a>
           <!-- dropdown links -->
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" id="category-list">
             <% activeCategoryNames.forEach(categoryName => { %>
             <li class="nav-item border-bottom px-3 hover-shadow">
-              <a class="nav-link active" href="#"><%= categoryName %></a>
+              <a class="nav-link active" href="/products?productCategory=<%= categoryName %>"><%= categoryName %></a>
             </li>
             <% }) %>
           </ul>
         </li>
-        <li class="nav-item">
+        <li class="nav-item <%= content === 'about' ? 'nav-link-underline' : '' %>" id="nav-links">
           <a class="nav-link active" href="#">About</a>
         </li>
-        <li class="nav-item">
+        <li class="nav-item <%= content === 'contact' ? 'nav-link-underline' : '' %>" id="nav-links">
           <a class="nav-link active" href="#">Contact</a>
         </li>
       </ul>
@@ -176,4 +210,6 @@
   window.addEventListener('pageshow', function(event) {
     document.getElementById('search-input').value = '';
   });
+
+
 </script>
