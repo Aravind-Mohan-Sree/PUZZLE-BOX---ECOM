@@ -3,6 +3,8 @@ const generateOtp = require('../../services/generateOtp');
 const userSchema = require('../../model/userSchema');
 const mailSender = require('../../services/emailSender');
 const passport = require('passport');
+const productSchema = require('../../model/productSchema');
+const categorySchema = require('../../model/categorySchema');
 require('../../services/auth');
 
 // will redirect to user login page
@@ -11,7 +13,7 @@ const user = (req, res) => {
 };
 
 // will render user login page if user session is not present
-const login = (req, res) => {
+const login = async (req, res) => {
   try {
     // will delete OTP stored in session
     delete req.session.otp;
@@ -31,7 +33,15 @@ const login = (req, res) => {
         req.flash('alert', { message: 'You are blocked by the admin!', color: 'bg-danger' });
       }
 
-      res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user });
+      const activeCategories = await productSchema.find({
+        isActive: true,
+        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+      })
+        .populate('productCategory');
+  
+      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+      res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
     }
   } catch (err) {
     console.error(`Error while rendering user login page ${err}`);
@@ -68,12 +78,20 @@ const loginPost = async (req, res) => {
 };
 
 // will render user signup page if user session is not present
-const signup = (req, res) => {
+const signup = async (req, res) => {
   try {
     if (req.session.user) {
       res.redirect('/home');
     } else {
-      res.render('user/signup', { title: 'User Signup', alert: req.flash('alert'), user: req.session.user });
+      const activeCategories = await productSchema.find({
+        isActive: true,
+        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+      })
+        .populate('productCategory');
+  
+      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+      res.render('user/signup', { title: 'User Signup', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
     }
   } catch (err) {
     console.error(`Error while rendering user signup page ${err}`);
@@ -130,10 +148,18 @@ const checkEmail = async (req, res) => {
 };
 
 // will render OTP page if OTP remains in session
-const otp = (req, res) => {
+const otp = async (req, res) => {
   try {
     if (req.session.otp) {
-      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('alert'), user: req.session.user });
+      const activeCategories = await productSchema.find({
+        isActive: true,
+        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+      })
+        .populate('productCategory');
+  
+      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
     } else {
       res.redirect('/login');
     }

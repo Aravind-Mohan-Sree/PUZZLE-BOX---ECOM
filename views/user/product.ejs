@@ -41,7 +41,7 @@
   <!-- ------------------------ top products section ------------------------- -->
   <section>
     <div class="container pt-4 px-4 px-sm-2">
-      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">ALL PRODUCTS</h2>
+      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark"><%= selectedCategory ? selectedCategory.toUpperCase() + 'S' : 'ALL PUZZLES' %></h2>
       <div class="row mt-5">
         <% activeProducts.forEach(product=> { %>
         <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
@@ -108,91 +108,8 @@
   <%- include('pagination') %>
   <!-- ----------------------------------------------------------------------- -->
 
-  <!-- ------------------------ testimonials section ------------------------- -->
-  <section>
-    <div class="container mt-md-4 pt-5 px-4 px-sm-2">
-      <div class="row d-flex justify-content-center">
-        <div class="col-md-10 col-xl-8 text-center">
-          <h3 class="mb-4">What Our Customers Are Saying...</h3>
-          <p class="mb-4 pb-2 mb-md-5 pb-md-0">
-            "Puzzle Experiences You'll Love!"
-          </p>
-        </div>
-      </div>
-
-      <div class="row text-center">
-        <div class="col-md-4 mb-5 mb-md-0">
-          <h5 class="mb-3">Arjun Varma</h5>
-          <p class="px-xl-3">
-            <i class="fas fa-quote-left pe-2"></i>Absolutely loved this puzzle! The pieces were sturdy, and the image quality was fantastic. It was challenging yet relaxing, and the difficulty was just right. Perfect for a weekend activity with family!
-          </p>
-          <ul class="list-unstyled d-flex justify-content-center mb-0">
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star-half-alt fa-sm text-warning"></i>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-5 mb-md-0">
-          <h5 class="mb-3">Farhan Ali</h5>
-          <p class="px-xl-3">
-            <i class="fas fa-quote-left pe-2"></i>This puzzle was a fun brain workout! The unique pieces and vibrant colors made it engaging from start to finish. The puzzle arrived in excellent condition, and I appreciated the eco-friendly packaging.
-          </p>
-          <ul class="list-unstyled d-flex justify-content-center mb-0">
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-4 mb-0">
-          <h5 class="mb-3">Geeta Nair</h5>
-          <p class="px-xl-3">
-            <i class="fas fa-quote-left pe-2"></i>Great puzzle for both beginners and experts. It took me a few days to complete, and I enjoyed every moment. The satisfaction of placing the final piece was unbeatable. Highly recommend for puzzle enthusiasts!
-          </p>
-          <ul class="list-unstyled d-flex justify-content-center mb-0">
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="fas fa-star fa-sm text-warning"></i>
-            </li>
-            <li>
-              <i class="far fa-star fa-sm text-warning"></i>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
+  <!-- --------------------------- testimonials included --------------------------- -->
+  <%- include('testimonial') %>
   <!-- ----------------------------------------------------------------------- -->
 </div>
 <!-- ----------------------------------------------------------------------- -->
@@ -204,7 +121,7 @@
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
+  // window.history.replaceState(null, null, window.location.pathname);
 
   // for searching products
   document.addEventListener('DOMContentLoaded', function() {

@@ -57,8 +57,10 @@ const product = async (req, res) => {
     res.render('user/product', {
       title: 'Products',
       alert: req.flash('alert'),
-      user: req.session.user, activeProducts,
+      user: req.session.user,
+      activeProducts,
       activeCategoryNames,
+      selectedCategory,
       pageNumber: Math.ceil(productsCount / productsPerPage),
       currentPage,
       totalPages: productsCount,
@@ -72,9 +74,24 @@ const product = async (req, res) => {
 // will show the details of a particular product
 const productDetail = async (req, res) => {
   try {
-    const products = await productSchema.findById(req.query.productId);
+    const product = await productSchema.findById(req.query.productId);
 
-    res.render('user/productDetail', { title: 'Product Details', products });
+    const activeCategories = await productSchema.find({
+      isActive: true,
+      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+    })
+      .populate('productCategory');
+
+    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+    res.render('user/productDetail', {
+      title: 'Product Details',
+      alert: req.flash('alert'),
+      user: req.session.user,
+      product,
+      activeCategoryNames,
+      content: ''
+    });
   } catch (err) {
     console.log(err);
   }

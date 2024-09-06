@@ -2,14 +2,24 @@ const bcrypt = require('bcrypt');
 const generateOtp = require('../../services/generateOtp');
 const userSchema = require('../../model/userSchema');
 const mailSender = require('../../services/emailSender');
+const productSchema = require('../../model/productSchema');
+const categorySchema = require('../../model/categorySchema');
 
 // will render user forgot password page 
-const forgotPassword = (req, res) => {
+const forgotPassword = async (req, res) => {
   try {
     // remove user from session
     delete req.session.user;
 
-    res.render('user/forgotPassword', { title: 'Forgot Password', alert: req.flash('alert'), user: req.session.user });
+    const activeCategories = await productSchema.find({
+      isActive: true,
+      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+    })
+      .populate('productCategory');
+
+    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+    res.render('user/forgotPassword', { title: 'Forgot Password', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
   } catch (err) {
     console.log('Error while rendering forgot password page', err);
   }
