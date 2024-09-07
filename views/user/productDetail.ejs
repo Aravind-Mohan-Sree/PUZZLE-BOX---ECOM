@@ -84,19 +84,33 @@
             <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
             </span><span class="badge badge-danger ms-3 p"><%= product.productDiscount !== 0 ? '-' + product.productDiscount + '%' : '' %></span>
           </h3>
-          <h6>Availability - <span class="badge <%= product.productQuantity <= 10 ? 'badge-warning' : 'badge-success' %>"><%= product.productQuantity <= 10 ? 'Only ' + product.productQuantity + ' left' : 'In stock' %></span></h6>
+          <h6>Availability - <span class="badge <% if (product.productQuantity > 10) { %>
+            badge-success
+          <% } else if (product.productQuantity > 0) { %>
+            badge-warning
+          <% } else { %>
+            badge-danger
+          <% } %>">
+              <% if (product.productQuantity> 10) { %>
+              In stock
+              <% } else if (product.productQuantity> 0) { %>
+              Only <%= product.productQuantity %> left
+              <% } else { %>
+              Out of stock
+              <% } %>
+            </span></h6>
           <h4 class="mt-5 mb-3 text-decoration-underline">Description</h4>
           <p class=""><%= product.productDescription %></p>
           <div class="row mt-5">
             <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-4 pb-md-0">
               <div class="input-group">
-                <button class="btn btn-dark"><i class="fa-regular fa-minus"></i></button>
-                <input type="text" class="form-control text-center fw-semibold" aria-label="" value="1" disabled />
-                <button class="btn btn-dark"><i class="fa-regular fa-plus"></i></button>
+                <button class="btn btn-dark minus-btn"><i class="fa-regular fa-minus"></i></button>
+                <input type="text" class="form-control text-center fw-semibold number-input" aria-label="" value="1" disabled />
+                <button class="btn btn-dark plus-btn"><i class="fa-regular fa-plus"></i></button>
               </div>
             </div>
             <div class="col col-md-6 col-lg-8 offset-xl-1">
-              <button id="add-to-cart" class="btn btn-block btn-dark"><i class="fa-regular fa-cart-shopping fa-bounce me-3" style="color: #ffffff;"></i>add to cart</button>
+              <button id="add-to-cart" class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping fa-bounce me-3" style="color: #ffffff;"></i>add to cart</button>
             </div>
           </div>
         </div>
@@ -119,8 +133,7 @@
         </div>
 
         <div id="details" class="tabcontent">
-          <h4 class="text-decoration-underline">Details</h4>
-          <div class="mt-4">
+          <div>
             <h3 class="fs-6 badge badge-light text-wrap lh-base">Category - <%= product.productCategory.categoryName %></h3>
           </div>
           <div class="mb-4 mt-4">
@@ -138,8 +151,7 @@
         </div>
 
         <div id="reviews" class="tabcontent">
-          <h3>Paris</h3>
-          <p>Paris is the capital of France.</p>
+
         </div>
       </div>
     </div>
@@ -151,6 +163,9 @@
     <div class="container pt-5 px-4 px-sm-2 mt-3">
       <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">SIMILAR PRODUCTS</h2>
       <div class="row mt-5">
+        <% if (similarProducts.length === 0) { %>
+        <h4 class="text-dark">Nothing...</h4>
+        <% } %>
         <% similarProducts.forEach(product=> { %>
         <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
           <div class="card shadow-l hover-shadow badge-light">
@@ -235,11 +250,20 @@
 
     // for product image swapping on hover
     subImages.forEach(subImage => {
-      subImage.addEventListener("mouseenter", function() {
-        // Swap the main image with the hovered sub-image
+      // Function to swap the main image with the sub-image
+      const swapImage = function() {
         const tempSrc1 = mainImage.src;
         mainImage.src = this.src;
         this.src = tempSrc1;
+      };
+
+      // For desktop hover
+      subImage.addEventListener("mouseenter", swapImage);
+
+      // For mobile touch
+      subImage.addEventListener("touchstart", function(e) {
+        e.preventDefault(); // Prevents default touch behavior
+        swapImage.call(this); // Call the swapImage function
       });
     });
 
@@ -263,7 +287,7 @@
 
     // Desktop mouse events
     mainImageContainer.addEventListener('mousemove', (e) => {
-      mainImage.style.transform = 'scale(1.5)';
+      mainImage.style.transform = 'scale(3)';
       moveImage(e.clientX, e.clientY);
     });
 
@@ -275,7 +299,7 @@
     mainImageContainer.addEventListener('touchstart', (e) => {
       e.preventDefault();
       isTouching = true;
-      mainImage.style.transform = 'scale(2)';
+      mainImage.style.transform = 'scale(3)';
       moveImage(e.touches[0].clientX, e.touches[0].clientY);
     }, {
       passive: false
