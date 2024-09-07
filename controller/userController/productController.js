@@ -74,24 +74,44 @@ const product = async (req, res) => {
 // will show the details of a particular product
 const productDetail = async (req, res) => {
   try {
-    const product = await productSchema.findById(req.query.productId);
-
-    const activeCategories = await productSchema.find({
+    const product = await productSchema.findOne({
+      _id: req.query.productId,
       isActive: true,
-      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+      productCategory: { $in: await categorySchema.find({ categoryName: req.query.productCategory, isActive: true }).select('_id') }
     })
       .populate('productCategory');
 
-    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+    if (product) {
+      const similarProducts = await productSchema.find({
+        _id: { $nin: [req.query.productId] },
+        productCategory: { $in: await categorySchema.find({ categoryName: req.query.productCategory }).select('_id') }
+      })
+        .sort({ createdAt: -1 })
+        .limit(4)
+        .populate('productCategory');
 
-    res.render('user/productDetail', {
-      title: 'Product Details',
-      alert: req.flash('alert'),
-      user: req.session.user,
-      product,
-      activeCategoryNames,
-      content: ''
-    });
+      const activeCategories = await productSchema.find({
+        isActive: true,
+        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+      })
+        .populate('productCategory');
+
+      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+      res.render('user/productDetail', {
+        title: 'Product Details',
+        alert: req.flash('alert'),
+        user: req.session.user,
+        product,
+        similarProducts,
+        activeCategoryNames,
+        content: ''
+      });
+    } else {
+      req.flash('alert', { message: 'Unable to view product. Try again', color: 'bg-danger' });
+
+      res.redirect('/home');
+    }
   } catch (err) {
     console.log(err);
   }

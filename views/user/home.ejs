@@ -89,7 +89,7 @@
           <div class="card shadow-l hover-shadow badge-light">
             <div class="bg-image hover-zoom ripple" data-mdb-ripple-color="light">
               <img src="<%= product.productImage[0] %>" class="w-100" />
-              <a href="/product-details?productId=<%= product._id %>">
+              <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>">
                 <div class="mask">
                   <div class="d-flex justify-content-start align-items-end h-100">
                     <h5>
@@ -114,7 +114,7 @@
               </a>
             </div>
             <div class="card-body">
-              <a href="/product-details?productId=<%= product._id %>" class="text-reset">
+              <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
                 <h5 class="card-title mb-3 text-dark">
                   <%= product.productName %>
                 </h5>
