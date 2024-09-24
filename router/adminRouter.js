@@ -13,28 +13,28 @@ admin.get('/login', adminController.login);
 admin.post('/login', adminController.loginPost);
 
 // will handle admin dashboard route
-admin.get('/dashboard', adminController.dashboard);
+admin.get('/dashboard', checkAdminSession, adminController.dashboard);
 // admin.post('/dashboard', adminController.dashboardPost);
 
 // will handle admin category route
-admin.get('/categories', categoryController.category);
-admin.post('/categories', categoryController.categoryPost);
+admin.get('/categories', checkAdminSession, categoryController.category);
+admin.post('/categories', checkAdminSession, categoryController.categoryPost);
 
 // will handle admin products route
-admin.get('/products', productController.product);
-admin.post('/products', productController.productPost);
+admin.get('/products', checkAdminSession, productController.product);
+admin.post('/products', checkAdminSession, productController.productPost);
 
 // will handle admin add products route
-admin.get('/add-product', productController.addProduct);
-admin.post('/add-product', upload.array('productImage', 3), productController.addProductPost);
+admin.get('/add-product', checkAdminSession, productController.addProduct);
+admin.post('/add-product', checkAdminSession, upload.array('productImage', 3), productController.addProductPost);
 
 // will handle admin edit products route
-admin.get('/edit-product', productController.editProduct);
-admin.post('/edit-product', upload.array('productImage', 3), productController.editProductPost);
+admin.get('/edit-product', checkAdminSession, productController.editProduct);
+admin.post('/edit-product', checkAdminSession, upload.array('productImage', 3), productController.editProductPost);
 
 // will handle admin customers route
-admin.get('/customers', customerController.customer);
-admin.post('/customers', customerController.customerPost);
+admin.get('/customers', checkAdminSession, customerController.customer);
+admin.post('/customers', checkAdminSession, customerController.customerPost);
 
 // will handle admin logout route
 admin.post('/logout', adminController.logout);

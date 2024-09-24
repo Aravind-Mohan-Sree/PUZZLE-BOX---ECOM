@@ -65,7 +65,7 @@
 </div>
 
 <!-- category table container -->
-<div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+<div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true" id="content">
   <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
     <table class="table datatable-table" id="exampleTable">
       <thead class="datatable-header">
@@ -326,6 +326,17 @@
                     Swal.fire({
                       title: 'Error!',
                       text: 'Something went wrong. Try again',
+                      icon: 'error',
+                      confirmButtonText: 'OK',
+                      allowOutsideClick: false,
+                      customClass: {
+                        container: 'swal-css'
+                      }
+                    });
+                  } else if (data.exist) {
+                    Swal.fire({
+                      title: 'Error!',
+                      text: 'Category already exist',
                       icon: 'error',
                       confirmButtonText: 'OK',
                       allowOutsideClick: false,

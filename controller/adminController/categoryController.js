@@ -50,11 +50,17 @@ const categoryPost = async (req, res) => {
 
         res.json({ lastUpdated: updatedCategory.updatedAt, isActive: updatedCategory.isActive });
       } else if (req.body.newCategoryName) {
-        await categorySchema.findByIdAndUpdate(req.body.categoryId, { categoryName: req.body.newCategoryName });
+        const categoryExist = await categorySchema.findOne({categoryName: new RegExp(`^${req.body.newCategoryName}$`, 'i')});
 
-        const category = await categorySchema.findById(req.body.categoryId);
-
-        res.json({ lastUpdated: category.updatedAt });
+        if (categoryExist) {
+          res.json({exist: true});
+        } else {
+          await categorySchema.findByIdAndUpdate(req.body.categoryId, { categoryName: req.body.newCategoryName });
+  
+          const category = await categorySchema.findById(req.body.categoryId);
+  
+          res.json({ lastUpdated: category.updatedAt });
+        }
       } else {
         await categorySchema.findByIdAndDelete(req.body.categoryId);
 

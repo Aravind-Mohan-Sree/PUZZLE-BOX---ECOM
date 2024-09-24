@@ -119,9 +119,30 @@
                   <%= product.productName %>
                 </h5>
               </a>
-              <h6 class="mb-4 mt-3">
-                <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
-              </h6>
+              <div class="row">
+                <div class="col me-auto">
+                  <h6 class="mb-4 mt-3">
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+                  </h6>
+                </div>
+                <div class="col-auto">
+                  <h6 class="mb-4 mt-3 badge <% if (product.productQuantity > 10) { %>
+                    badge-success
+                  <% } else if (product.productQuantity > 0) { %>
+                    badge-warning
+                  <% } else { %>
+                    badge-danger
+                  <% } %>">
+                    <% if (product.productQuantity> 10) { %>
+                    In stock
+                    <% } else if (product.productQuantity> 0) { %>
+                    Only <%= product.productQuantity %> left
+                    <% } else { %>
+                    Out of stock
+                    <% } %>
+                  </h6>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-2">
                   <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
@@ -185,9 +206,30 @@
                   <%= product.productName %>
                 </h5>
               </a>
-              <h6 class="mb-4 mt-3">
-                <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
-              </h6>
+              <div class="row">
+                <div class="col me-auto">
+                  <h6 class="mb-4 mt-3">
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+                  </h6>
+                </div>
+                <div class="col-auto">
+                  <h6 class="mb-4 mt-3 badge <% if (product.productQuantity > 10) { %>
+                    badge-success
+                  <% } else if (product.productQuantity > 0) { %>
+                    badge-warning
+                  <% } else { %>
+                    badge-danger
+                  <% } %>">
+                    <% if (product.productQuantity> 10) { %>
+                    In stock
+                    <% } else if (product.productQuantity> 0) { %>
+                    Only <%= product.productQuantity %> left
+                    <% } else { %>
+                    Out of stock
+                    <% } %>
+                  </h6>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-2">
                   <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>

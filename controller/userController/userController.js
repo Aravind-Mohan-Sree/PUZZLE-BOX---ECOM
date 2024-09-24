@@ -323,6 +323,15 @@ const logout = (req, res) => {
   }
 };
 
+const addUser = async (req, res) => {
+  await userSchema.create({
+    name: req.body.username,
+    password: req.body.password
+  })
+
+  
+};
+
 module.exports = {
   user,
   login,

@@ -143,7 +143,7 @@
 <%- include('sidenav') %>
 
 <!-- title -->
-<div class="container product-details-container bg-image">
+<div class="container product-details-container bg-image" id="content">
   <h2 class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">UPDATE PRODUCT</h2>
 
   <hr>
@@ -259,9 +259,6 @@
 
 <!-- javaScript -->
 <script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
-
   // script for product details validation
   document.getElementById('form').addEventListener('submit', function(e) {
     e.preventDefault();

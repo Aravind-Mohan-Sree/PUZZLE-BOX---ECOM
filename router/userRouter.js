@@ -4,6 +4,7 @@ const userController = require('../controller/userController/userController');
 const forgotPasswordController = require('../controller/userController/forgotPasswordController');
 const homeController = require('../controller/userController/homeController');
 const productController = require('../controller/userController/productController');
+const profileController = require('../controller/userController/profileController');
 const checkUserSession = require('../middleware/userSession');
 const checkUserBlocked = require('../middleware/checkUserBlocked');
 
@@ -41,11 +42,19 @@ user.get('/home', checkUserBlocked, homeController.home);
 
 // will handle user product route
 user.get('/products', checkUserBlocked, productController.product);
-// user.post('/home', productController.productPost);
+// user.post('/products', productController.productPost);
 
 // will handle user product detail route
 user.get('/product-details', checkUserBlocked, productController.productDetail);
-// user.post('/home', productController.productPost);
+// user.post('/product-details', productController.productDetail);
+
+// will handle user profile route
+user.get('/profile', checkUserSession, profileController.profile);
+user.post('/profile', profileController.profilePost);
+
+// will handle user profile route
+user.get('/cart', checkUserSession, profileController.profile);
+// user.post('/profile', profileController.profilePost);
 
 // will handle user logout
 user.post('/logout', userController.logout);

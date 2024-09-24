@@ -55,7 +55,7 @@
 </div>
 
 <!-- product table container -->
-<div data-mdb-datatable-init class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+<div data-mdb-datatable-init class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true" id="content">
   <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
     <table class="table datatable-table" id="exampleTable">
       <thead class="datatable-header">
@@ -64,7 +64,7 @@
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Category</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Price</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Stock</th>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Image</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_5" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_6" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_7" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
@@ -94,12 +94,7 @@
             </p>
           </td>
           <td style="" class="" data-mdb-field="field_4" false="">
-            <p class="fw-normal mb-1">
-              <%= new Date(product.createdAt).toDateString() %>
-            </p>
-            <p class="fw-normal mb-0">
-              <%= new Date(product.createdAt).toTimeString().slice(0, 8) %>
-            </p>
+            <img src="<%= product.productImage[0] %>" alt="" class="w-50 rounded-5">
           </td>
           <td style="" class="" data-mdb-field="field_5" false="">
             <p class="fw-normal mb-1 updated-date">

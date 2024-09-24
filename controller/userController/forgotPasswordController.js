@@ -58,7 +58,7 @@ const forgotPasswordPost = async (req, res) => {
 const changePassword = (req, res) => {
   try {
     if (req.session.email) {
-      res.render('user/changePassword', { title: 'Change Password', alert: req.flash('alert'), user: req.session.user });
+      res.render('user/changePassword', { title: 'Change Password', alert: req.flash('alert'), user: req.session.user, activeCategoryNames: [], content: '' });
     } else {
       res.redirect('/login');
     }

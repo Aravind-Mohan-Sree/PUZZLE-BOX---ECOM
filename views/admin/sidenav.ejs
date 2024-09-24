@@ -125,7 +125,7 @@
 </style>
 
 <!-- Sidenav -->
-<div id="full-screen-example" class="sidenav bg-light" data-mdb-color="dark" data-mdb-mode="side" data-mdb-hidden="false" data-mdb-scroll-container="#scrollContainer">
+<div id="full-screen-example" class="sidenav bg-light" data-mdb-color="dark" data-mdb-mode="side" data-mdb-hidden="false" data-mdb-scroll-container="#scrollContainer" data-mdb-content="#content">
   <div class="pt-5">
     <div id="header-content" class="ps-3">
       <h4>
@@ -298,4 +298,12 @@
   // dynamically adds margin to table container
   const navHeight1 = document.getElementsByTagName('nav')[0].offsetHeight;
   document.getElementById('full-screen-example').style.marginTop = `${navHeight1 - 1}px`;
+
+  // show or hide sidenav according to viewport width
+  let viewportWidth = document.documentElement.clientWidth;
+  
+  if (viewportWidth <= 660) {
+    sidenav.setAttribute('data-mdb-mode', 'over');
+    sidenav.setAttribute('data-mdb-hidden', 'true');
+  }
 </script>

@@ -69,8 +69,9 @@ const addProduct = async (req, res) => {
 const addProductPost = async (req, res) => {
   try {
     // check product already exist in the product collection
+    const checkProduct = await productSchema.findOne({ productName: { $regex: new RegExp(`^${req.body.productName}$`, 'i') } });
+
     const category = await categorySchema.findOne({ categoryName: req.body.productCategory });
-    const checkProduct = await productSchema.findOne({ productName: req.body.productName, productCategory: category._id });
 
     const productDimension = req.body.length + '-' + req.body.width + '-' + req.body.height;
 

@@ -1,10 +1,26 @@
-// checks if the user session exists, otherwise will be redirected to login page
-function checkUserSession (req, res, next) {
-  if (req.session.user) {
-    // will be redirect to next route
-    next();
-  } else {
-    res.redirect('/login');
+const userSchema = require("../model/userSchema");
+
+async function checkUserSession(req, res, next) {
+  try {
+    req.session.user = '66ee9333ea7cb10f8f5a34c6';
+    if (req.session.user) {
+      const userDetails = await userSchema.findById(req.session.user);
+
+      // if the logged user is blocked then delete the session and redirect to login
+      if (userDetails && !userDetails.isBlocked) {
+        next();
+      } else {
+        delete req.session.user;
+
+        res.redirect('/login');
+      }
+    } else {
+      // if user does not exist then redirect to login
+      res.redirect('/login')
+    }
+
+  } catch (err) {
+    console.error(`Error in checkUserSession middleware ${err}`);
   }
 }
 

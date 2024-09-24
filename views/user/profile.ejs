@@ -1,0 +1,176 @@
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  .profile-container {
+    flex-grow: 1;
+    padding-top: 6.25rem;
+    padding-bottom: 2.875rem;
+  }
+
+  .card input {
+    border: none;
+  }
+
+  .card input:focus-within {
+    border: none;
+    outline: none;
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
+<%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------------- profile container -------------------------- -->
+<div class="profile-container">
+  <!-- ----------------------- profile details section ----------------------- -->
+  <section>
+    <div class="container px-4 px-sm-2 pt-md-3">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <img src="/image/user.svg" alt="avatar" class="img-fluid" style="width: 150px;">
+              <h5 class="my-3 text-uppercase"><%= userDetails.name %></h5>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Full Name</p>
+                </div>
+                <div class="col-sm-9">
+                  <input type="text" value="<%= userDetails.name %>" class="w-100">
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Email</p>
+                </div>
+                <div class="col-sm-9">
+                  <input type="text" value="<%= userDetails.email %>" disabled class="w-100">
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Phone</p>
+                </div>
+                <div class="col-sm-9">
+                  <input type="tel" value="<%= userDetails.phone %>" class="w-100" placeholder="<%= userDetails.phone ? '' : 'type...' %>">
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Address</p>
+                </div>
+                <div class="col-sm-5">
+                  <select class="select" id="Address" data-mdb-select-init class="form-control" name="address">
+                    <% if (userDetails.address.length===0) { %>
+                      <option value="" disabled selected hidden>None</option>
+                    <% } %>
+                    <% userDetails.address.forEach(item=> { %>
+                    <option value="<%= category.categoryName %>">
+                      <%= category.categoryName %>
+                    </option>
+                    <% }) %>
+                  </select>
+                </div>
+                <div class="col">
+                  <button type="button" class="btn btn-dark">Edit</button>
+                  <!-- Button trigger modal -->
+                  <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
+                    add address
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+</div>
+</section>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ---------------------------- address modal ---------------------------- -->
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Enter Details</h5>
+        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="/profile" method="post">
+          <label class="form-label" for="form12">Contact Name <span class="text-danger">*</span></label>
+          <input type="text" id="form12" class="form-control mb-3" name="name" placeholder="type..." />
+
+          <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
+          <input type="tel" id="form12" class="form-control mb-3" name="phone" placeholder="type..." />
+
+          <label class="form-label" for="form12">Pincode <span class="text-danger">*</span></label>
+          <input type="tel" id="form12" class="form-control mb-3" name="pincode" placeholder="type..." />
+
+          <label class="form-label" for="form12">State <span class="text-danger">*</span></label>
+          <input type="text" id="form12" class="form-control mb-3" name="state" placeholder="type..." />
+
+          <label class="form-label" for="form12">City <span class="text-danger">*</span></label>
+          <input type="text" id="form12" class="form-control mb-3" name="city" placeholder="type..." />
+
+          <label class="form-label" for="form12">House No., Building Name <span class="text-danger">*</span></label>
+          <input type="text" id="form12" class="form-control mb-3" name="house" placeholder="type..." />
+
+          <label class="form-label" for="form12">Road Name, Area, Colony <span class="text-danger">*</span></label>
+          <input type="text" id="form12" class="form-control mb-3" name="area" placeholder="type..." />
+
+          <label class="form-label" for="form12">Landmark (optional)</label>
+          <input type="text" id="form12" class="form-control mb-2" name="landmark" placeholder="type..." />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" data-mdb-ripple-init>Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- testimonials included --------------------------- -->
+<%- include('testimonial') %>
+<!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal Initialization
+    const modalElement = document.getElementById('exampleModal');
+    let modalInstance = mdb.Modal.getInstance(modalElement);
+
+    // If no instance exists, create a new one
+    if (!modalInstance) {
+      modalInstance = new mdb.Modal(modalElement);
+    }
+
+    // Open modal on button click
+    document.getElementById('open-modal-btn').addEventListener('click', function() {
+      modalInstance.show();
+    });
+  });
+</script>
+<!-- ----------------------------------------------------------------------- -->
