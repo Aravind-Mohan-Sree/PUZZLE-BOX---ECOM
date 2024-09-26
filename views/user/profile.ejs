@@ -3,7 +3,6 @@
   .profile-container {
     flex-grow: 1;
     padding-top: 6.25rem;
-    padding-bottom: 2.875rem;
   }
 
   .card input {
@@ -13,6 +12,38 @@
   .card input:focus-within {
     border: none;
     outline: none;
+  }
+
+  small {
+    display: none;
+    font-size: .75rem;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
+
+  #change-password:hover {
+    cursor: pointer;
+    text-decoration: none !important;
   }
 </style>
 <!-- ----------------------------------------------------------------------- -->
@@ -37,13 +68,14 @@
         </div>
         <div class="col-lg-8">
           <div class="card mb-4">
-            <div class="card-body">
+            <div class="card-body" id="profile-detail-body">
               <div class="row">
                 <div class="col-sm-3">
                   <p class="mb-0">Full Name</p>
                 </div>
                 <div class="col-sm-9">
-                  <input type="text" value="<%= userDetails.name %>" class="w-100">
+                  <input type="text" value="<%= userDetails.name %>" class="w-100 border-bottom border-dark" name="userName">
+                  <small class="text-danger" id="username-alert"></small>
                 </div>
               </div>
               <hr>
@@ -61,28 +93,35 @@
                   <p class="mb-0">Phone</p>
                 </div>
                 <div class="col-sm-9">
-                  <input type="tel" value="<%= userDetails.phone %>" class="w-100" placeholder="<%= userDetails.phone ? '' : 'type...' %>">
+                  <input type="tel" value="<%= userDetails.phone %>" class="w-100 border-bottom border-dark" placeholder="<%= userDetails.phone ? '' : 'type...' %>" name="userPhone">
+                  <small class="text-danger" id="user-phone-alert"></small>
                 </div>
               </div>
               <hr>
               <div class="row">
+                <div class="col-auto">
+                  <p class="mb-0 text-decoration-underline" id="change-password">Change Password</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row" id="row">
                 <div class="col-sm-3">
                   <p class="mb-0">Address</p>
                 </div>
                 <div class="col-sm-5">
-                  <select class="select" id="Address" data-mdb-select-init class="form-control" name="address">
+                  <select id="address" data-mdb-select-init class="form-control select" name="address">
                     <% if (userDetails.address.length===0) { %>
-                      <option value="" disabled selected hidden>None</option>
+                    <option value="" disabled selected hidden>None</option>
                     <% } %>
-                    <% userDetails.address.forEach(item=> { %>
-                    <option value="<%= category.categoryName %>">
-                      <%= category.categoryName %>
+                    <% userDetails.address.forEach((item, index)=> { %>
+                    <option value="<%= index %>">
+                      <%= item.contactName + ', ' + item.house + ', ' + item.area + ', ' + item.city + ', ' + item.state + ', ' + item.pincode + ', ' + item.phone %>
                     </option>
                     <% }) %>
                   </select>
                 </div>
                 <div class="col">
-                  <button type="button" class="btn btn-dark">Edit</button>
+                  <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
                   <!-- Button trigger modal -->
                   <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
                     add address
@@ -100,49 +139,67 @@
 </section>
 <!-- ----------------------------------------------------------------------- -->
 
-<!-- ---------------------------- address modal ---------------------------- -->
+<!-- ---------------------------- add address modal ---------------------------- -->
 <!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Enter Details</h5>
-        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form action="/profile" method="post">
-          <label class="form-label" for="form12">Contact Name <span class="text-danger">*</span></label>
-          <input type="text" id="form12" class="form-control mb-3" name="name" placeholder="type..." />
+<form action="/add-address" method="post" id="form">
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Enter Details</h5>
+          <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="position-relative">
+            <label class="form-label" for="form12">Contact Name <span class="text-danger">*</span></label>
+            <input type="text" id="form12" class="form-control mb-3" name="contactName" placeholder="type..." />
+            <small class="contact-name-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
-          <input type="tel" id="form12" class="form-control mb-3" name="phone" placeholder="type..." />
+          <div class="position-relative">
+            <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
+            <input type="tel" id="form12" class="form-control mb-3" name="phone" placeholder="type..." />
+            <small class="phone-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">Pincode <span class="text-danger">*</span></label>
-          <input type="tel" id="form12" class="form-control mb-3" name="pincode" placeholder="type..." />
+          <div class="position-relative">
+            <label class="form-label" for="form12">Pincode <span class="text-danger">*</span></label>
+            <input type="tel" id="form12" class="form-control mb-3" name="pincode" placeholder="type..." />
+            <small class="pincode-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">State <span class="text-danger">*</span></label>
-          <input type="text" id="form12" class="form-control mb-3" name="state" placeholder="type..." />
+          <div class="position-relative">
+            <label class="form-label" for="form12">State <span class="text-danger">*</span></label>
+            <input type="text" id="form12" class="form-control mb-3" name="state" placeholder="type..." />
+            <small class="state-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">City <span class="text-danger">*</span></label>
-          <input type="text" id="form12" class="form-control mb-3" name="city" placeholder="type..." />
+          <div class="position-relative">
+            <label class="form-label" for="form12">City <span class="text-danger">*</span></label>
+            <input type="text" id="form12" class="form-control mb-3" name="city" placeholder="type..." />
+            <small class="city-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">House No., Building Name <span class="text-danger">*</span></label>
-          <input type="text" id="form12" class="form-control mb-3" name="house" placeholder="type..." />
+          <div class="position-relative">
+            <label class="form-label" for="form12">House No., Building Name <span class="text-danger">*</span></label>
+            <input type="text" id="form12" class="form-control mb-3" name="house" placeholder="type..." />
+            <small class="house-alert position-absolute top-100 text-danger"></small>
+          </div>
 
-          <label class="form-label" for="form12">Road Name, Area, Colony <span class="text-danger">*</span></label>
-          <input type="text" id="form12" class="form-control mb-3" name="area" placeholder="type..." />
-
-          <label class="form-label" for="form12">Landmark (optional)</label>
-          <input type="text" id="form12" class="form-control mb-2" name="landmark" placeholder="type..." />
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-mdb-ripple-init>Save changes</button>
+          <div class="position-relative">
+            <label class="form-label" for="form12">Road Name, Area, Colony <span class="text-danger">*</span></label>
+            <input type="text" id="form12" class="form-control mb-3" name="area" placeholder="type..." />
+            <small class="area-alert position-absolute top-100 text-danger"></small>
+          </div>
+        </div>
+        <div class="modal-footer mx-auto">
+          <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Save</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</form>
 <!-- ----------------------------------------------------------------------- -->
 
 <!-- --------------------------- testimonials included --------------------------- -->
@@ -170,6 +227,432 @@
     // Open modal on button click
     document.getElementById('open-modal-btn').addEventListener('click', function() {
       modalInstance.show();
+    });
+
+    // address validation
+    document.querySelector('body').addEventListener('submit', function(event) {
+      const target = event.target;
+
+      if (target.id === 'form' || target.id === 'form2') {
+        event.preventDefault();
+        const formElement = document.getElementById(target.id);
+
+        const contactName = formElement.querySelector('input[name="contactName"]').value;
+        const phone = formElement.querySelector('input[name="phone"]').value;
+        const pincode = formElement.querySelector('input[name="pincode"]').value;
+        const state = formElement.querySelector('input[name="state"]').value;
+        const city = formElement.querySelector('input[name="city"]').value;
+        const house = formElement.querySelector('input[name="house"]').value;
+        const area = formElement.querySelector('input[name="area"]').value;
+
+        const contactNameAlert = formElement.querySelectorAll('.contact-name-alert');
+        const phoneAlert = formElement.querySelectorAll('.phone-alert');
+        const pincodeAlert = formElement.querySelectorAll('.pincode-alert');
+        const stateAlert = formElement.querySelectorAll('.state-alert');
+        const cityAlert = formElement.querySelectorAll('.city-alert');
+        const houseAlert = formElement.querySelectorAll('.house-alert');
+        const areaAlert = formElement.querySelectorAll('.area-alert');
+
+        // Hide all alerts before validation
+        [contactNameAlert, phoneAlert, pincodeAlert, stateAlert, cityAlert, houseAlert, areaAlert].forEach(alerts => {
+          alerts.forEach(alert => alert.style.display = 'none');
+        });
+
+        let hasErrors = false;
+
+        // Validate contact name
+        if (contactName === '' || /[^\w\s]/.test(contactName) || /\d/.test(contactName) || /^\s|\s{2,}|\s$/.test(contactName) || contactName.replace(/\s+/g, '').length < 3 || contactName.replace(/\s+/g, '').length > 15) {
+          contactNameAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (contactName === '') {
+              alert.innerText = 'Name is required';
+            } else if (/[^\w\s]/.test(contactName)) {
+              alert.innerText = `Name can't contain special characters`;
+            } else if (/\d/.test(contactName)) {
+              alert.innerText = `Name can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(contactName)) {
+              alert.innerText = `Name can't contain unwanted spaces`;
+            } else if (contactName.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `Name minimum length is 3`;
+            } else {
+              alert.innerText = `Name maximum length is 15`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // Validate phone
+        if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+          phoneAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (phone === '') {
+              alert.innerText = `Phone is required`;
+            } else if (/[a-zA-Z]/.test(phone)) {
+              alert.innerText = `Phone can't contain alphabets`;
+            } else if (/[^\w\s]/.test(phone)) {
+              alert.innerText = `Phone can't contain special characters`;
+            } else if (/\s/.test(phone)) {
+              alert.innerText = `Phone can't contain spaces`;
+            } else {
+              alert.innerText = `Phone length must be 10`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // Validate pincode
+        if (pincode === '' || /[a-zA-Z]/.test(pincode) || /[^\w\s]/.test(pincode) || /\s/.test(pincode) || pincode.length < 4 || pincode.length > 10) {
+          pincodeAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (pincode === '') {
+              alert.innerText = `Pincode is required`;
+            } else if (/[a-zA-Z]/.test(pincode)) {
+              alert.innerText = `Pincode can't contain alphabets`;
+            } else if (/[^\w\s]/.test(pincode)) {
+              alert.innerText = `Pincode can't contain special characters`;
+            } else if (/\s/.test(pincode)) {
+              alert.innerText = `Pincode can't contain spaces`;
+            } else if (pincode.length < 4) {
+              alert.innerText = `Minimum length is 4`;
+            } else {
+              alert.innerText = `Maximum length is 10`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (state === '' || /[^\w\s]/.test(state) || /\d/.test(state) || /^\s|\s{2,}|\s$/.test(state) || state.replace(/\s+/g, '').length < 3 || state.replace(/\s+/g, '').length > 36) {
+          stateAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (state === '') {
+              alert.innerText = 'State is required';
+            } else if (/[^\w\s]/.test(state)) {
+              alert.innerText = `State can't contain special characters`;
+            } else if (/\d/.test(state)) {
+              alert.innerText = `State can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(state)) {
+              alert.innerText = `State can't contain unwanted spaces`;
+            } else if (state.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `State minimum length is 3`;
+            } else {
+              alert.innerText = `State maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (city === '' || /[^\w\s]/.test(city) || /\d/.test(city) || /^\s|\s{2,}|\s$/.test(city) || city.replace(/\s+/g, '').length < 3 || city.replace(/\s+/g, '').length > 36) {
+          cityAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (city === '') {
+              alert.innerText = 'City is required';
+            } else if (/[^\w\s]/.test(city)) {
+              alert.innerText = `City can't contain special characters`;
+            } else if (/\d/.test(city)) {
+              alert.innerText = `City can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(city)) {
+              alert.innerText = `City can't contain unwanted spaces`;
+            } else if (city.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `City minimum length is 3`;
+            } else {
+              alert.innerText = `City maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (house === '' || /^\s|\s{2,}|\s$/.test(house) || house.replace(/\s+/g, '').length < 8 || house.replace(/\s+/g, '').length > 36) {
+          houseAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (house === '') {
+              alert.innerText = 'Field is required';
+            } else if (/^\s|\s{2,}|\s$/.test(house)) {
+              alert.innerText = `Can't contain unwanted spaces`;
+            } else if (house.replace(/\s+/g, '').length < 8) {
+              alert.innerText = `Minimum length is 8`;
+            } else {
+              alert.innerText = `Maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (area === '' || /^\s|\s{2,}|\s$/.test(area) || area.replace(/\s+/g, '').length < 8 || area.replace(/\s+/g, '').length > 36) {
+          areaAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (area === '') {
+              alert.innerText = 'Field is required';
+            } else if (/^\s|\s{2,}|\s$/.test(area)) {
+              alert.innerText = `Can't contain unwanted spaces`;
+            } else if (area.replace(/\s+/g, '').length < 8) {
+              alert.innerText = `Minimum length is 8`;
+            } else {
+              alert.innerText = `Maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // If no errors, submit the form
+        if (!hasErrors) {
+          formElement.submit();
+        }
+      }
+    });
+
+    // for editing user address
+    let index;
+    let addresses = JSON.parse('<%- JSON.stringify(userDetails.address) %>');
+
+    document.getElementById('address').addEventListener('change', function() {
+      index = this.value;
+    })
+
+    function createAndShowModalForm() {
+      index = index || document.getElementById('address').value;
+      const selectedAddress = addresses[index];
+
+      // Check if the modal already exists
+      let existingModal = document.getElementById('form2');
+      if (existingModal) {
+        // If it exists, remove it
+        existingModal.remove();
+      }
+
+      const form = document.createElement('form');
+      form.action = `/update-address?index=${index}`;
+      form.method = "post";
+      form.id = "form2";
+
+      const modalHTML = `
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Details</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ${createInputField("contact-name", "Contact Name", "contactName", "text", `${selectedAddress.contactName}`)}
+            ${createInputField("phone", "Phone Number", "phone", "tel", `${selectedAddress.phone}`)}
+            ${createInputField("pincode", "Pincode", "pincode", "tel", `${selectedAddress.pincode}`)}
+            ${createInputField("state", "State", "state", "text", `${selectedAddress.state}`)}
+            ${createInputField("city", "City", "city", "text", `${selectedAddress.city}`)}
+            ${createInputField("house", "House No., Building Name", "house", "text", `${selectedAddress.house}`)}
+            ${createInputField("area", "Road Name, Area, Colony", "area", "text", `${selectedAddress.area}`)}
+          </div>
+          <div class="modal-footer mx-auto">
+            <button type="button" class="btn btn-dark" data-mdb-dismiss="modal">Close</button>
+            <button id="delete-address" type="button" class="btn btn-dark">Delete</button>
+            <button type="submit" class="btn btn-dark">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+      form.innerHTML = modalHTML;
+      document.body.appendChild(form);
+
+      // Initialize the modal
+      const modal = new mdb.Modal(document.getElementById('exampleModal2'));
+
+      // Show the modal
+      modal.show();
+    }
+
+    function createInputField(className, label, name, type, value) {
+      return `
+    <div class="position-relative">
+      <label class="form-label" for="${name}">${label} <span class="text-danger">*</span></label>
+      <input type="${type}" id="${name}" class="form-control mb-3" name="${name}" placeholder="type..." value="${value}" />
+      <small class="position-absolute top-100 text-danger ${className}-alert"></small>
+    </div>
+  `;
+    }
+
+    // Event listener for the button click
+    document.getElementById('createModalButton').addEventListener('click', createAndShowModalForm);
+
+    // using fetch for deleting user address
+    document.querySelector('body').addEventListener('click', function(event) {
+      const target = event.target;
+
+      if (target.id === 'delete-address') {
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/delete-address?index=${index}`, {
+                method: "GET"
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.log(error);
+                } else {
+                  window.location.href = data.url;
+                }
+              })
+          }
+        })
+      }
+    });
+
+    // for listening user profile detail changes
+    const modalBody = document.getElementById('profile-detail-body');
+    const updateButton = document.createElement('button');
+    updateButton.innerText = 'update profile';
+    updateButton.classList.add('btn', 'btn-dark', 'mt-4');
+    updateButton.id = 'update-profile';
+
+    modalBody.addEventListener('input', function() {
+      modalBody.querySelector('#row').appendChild(updateButton);
+    })
+
+    // for updating user details
+    modalBody.addEventListener('click', function(event) {
+      const target = event.target;
+
+      if (target.id === 'update-profile') {
+        event.preventDefault();
+
+        const contactName = document.getElementsByName('userName')[0].value;
+        const phone = document.getElementsByName('userPhone')[0].value;
+
+        const contactNameAlert = document.getElementById('username-alert');
+        const phoneAlert = document.getElementById('user-phone-alert');
+
+        contactNameAlert.style.display = 'none';
+        phoneAlert.style.display = 'none';
+
+        let hasErrors = false;
+
+        if (contactName === '' || /[^\w\s]/.test(contactName) || /\d/.test(contactName) || /^\s|\s{2,}|\s$/.test(contactName) || contactName.replace(/\s+/g, '').length < 3 || contactName.replace(/\s+/g, '').length > 15) {
+          contactNameAlert.style.display = 'inline';
+
+          if (contactName === '') {
+            contactNameAlert.innerText = 'Name is required';
+          } else if (/[^\w\s]/.test(contactName)) {
+            contactNameAlert.innerText = `Name can't contain special characters`;
+          } else if (/\d/.test(contactName)) {
+            contactNameAlert.innerText = `Name can't contain numbers`;
+          } else if (/^\s|\s{2,}|\s$/.test(contactName)) {
+            contactNameAlert.innerText = `Name can't contain unwanted spaces`;
+          } else if (contactName.replace(/\s+/g, '').length < 3) {
+            contactNameAlert.innerText = `Name minimum length is 3`;
+          } else {
+            contactNameAlert.innerText = `Name maximum length is 15`;
+          }
+
+          hasErrors = true;
+        }
+
+        if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+          phoneAlert.style.display = 'inline';
+
+          if (phone === '') {
+            phoneAlert.innerText = `Phone is required`;
+          } else if (/[a-zA-Z]/.test(phone)) {
+            phoneAlert.innerText = `Phone can't contain alphabets`;
+          } else if (/[^\w\s]/.test(phone)) {
+            phoneAlert.innerText = `Phone can't contain special characters`;
+          } else if (/\s/.test(phone)) {
+            phoneAlert.innerText = `Phone can't contain spaces`;
+          } else {
+            phoneAlert.innerText = `Phone length must be 10`;
+          }
+
+          hasErrors = true;
+        }
+
+        if (!hasErrors) {
+          fetch(`/profile?updateProfile=${true}`, {
+              method: "POST",
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                contactName,
+                phone
+              })
+            }).then(response => response.json())
+            .then(data => {
+              if (data.error) {
+                console.log(error);
+              } else {
+                window.location.href = data.url;
+              }
+            })
+        }
+      }
+    });
+
+    // change password prompt
+    document.getElementById('change-password').addEventListener('click', function(event) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will be logged out",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        allowOutsideClick: false,
+        customClass: {
+          container: 'swal-css'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/forgot-password';
+        }
+      })
     });
   });
 </script>

@@ -26,7 +26,7 @@ const login = async (req, res) => {
       }
 
       if (req.query.logout) {
-        req.flash('alert', { message: 'Logout successful!', color: 'bg-danger' });
+        req.flash('alert', { message: 'Logout successful!', color: 'bg-success' });
       }
 
       if (req.query.isBlocked) {

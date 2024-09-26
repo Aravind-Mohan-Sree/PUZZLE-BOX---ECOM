@@ -6,7 +6,11 @@ const dotEnv = require('dotenv').config();
 const session = require('express-session');
 // create layout header for both user and admin
 const expressLayouts = require('express-ejs-layouts');
-const {v4: uuidv4} = require('uuid');
+const { v4: uuidv4 } = require('uuid');
+
+// requiring schemas
+const productSchema = require('./model/productSchema');
+const categorySchema = require('./model/categorySchema');
 
 // admin and user routers
 const adminRouters = require('./router/adminRouter');
@@ -53,14 +57,14 @@ app.use('/cropperjs', express.static(path.join(__dirname, 'node_modules', 'cropp
 
 // will parse incoming request bodies and can be used for further processing
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 // manages the session
 app.use(session({
   secret: uuidv4(),
   resave: false,
   saveUninitialized: true,
-  cookie: {secure: false}
+  cookie: { secure: false }
 }));
 
 // mounting and initialization of 'passport'
@@ -78,8 +82,16 @@ app.use('/', userRouters);
 app.use('/admin', adminRouters);
 
 // for handling unspecified routes
-app.get('*', (req, res) => {
-  res.render('pageNotFound', {title: 'Page not found', alert: req.flash('alert'), user: req.session.user});
+app.get('*', async (req, res) => {
+  const activeCategories = await productSchema.find({
+    isActive: true,
+    productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+  })
+    .populate('productCategory');
+
+  const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+  res.render('pageNotFound', { title: 'Page not found', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
 });
 
 // listening port

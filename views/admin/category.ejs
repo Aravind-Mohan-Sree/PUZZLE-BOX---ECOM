@@ -80,12 +80,12 @@
       <tbody class="datatable-body">
         <% categories.forEach(category=> { %>
         <tr>
-          <td style="" class="" data-mdb-field="field_0" false="">
+          <td class="" data-mdb-field="field_0" false="">
             <p class="fw-bold mb-1 name">
               <%= category.categoryName %>
             </p>
           </td>
-          <td style="" class="" data-mdb-field="field_1" false="">
+          <td class="" data-mdb-field="field_1" false="">
             <p class="fw-normal mb-1">
               <%= new Date(category.createdAt).toDateString() %>
             </p>
@@ -93,7 +93,7 @@
               <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
             </p>
           </td>
-          <td style="" class="" data-mdb-field="field_2" false="">
+          <td class="" data-mdb-field="field_2" false="">
             <p class="fw-normal mb-1 updated-date">
               <%= new Date(category.updatedAt).toDateString() %>
             </p>
@@ -101,12 +101,12 @@
               <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
             </p>
           </td>
-          <td style="" class="" data-mdb-field="field_3" false="">
+          <td class="" data-mdb-field="field_3" false="">
             <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
               <%= category.isActive ? 'Active' : 'Inactive' %>
             </span>
           </td>
-          <td style="" class="" data-mdb-field="field_4" false="">
+          <td class="" data-mdb-field="field_4" false="">
             <!-- active/inactive button -->
             <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
               <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>

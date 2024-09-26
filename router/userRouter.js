@@ -50,7 +50,10 @@ user.get('/product-details', checkUserBlocked, productController.productDetail);
 
 // will handle user profile route
 user.get('/profile', checkUserSession, profileController.profile);
-user.post('/profile', profileController.profilePost);
+user.post('/profile', checkUserSession, profileController.profilePost);
+user.post('/add-address', checkUserSession, profileController.addAddress);
+user.post('/update-address', checkUserSession, profileController.updateAddress);
+user.get('/delete-address', checkUserSession, profileController.deleteAddress);
 
 // will handle user profile route
 user.get('/cart', checkUserSession, profileController.profile);

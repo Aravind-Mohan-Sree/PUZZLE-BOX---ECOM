@@ -5,19 +5,27 @@ const addressSchema = new mongoose.Schema({
     type: String
   },
 
+  phone: {
+    type: Number
+  },
+
   pincode: {
     type: Number
   },
 
-  homeAddress: {
+  state: {
     type: String
   },
 
-  areaAddress: {
+  city: {
     type: String
   },
 
-  landmark: {
+  house: {
+    type: String
+  },
+
+  area: {
     type: String
   }
 }, {_id: false});
