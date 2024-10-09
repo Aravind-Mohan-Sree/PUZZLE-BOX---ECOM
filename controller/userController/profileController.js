@@ -1,6 +1,7 @@
 const userSchema = require('../../model/userSchema');
 const categorySchema = require('../../model/categorySchema');
 const productSchema = require('../../model/productSchema');
+const bcrypt = require('bcrypt');
 
 /* ------------------------ will render profile page ------------------------ */
 const profile = async (req, res) => {
@@ -17,7 +18,7 @@ const profile = async (req, res) => {
 
       const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
 
-      res.render('user/profile', { title: 'Home', alert: req.flash('alert'), user: req.session.user, userDetails, activeCategoryNames, content: '' })
+      res.render('user/profile', { title: 'Profile', alert: req.flash('alert'), user: req.session.user, userDetails, activeCategoryNames, content: '' })
     } else {
       req.flash('alert', { message: 'An error occurred while getting user details. Try again later', color: 'bg-danger' });
       res.redirect('/home');
@@ -45,7 +46,7 @@ const profilePost = async (req, res) => {
     }
   } catch (err) {
     res.json({ error: true });
-    
+
     console.log('Error while updating user details');
   }
 };
@@ -134,10 +135,41 @@ const deleteAddress = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------ for updating user password ----------------------- */
+const updatePassword = async (req, res, next) => {
+  try {
+    const userDetails = await userSchema.findById(req.session.user);
+    const currentPassword = req.body.currentPassword;
+    const newPassword = req.body.password;
+
+    if (!newPassword) {
+      if (await bcrypt.compare(currentPassword, userDetails.password)) {
+        res.json({ exist: true });
+      } else {
+        res.json({ exist: false });
+      }
+    }
+
+    if (newPassword) {
+      await userSchema.updateOne({ _id: req.session.user }, { password: await bcrypt.hash(req.body.password, 10) });
+
+      req.flash('alert', { message: 'Password updated successfully!', color: 'bg-success' });
+
+      res.json({ url: '/profile' });
+    }
+  } catch (err) {
+    res.json({error: true});
+
+    console.log('Error while updating user password', err);
+  };
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   profile,
   profilePost,
   addAddress,
   updateAddress,
-  deleteAddress
+  deleteAddress,
+  updatePassword
 };

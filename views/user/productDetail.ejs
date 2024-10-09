@@ -41,6 +41,28 @@
   #add-to-cart {
     height: 2.205rem;
   }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -52,7 +74,7 @@
 <div class="product-detail-container">
   <!-- ----------------------- product highlight section ------------------------ -->
   <section>
-    <div class="container px-4 px-sm-2 pt-md-3">  
+    <div class="container px-4 px-sm-2 pt-md-3">
       <div class="row">
         <div class="col-12 col-md-5 col-lg-4">
           <div class="rounded-9 main-image-container overflow-hidden">
@@ -102,14 +124,7 @@
           <h4 class="mt-5 mb-3 text-decoration-underline">Description</h4>
           <p class=""><%= product.productDescription %></p>
           <div class="row mt-5">
-            <div class="col-12 col-md-6 col-lg-4 col-xl-3 pb-4 pb-md-0">
-              <div class="input-group">
-                <button class="btn btn-dark minus-btn"><i class="fa-regular fa-minus"></i></button>
-                <input type="text" class="form-control text-center fw-semibold number-input" aria-label="" value="1" disabled />
-                <button class="btn btn-dark plus-btn"><i class="fa-regular fa-plus"></i></button>
-              </div>
-            </div>
-            <div class="col col-md-6 col-lg-8 offset-xl-1">
+            <div class="col col-md-6 col-lg-8">
               <button id="add-to-cart" class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping fa-bounce me-3" style="color: #ffffff;"></i>add to cart</button>
             </div>
           </div>
@@ -371,5 +386,26 @@
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
   }
+
+  // using fetch for adding product to cart
+  document.getElementById('add-to-cart').addEventListener('click', function() {
+    const productId = JSON.parse('<%- JSON.stringify(product._id) %>');
+    const productPrice = JSON.parse('<%- JSON.stringify(product.productPrice) %>');
+
+    fetch(`/add-to-cart?productId=${productId}&productPrice=${productPrice}`, {
+        method: 'POST',
+      }).then(response => response.json())
+      .then(data => {
+        Swal.fire({
+          title: 'Success!',
+          text: data.success,
+          confirmButtonText: 'OK',
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        });
+      })
+  });
 </script>
 <!-- ----------------------------------------------------------------------- -->

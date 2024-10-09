@@ -1,3 +1,4 @@
+const userSchema = require('../../model/userSchema');
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
 
@@ -17,10 +18,11 @@ const home = async (req, res) => {
 
     const activeCategoryNames = Array.from(new Set(activeProducts.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
 
+    const users = await userSchema.find({ isBlocked: false });
     const latestProducts = activeProducts.sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
     const topProducts = activeProducts.sort((a, b) => a.productName.localeCompare(b.productName)).slice(0, 4);
 
-    res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, activeProducts, latestProducts, topProducts, activeCategoryNames, content: '' });
+    res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, users, activeProducts, latestProducts, topProducts, activeCategoryNames, content: '' });
   } catch (err) {
     console.log('Error while rendering user home page', err);
   }

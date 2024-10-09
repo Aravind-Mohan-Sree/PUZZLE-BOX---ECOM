@@ -7,6 +7,8 @@ const product = async (req, res) => {
     let selectedCategory;
     let content;
     const search = req.query.searchTerm || '';
+    const minPrice = parseFloat(req.query.minPrice) || 0;
+    const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
 
     // Pagination parameters
     const productsPerPage = 8;
@@ -30,17 +32,32 @@ const product = async (req, res) => {
       productName: { $regex: search, $options: "i" },
       productCategory: productCategoryQuery,
       isActive: true,
-      // productPrice: { $gte: minPrice, $lte: maxPrice },
+      productDiscountedPrice: { $gte: minPrice, $lte: maxPrice },
       // productRating: { $gte: productRating }
     };
 
     const productsCount = await productSchema.countDocuments(productQuery);
 
-    const activeProducts = await productSchema.find(productQuery)
-      .sort({ createdAt: -1 })
+    const activeProductsQuery = productSchema.find(productQuery)
       .skip(skip)
       .limit(productsPerPage)
       .populate('productCategory');
+
+    // apply sorting only if a option is selected
+    if (req.query.sort) {
+      if (req.query.sort === 'lowToHigh' || req.query.sort === 'highToLow') {
+        const sortOrder = req.query.sort === 'lowToHigh' ? 1 : -1;
+        activeProductsQuery.sort({ productDiscountedPrice: sortOrder });
+      } else if (req.query.sort === 'aToZ' || req.query.sort === 'zToA') {
+        const sortOrder = req.query.sort === 'aToZ' ? 1 : -1;
+        activeProductsQuery.sort({ productName: sortOrder });
+      } else {
+        const sortOrder = -1;
+        activeProductsQuery.sort({ createdAt: sortOrder });
+      }      
+    }
+
+    const activeProducts = await activeProductsQuery;
 
     if (activeProducts.length === 0) {
       req.flash('alert', { message: 'Nothing match your search', color: 'bg-danger' });
@@ -60,7 +77,11 @@ const product = async (req, res) => {
       user: req.session.user,
       activeProducts,
       activeCategoryNames,
+      search,
       selectedCategory,
+      minPrice,
+      maxPrice,
+      sort: req.query.sort,
       pageNumber: Math.ceil(productsCount / productsPerPage),
       currentPage,
       totalPages: productsCount,

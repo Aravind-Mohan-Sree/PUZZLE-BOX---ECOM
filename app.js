@@ -94,6 +94,23 @@ app.get('*', async (req, res) => {
   res.render('pageNotFound', { title: 'Page not found', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
 });
 
+// error handling middleware
+app.use(async (err, req, res, next) => {
+  console.error(err.stack);
+
+  res.status(err.status || 500);
+
+  const activeCategories = await productSchema.find({
+    isActive: true,
+    productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
+  })
+    .populate('productCategory');
+
+  const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+
+  res.render('error', { title: 'Error', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '', message: err.message || 'Internal Server Error' });
+});
+
 // listening port
 app.listen(port, (err) => {
   if (err) {

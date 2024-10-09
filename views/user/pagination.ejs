@@ -6,7 +6,7 @@
     </li>
     <% for(let i = 1; i <= pageNumber; i++) { %>
     <li class="page-item">
-      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+      <a class="page-link" href="?page=<%= i %>&searchTerm=<%= search %>&minPrice=<%= minPrice %>&maxPrice=<%= maxPrice %>&productCategory=<%= selectedCategory %>&sort=<%= sort %>"><%= i %></a>
     </li>
     <% } %>
     <li class="page-item">
@@ -16,19 +16,24 @@
 </nav>
 <!-- ----------------------------------------------------------------------- -->
 
+
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   // next page
   function nextPage(currentPage, totalPage) {
     if (Number(currentPage) < Number(totalPage)) {
-      window.location.href = `?page=${Number(currentPage)+1}`
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', Number(currentPage) + 1);
+      window.location.href = `?${params.toString()}`;
     }
   }
 
   // previous page
   function previousPage(currentPage) {
     if ((Number(currentPage) - 1) != 0) {
-      window.location.href = `?page=${Number(currentPage)-1}`
+      const params = new URLSearchParams(window.location.search);
+      params.set('page', Number(currentPage) - 1);
+      window.location.href = `?${params.toString()}`;
     }
   }
 </script>

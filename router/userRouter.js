@@ -5,6 +5,8 @@ const forgotPasswordController = require('../controller/userController/forgotPas
 const homeController = require('../controller/userController/homeController');
 const productController = require('../controller/userController/productController');
 const profileController = require('../controller/userController/profileController');
+const cartController = require('../controller/userController/cartController');
+const updateNavbarController = require('../controller/userController/updateNavbarController');
 const checkUserSession = require('../middleware/userSession');
 const checkUserBlocked = require('../middleware/checkUserBlocked');
 
@@ -54,10 +56,14 @@ user.post('/profile', checkUserSession, profileController.profilePost);
 user.post('/add-address', checkUserSession, profileController.addAddress);
 user.post('/update-address', checkUserSession, profileController.updateAddress);
 user.get('/delete-address', checkUserSession, profileController.deleteAddress);
+user.post('/update-password', checkUserSession, profileController.updatePassword);
 
-// will handle user profile route
-user.get('/cart', checkUserSession, profileController.profile);
-// user.post('/profile', profileController.profilePost);
+// will handle user cart route
+user.get('/cart', checkUserSession, cartController.cart);
+user.post('/add-to-cart', checkUserSession, cartController.addToCartPost);
+
+// will handle update navbar route
+user.post('/update-navbar', updateNavbarController.updateNavbarPost);
 
 // will handle user logout
 user.post('/logout', userController.logout);

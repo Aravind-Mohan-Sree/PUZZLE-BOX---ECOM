@@ -40,11 +40,6 @@
     box-shadow: none;
     border-color: rgb(255, 255, 255);
   }
-
-  #change-password:hover {
-    cursor: pointer;
-    text-decoration: none !important;
-  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -99,33 +94,54 @@
               </div>
               <hr>
               <div class="row">
-                <div class="col-auto">
-                  <p class="mb-0 text-decoration-underline" id="change-password">Change Password</p>
+                <div class="col-sm-3">
+                  <p class="mb-0">Change Password</p>
+                </div>
+                <div class="col-sm-9">
+                  <div class="mb-3">
+                    <input type="text" value="" class="w-100 border-bottom border-dark" placeholder="Enter current password" name="currentPassword">
+                    <small class="text-danger" id="current-password-alert"></small>
+                  </div>
+                  <div>
+                    <input type="text" value="" class="w-100 border-bottom border-dark" placeholder="Enter new password" name="newPassword">
+                    <small class="text-danger" id="new-password-alert"></small>
+                  </div>
+                  <button class="btn btn-sm btn-dark mt-3" id="change-password">update</button>
                 </div>
               </div>
               <hr>
-              <div class="row" id="row">
-                <div class="col-sm-3">
-                  <p class="mb-0">Address</p>
+              <div class="row">
+                <div class="row pe-0">
+                  <div class="col-sm-3">
+                    <p class="mb-0">Address</p>
+                  </div>
+                  <div class="pe-0 col-sm-9">
+                    <select id="address" data-mdb-select-init class="form-control select" name="address">
+                      <% if (userDetails.address.length===0) { %>
+                      <option value="" disabled selected hidden>None</option>
+                      <% } %>
+                      <% userDetails.address.forEach((item, index)=> { %>
+                      <option value="<%= index %>">
+                        <%= item.contactName + ', ' + item.house + ', ' + item.area + ', ' + item.city + ', ' + item.state + ', ' + item.pincode + ', ' + item.phone %>
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
                 </div>
-                <div class="col-sm-5">
-                  <select id="address" data-mdb-select-init class="form-control select" name="address">
-                    <% if (userDetails.address.length===0) { %>
-                    <option value="" disabled selected hidden>None</option>
-                    <% } %>
-                    <% userDetails.address.forEach((item, index)=> { %>
-                    <option value="<%= index %>">
-                      <%= item.contactName + ', ' + item.house + ', ' + item.area + ', ' + item.city + ', ' + item.state + ', ' + item.pincode + ', ' + item.phone %>
-                    </option>
-                    <% }) %>
-                  </select>
+                <div class="row justify-content-start gy-2 justify-content-sm-end pe-0">
+                  <div class="col-auto pe-0">
+                    <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
+                      add address
+                    </button>
+                  </div>
                 </div>
-                <div class="col">
-                  <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
-                  <!-- Button trigger modal -->
-                  <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
-                    add address
-                  </button>
+              </div>
+              <hr id="rule" class="d-none">
+              <div class="row justify-content-center d-none" id="row">
+                <div class="col-auto">
+                  <button class="btn btn-dark" id="update-profile">Update Profile</button>
                 </div>
               </div>
             </div>
@@ -152,43 +168,43 @@
         <div class="modal-body">
           <div class="position-relative">
             <label class="form-label" for="form12">Contact Name <span class="text-danger">*</span></label>
-            <input type="text" id="form12" class="form-control mb-3" name="contactName" placeholder="type..." />
+            <input type="text" id="form1" class="form-control mb-3" name="contactName" placeholder="type..." />
             <small class="contact-name-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
-            <input type="tel" id="form12" class="form-control mb-3" name="phone" placeholder="type..." />
+            <input type="tel" id="form2" class="form-control mb-3" name="phone" placeholder="type..." />
             <small class="phone-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">Pincode <span class="text-danger">*</span></label>
-            <input type="tel" id="form12" class="form-control mb-3" name="pincode" placeholder="type..." />
+            <input type="tel" id="form3" class="form-control mb-3" name="pincode" placeholder="type..." />
             <small class="pincode-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">State <span class="text-danger">*</span></label>
-            <input type="text" id="form12" class="form-control mb-3" name="state" placeholder="type..." />
+            <input type="text" id="form4" class="form-control mb-3" name="state" placeholder="type..." />
             <small class="state-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">City <span class="text-danger">*</span></label>
-            <input type="text" id="form12" class="form-control mb-3" name="city" placeholder="type..." />
+            <input type="text" id="form5" class="form-control mb-3" name="city" placeholder="type..." />
             <small class="city-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">House No., Building Name <span class="text-danger">*</span></label>
-            <input type="text" id="form12" class="form-control mb-3" name="house" placeholder="type..." />
+            <input type="text" id="form6" class="form-control mb-3" name="house" placeholder="type..." />
             <small class="house-alert position-absolute top-100 text-danger"></small>
           </div>
 
           <div class="position-relative">
             <label class="form-label" for="form12">Road Name, Area, Colony <span class="text-danger">*</span></label>
-            <input type="text" id="form12" class="form-control mb-3" name="area" placeholder="type..." />
+            <input type="text" id="form7" class="form-control mb-3" name="area" placeholder="type..." />
             <small class="area-alert position-absolute top-100 text-danger"></small>
           </div>
         </div>
@@ -549,13 +565,14 @@
 
     // for listening user profile detail changes
     const modalBody = document.getElementById('profile-detail-body');
-    const updateButton = document.createElement('button');
-    updateButton.innerText = 'update profile';
-    updateButton.classList.add('btn', 'btn-dark', 'mt-4');
-    updateButton.id = 'update-profile';
 
-    modalBody.addEventListener('input', function() {
-      modalBody.querySelector('#row').appendChild(updateButton);
+    modalBody.addEventListener('input', function(event) {
+      const target = event.target;
+
+      if (target.name === 'userName' || target.name === 'userPhone') {
+        document.getElementById('rule').classList.remove('d-none');
+        document.getElementById('row').classList.remove('d-none');
+      }
     })
 
     // for updating user details
@@ -636,23 +653,75 @@
       }
     });
 
-    // change password prompt
-    document.getElementById('change-password').addEventListener('click', function(event) {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You will be logged out",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes",
-        allowOutsideClick: false,
-        customClass: {
-          container: 'swal-css'
-        }
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = '/forgot-password';
-        }
-      })
+    // using fetch to change password
+    document.getElementById('change-password').addEventListener('click', function() {
+      const currentPassword = document.getElementsByName('currentPassword')[0].value;
+      const password = document.getElementsByName('newPassword')[0].value;
+      const currentPasswordAlert = document.getElementById('current-password-alert');
+      const passwordAlert1 = document.getElementById('new-password-alert');
+
+      currentPasswordAlert.style.display = 'none';
+      passwordAlert1.style.display = 'none';
+
+      fetch('/update-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            currentPassword
+          })
+        }).then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            passwordAlert1.style.display = 'inline';
+            passwordAlert1.innerText = 'Something went wrong. Try again';
+          } else if (!data.exist) {
+            currentPasswordAlert.style.display = 'inline';
+            currentPasswordAlert.innerText = 'Wrong Password';
+          } else if (data.exist) {
+            if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
+              if (password === '') {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password is required`;
+              } else if (!/[a-z]/.test(password)) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password must be case-sensitive`;
+              } else if (!/[A-Z]/.test(password)) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password must be case-sensitive`;
+              } else if (!/[^\w\s]/.test(password)) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password must contain a special character`;
+              } else if (!/\d/.test(password)) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password must contain a number`;
+              } else if (/\s/.test(password)) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password can't contain spaces`;
+              } else if (password.length < 8) {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password minimum length is 8`;
+              } else {
+                passwordAlert1.style.display = 'inline';
+                passwordAlert1.innerText = `Password maximum length is 30`;
+              }
+            } else {
+              fetch('/update-password', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    password
+                  })
+                }).then(response => response.json())
+                .then(data => {
+                  window.location.href = data.url;
+                })
+            }
+          }
+        })
     });
   });
 </script>

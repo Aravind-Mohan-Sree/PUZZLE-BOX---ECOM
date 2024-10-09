@@ -1,0 +1,28 @@
+<!-- styles -->
+<style>
+  .error-container {
+    background-image: url('/image/bg.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .box {
+    backdrop-filter: blur(8px);
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('user/navbar') %>
+
+<!-- error page content -->
+<div class="d-flex vh-100 error-container justify-content-center align-items-center">
+  <div class="ps-5 pe-5 pt-3 pb-4 bg-white mx-3 rounded-8 bg-opacity-25 box">
+    <h1 class="display-1 text-center text-dark">ERROR</h1>
+    <p class="text-center fs-4"><%= message %></p>
+    <a href="/login" class="btn btn-dark mx-auto d-block">go back</a>
+  </div>
+</div>
+
+<!-- footer included -->
+<%- include('user/footer') %>
