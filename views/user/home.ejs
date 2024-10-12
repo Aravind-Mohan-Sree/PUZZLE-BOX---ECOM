@@ -49,7 +49,7 @@
                 and
                 enhance your problem-solving skills today!</p>
               <div>
-                <button class="btn btn-dark btn-lg mx-auto mx-md-0 d-block d-md-inline">Shop Now</button>
+                <a href="/products"><button class="btn btn-dark btn-lg mx-auto mx-md-0 d-block d-md-inline">Shop Now</button></a>
                 <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-2xl ms-5" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1; --fa-rotate-angle: 10deg;""></i>
             </div>
             <div class=" row mt-5">
@@ -115,14 +115,14 @@
             </div>
             <div class="card-body">
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
-                <h5 class="card-title mb-3 text-dark">
+                <h5 class="card-title mb-3 text-dark text-truncate">
                   <%= product.productName %>
                 </h5>
               </a>
               <div class="row">
                 <div class="col me-auto">
                   <h6 class="mb-4 mt-3">
-                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
                   </h6>
                 </div>
                 <div class="col-auto">
@@ -144,13 +144,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-2">
-                  <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
-                </div>
-                <div class="col-4">
-                  <i class="fa-duotone fa-solid fa-cart-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
-                </div>
-                <div class="col ms-auto text-end">
+                <div class="col text-center">
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star-half-stroke"></i>
@@ -202,14 +196,14 @@
             </div>
             <div class="card-body">
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
-                <h5 class="card-title mb-3 text-dark">
+                <h5 class="card-title mb-3 text-dark text-truncate">
                   <%= product.productName %>
                 </h5>
               </a>
               <div class="row">
                 <div class="col me-auto">
                   <h6 class="mb-4 mt-3">
-                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
                   </h6>
                 </div>
                 <div class="col-auto">
@@ -231,13 +225,7 @@
                 </div>
               </div>
               <div class="row">
-                <div class="col-2">
-                  <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
-                </div>
-                <div class="col-4">
-                  <i class="fa-duotone fa-solid fa-cart-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
-                </div>
-                <div class="col ms-auto text-end">
+                <div class="col text-center">
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
@@ -270,13 +258,7 @@
 
   // for searching products
   document.addEventListener('DOMContentLoaded', function() {
-    const searchButton = document.getElementById('search-button');
 
-    searchButton.addEventListener('click', function() {
-      const searchTerm = document.getElementById('search-input').value;
-
-      window.location.href = `/products?searchTerm=${searchTerm}`;
-    });
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

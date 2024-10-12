@@ -92,8 +92,8 @@
         <div class="col-12 offset-md-1 col-md-6 col-lg-7 pt-5 pt-md-0">
           <h2 class="text-dark">
             <%= product.productName %>
-            <i class="fa-duotone fa-solid fa-heart-circle-plus ms-5" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           </h2>
+          <i class="fa-duotone fa-solid fa-heart-circle-plus fs-3 mt-1" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <div class="col text-warning mt-3 mb-4">
             <i class="fa fa-star"></i>
             <i class="fa fa-star"></i>
@@ -103,7 +103,7 @@
             <strong class="text-dark ms-3"><span>3.5</span>/5</strong>
           </div>
           <h3 class="mb-4 mt-3">
-            <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+            <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
             </span><span class="badge badge-danger ms-3 p"><%= product.productDiscount !== 0 ? '-' + product.productDiscount + '%' : '' %></span>
           </h3>
           <h6>Availability - <span class="badge <% if (product.productQuantity > 10) { %>
@@ -125,7 +125,26 @@
           <p class=""><%= product.productDescription %></p>
           <div class="row mt-5">
             <div class="col col-md-6 col-lg-8">
-              <button id="add-to-cart" class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping fa-bounce me-3" style="color: #ffffff;"></i>add to cart</button>
+              <% if (cart) { %>
+              <% let flag = 0 %>
+              <% cart.items.forEach(item => { %>
+              <% if (product.id === item.productID.id) { %>
+              <a href="/cart">
+                <button class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping me-3" style="color: #ffffff;"></i>go to cart</button>
+              </a>
+              <% flag = 1 %>
+              <% } %>
+              <% }) %>
+              <% if (!flag && product.productQuantity > 0) { %>
+              <button id="add-to-cart" class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping me-3" style="color: #ffffff;"></i>add to cart</button>
+              <% } else if (!flag && product.productQuantity === 0) { %>
+              <button class="btn btn-block btn-dark" disabled>out of stock</button>
+              <% } %>
+              <% } else if (product.productQuantity > 0) { %>
+              <button id="add-to-cart" class="btn btn-block btn-dark"><i id="cart-icon" class="fa-regular fa-cart-shopping me-3" style="color: #ffffff;"></i>add to cart</button>
+              <% } else { %>
+              <button class="btn btn-block btn-dark" disabled>out of stock</button>
+              <% } %>
             </div>
           </div>
         </div>
@@ -212,21 +231,36 @@
             </div>
             <div class="card-body">
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
-                <h5 class="card-title mb-3 text-dark">
+                <h5 class="card-title mb-3 text-dark text-truncate">
                   <%= product.productName %>
                 </h5>
               </a>
-              <h6 class="mb-4 mt-3">
-                <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
-              </h6>
               <div class="row">
-                <div class="col-2">
-                  <i class="fa-duotone fa-solid fa-heart-circle-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+                <div class="col me-auto">
+                  <h6 class="mb-4 mt-3">
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
+                  </h6>
                 </div>
-                <div class="col-4">
-                  <i class="fa-duotone fa-solid fa-cart-plus fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #66ff00; --fa-secondary-opacity: 1;"></i>
+                <div class="col-auto">
+                  <h6 class="mb-4 mt-3 badge <% if (product.productQuantity > 10) { %>
+                    badge-success
+                  <% } else if (product.productQuantity > 0) { %>
+                    badge-warning
+                  <% } else { %>
+                    badge-danger
+                  <% } %>">
+                    <% if (product.productQuantity> 10) { %>
+                    In stock
+                    <% } else if (product.productQuantity> 0) { %>
+                    Only <%= product.productQuantity %> left
+                    <% } else { %>
+                    Out of stock
+                    <% } %>
+                  </h6>
                 </div>
-                <div class="col ms-auto text-end">
+              </div>
+              <div class="row">
+                <div class="col text-center">
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
                   <i class="fa fa-star"></i>
@@ -355,57 +389,66 @@
 
     document.addEventListener('touchend', endTouch);
     document.addEventListener('touchcancel', endTouch);
-  });
 
-  // for searching products
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchButton = document.getElementById('search-button');
+    // funtion for tab functionality
+    window.tab = function(evt, tabName) {
+      let i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
 
-    searchButton.addEventListener('click', function() {
-      const searchTerm = document.getElementById('search-input').value;
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
 
-      window.location.href = `/products?searchTerm=${searchTerm}`;
+      tablinks = document.getElementsByClassName("tablinks");
+
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    // using fetch for adding product to cart
+    document.getElementById('add-to-cart').addEventListener('click', function() {
+      const productId = JSON.parse('<%- JSON.stringify(product._id) %>');
+      const productPrice = JSON.parse('<%- JSON.stringify(product.productPrice) %>');
+
+      fetch(`/add-to-cart?productId=${productId}&productPrice=${productPrice}`, {
+          method: 'POST',
+        }).then(response => response.json())
+        .then(data => {
+          console.log('object');
+          Swal.fire({
+            title: 'Success!',
+            text: data.success,
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          }).then(res => {
+            if (res.isConfirmed) {
+              window.location.reload();
+            }
+          })
+
+          // fetching content for updating navbar
+          fetch('/update-navbar', {
+              method: 'POST'
+            }).then(response => response.json())
+            .then(data => {
+              const user = JSON.parse('<%- JSON.stringify(user) %>');
+              const cartCount = document.getElementById('cart-count');
+
+              user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+            })
+        }).catch(err => {
+          window.location.href = '/login';
+
+          console.log(err);
+        })
     });
-  });
-
-  // funtion for tab functionality
-  function tab(evt, tabName) {
-    let i, tabcontent, tablinks;
-    tabcontent = document.getElementsByClassName("tabcontent");
-
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
-    }
-
-    tablinks = document.getElementsByClassName("tablinks");
-
-    for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
-    }
-
-    document.getElementById(tabName).style.display = "block";
-    evt.currentTarget.className += " active";
-  }
-
-  // using fetch for adding product to cart
-  document.getElementById('add-to-cart').addEventListener('click', function() {
-    const productId = JSON.parse('<%- JSON.stringify(product._id) %>');
-    const productPrice = JSON.parse('<%- JSON.stringify(product.productPrice) %>');
-
-    fetch(`/add-to-cart?productId=${productId}&productPrice=${productPrice}`, {
-        method: 'POST',
-      }).then(response => response.json())
-      .then(data => {
-        Swal.fire({
-          title: 'Success!',
-          text: data.success,
-          confirmButtonText: 'OK',
-          allowOutsideClick: false,
-          customClass: {
-            container: 'swal-css'
-          }
-        });
-      })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

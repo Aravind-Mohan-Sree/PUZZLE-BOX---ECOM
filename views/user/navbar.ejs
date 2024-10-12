@@ -182,45 +182,56 @@
 
 <!-- javaScript -->
 <script>
-  // for changing navbar toggler icon
-  document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function() {
-    const collapse = document.getElementsByClassName('navbar-collapse')[0];
-    const togglerIcon = document.getElementById('toggler-icon');
+  document.addEventListener("DOMContentLoaded", function() {
+    // for searching products
+    const searchButton = document.getElementById('search-button');
 
-    // create a mutation observer to watch for class changes
-    const observer = new MutationObserver(mutationsList => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          // check if the class is present
-          if (collapse.classList.contains('show')) {
-            togglerIcon.classList.add('fa-xmark-large');
-            observer.disconnect();
-          } else {
-            togglerIcon.classList.remove('fa-xmark-large');
+    searchButton.addEventListener('click', function() {
+      const searchTerm = document.getElementById('search-input').value;
+
+      window.location.href = `/products?searchTerm=${searchTerm}`;
+    });
+
+    // for changing navbar toggler icon
+    document.getElementsByClassName('navbar-toggler')[0].addEventListener('click', function() {
+      const collapse = document.getElementsByClassName('navbar-collapse')[0];
+      const togglerIcon = document.getElementById('toggler-icon');
+
+      // create a mutation observer to watch for class changes
+      const observer = new MutationObserver(mutationsList => {
+        for (const mutation of mutationsList) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            // check if the class is present
+            if (collapse.classList.contains('show')) {
+              togglerIcon.classList.add('fa-xmark-large');
+              observer.disconnect();
+            } else {
+              togglerIcon.classList.remove('fa-xmark-large');
+            }
           }
         }
-      }
+      });
+
+      // start observing the target node for configured mutations
+      observer.observe(collapse, {
+        attributes: true
+      });
     });
 
-    // start observing the target node for configured mutations
-    observer.observe(collapse, {
-      attributes: true
+    // will clear search input value when page shows
+    window.addEventListener('pageshow', function(event) {
+      document.getElementById('search-input').value = '';
     });
+
+    // fetching content for updating navbar
+    fetch('/update-navbar', {
+        method: 'POST'
+      }).then(response => response.json())
+      .then(data => {
+        const user = JSON.parse('<%- JSON.stringify(user) %>');
+        const cartCount = document.getElementById('cart-count');
+
+        user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+      })
   });
-
-  // will clear search input value when page shows
-  window.addEventListener('pageshow', function(event) {
-    document.getElementById('search-input').value = '';
-  });
-
-  // fetching content for updating navbar
-  fetch('/update-navbar', {
-      method: 'POST'
-    }).then(response => response.json())
-    .then(data => {
-      const user = JSON.parse('<%- JSON.stringify(user) %>');
-      const cartCount = document.getElementById('cart-count');
-
-      user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
-    })
 </script>

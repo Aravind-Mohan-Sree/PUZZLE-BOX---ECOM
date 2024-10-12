@@ -5,6 +5,28 @@
     padding-top: 4.25rem;
     padding-bottom: 2.875rem;
   }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -24,8 +46,10 @@
               <h5 class="mb-0">CART - <%= cart ? cart.items.length : '0' %> item(s)</h5>
             </div>
             <div class="card-body pt-0">
+              <% let totalProductQuantity = 0 %>
               <% if (cart) { %>
-              <% cart.items.forEach(item => { %>
+              <% cart.items.forEach((item, index) => { %>
+              <% totalProductQuantity += item.productCount %>
               <!-- Single item -->
               <hr class="mb-4" />
 
@@ -33,9 +57,8 @@
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                    <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="Blue Jeans Jacket" />
-                    <a href="#!">
-                      <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                    <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>">
+                      <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="Blue Jeans Jacket" />
                     </a>
                   </div>
                   <!-- Image -->
@@ -43,63 +66,67 @@
 
                 <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
                   <!-- Data -->
-                  <p class="h4"><strong><%= item.productID.productName %></strong></p>
+                  <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark">
+                    <p class="h5"><%= item.productID.productName %></p>
+                  </a>
                   <p>Category: <%= item.productID.productCategory.categoryName %></p>
                   <p>Dimensions: <%= item.productID.productDimension.split('-')[0] + ' x ' + item.productID.productDimension.split('-')[1] + ' x ' + item.productID.productDimension.split('-')[2] + ' cm' %></p>
-                  <a href="" class="me-3">
-                    <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                  </a>
+                  <button class="border-0 bg-transparent" onclick="removeProduct('<%= item.productID.id %>')">
+                    <i class="fa-duotone fa-solid fa-trash-can fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+                  </button>
                   <!-- Data -->
                 </div>
 
                 <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 me-2" onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 me-2 minus-btn" onclick="decreaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount <= 0 ? 'disabled' : '' %>>
                       <i class="fas fa-minus"></i>
                     </button>
 
                     <div data-mdb-input-init class="form-outline">
-                      <input id="form1" min="0" name="quantity" value="1" type="number" class="form-control" />
+                      <input name="quantity" value="<%= item.productCount %>" type="number" class="form-control bg-white quantity-count" disabled />
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
 
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 ms-2" onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 ms-2 plus-btn" onclick="increaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount >= 5 ? 'disabled' : '' %>>
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
                   <!-- Quantity -->
 
                   <!-- Price -->
-                  <p class="text-start text-md-center">
-                    <strong><%= '₹ ' + item.productPrice %></strong>
+                  <p class="mb-4 mt-3">
+                    <s class="text-danger per-product-amount <%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
                   </p>
+                  <p class="badge badge-danger out-of-stock"><%= item.productCount === 0 ? 'Out of stock' : '' %></p>
                   <!-- Price -->
                 </div>
               </div>
               <!-- Single item -->
               <% }) %>
               <% } else { %>
-                <h3 class="mt-4 h4">Your cart is empty</h3>
+              <h3 class="mt-4 h4">Your cart is empty!</h3>
               <% } %>
             </div>
           </div>
+          <% if (cart) { %>
           <div class="card mb-4">
             <div class="card-body">
-              <p><strong>Expected shipping delivery</strong></p>
-              <p class="mb-0">12.10.2020 - 14.10.2020</p>
+              <p><strong>Expected Delivery</strong></p>
+              <p class="mb-0">In 7 days</p>
             </div>
           </div>
           <div class="card mb-4 mb-lg-0">
             <div class="card-body">
-              <p><strong>We accept</strong></p>
-              <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/visa.svg" alt="Visa" />
-              <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/amex.svg" alt="American Express" />
-              <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce-gateway-stripe/assets/images/mastercard.svg" alt="Mastercard" />
-              <img class="me-2" width="45px" src="https://mdbcdn.b-cdn.net/wp-content/plugins/woocommerce/includes/gateways/paypal/assets/images/paypal.webp" alt="PayPal acceptance mark" />
-            </div>
+              <p><strong>Payment Options</strong></p>
+              <a href="https://razorpay.com/" target="_blank" class="me-4"> <img referrerpolicy="origin" src = "https://badges.razorpay.com/badge-dark.png " style = "height: 45px; width: 113px;" alt = "Razorpay | Payment Gateway | Neobank"></a>
+              <a href="#" target="_blank"> <img referrerpolicy="origin" src = "/image/cash-on-delivery.png" style = "width: 45px;" alt = "Razorpay | Payment Gateway | Neobank"></a>
+            </div>            
           </div>
+          <% } %>
         </div>
+        <% if (cart) { %>
         <div class="col-md-4">
           <div class="card mb-4">
             <div class="card-header py-3">
@@ -109,17 +136,21 @@
               <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                   Total Amount
-                  <span><%= '₹ ' + cart.totalPrice %></span>
+                  <span id="total-amount"><%= '₹ ' + cart.totalPrice.toLocaleString() %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Discount
+                  <span id="discount" class="text-danger"><%= '- ₹ ' + (cart.totalPrice - cart.payableAmount).toLocaleString() %></span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
-                  Discount
-                  <span><%= '₹ ' + (cart.totalPrice - cart.payableAmount) %></span>
+                  Delivery Charge
+                  <span id="delivery-charge" class="<%= cart.payableAmount < 500 ? '' : 'text-danger' %>"><%= cart.payableAmount < 500 ? '+ ₹ ' + (40 * totalProductQuantity) : 'Free' %></span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                   <div>
                     <strong>Payable Amount</strong>
                   </div>
-                  <span><strong><%= '₹ ' + cart.payableAmount %></strong></span>
+                  <span><strong id="payable-amount"><%= cart.payableAmount < 500 ? '₹ ' + (cart.payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + cart.payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
 
@@ -129,6 +160,7 @@
             </div>
           </div>
         </div>
+        <% } %>
       </div>
     </div>
   </section>
@@ -142,4 +174,159 @@
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // using fetch for updating the product quantity
+    const quantityCount = document.querySelectorAll('.quantity-count');
+    const perProductAmount = document.querySelectorAll('.per-product-amount');
+    const perProductDiscount = document.querySelectorAll('.per-product-discount');
+    const outOfStock = document.querySelectorAll('.out-of-stock');
+    const totalAmount = document.getElementById('total-amount');
+    const discount = document.getElementById('discount');
+    const payableAmount = document.getElementById('payable-amount');
+    const deliveryCharge = document.getElementById('delivery-charge');
+
+    // increase the product quantity
+    window.increaseQuantity = function(productID, index) {
+
+      // enable minus button
+      document.getElementsByClassName('minus-btn')[index].disabled = false;
+
+      // if product quantity reached to 5, then disable the plus button
+      if (quantityCount[index].value >= 5) {
+        document.getElementsByClassName('plus-btn')[index].disabled = true;
+      }
+
+      if (quantityCount[index].value <= 5) {
+        fetch(`/increment-product/${productID}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              quantity: quantityCount[index].value
+            })
+          }).then(response => response.json())
+          .then((data) => {
+            if ((data.productCount) >= 0) {
+              quantityCount[index].value = data.productCount;
+              perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
+              data.productDiscount === 0 ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
+              perProductDiscount[index].innerHTML = '₹ ' + data.productDiscount.toLocaleString();
+              outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
+              totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();
+              discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
+              deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
+              data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
+              payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+            }
+
+            if (data.error) {
+              Swal.fire({
+                title: data.title || 'Error!',
+                text: data.error,
+                icon: data.icon || 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              })
+            }
+          })
+      }
+    }
+
+    // decrease the product quantity
+    window.decreaseQuantity = function decreaseQuantity(productID, index) {
+      // if product quantity reached to 1 then disable the minus button
+      if (quantityCount[index].value <= 1) {
+        document.getElementsByClassName('minus-btn')[index].disabled = true;
+      }
+
+      // enable plus button
+      document.getElementsByClassName('plus-btn')[index].disabled = false;
+
+      if (quantityCount[index].value >= 1) {
+        fetch(`/decrement-product/${productID}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              quantity: quantityCount[index].value
+            })
+          }).then(response => response.json())
+          .then((data) => {
+            if ((data.productCount) >= 0) {
+              quantityCount[index].value = data.productCount;
+              perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
+              data.productDiscount === 0 ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
+              perProductDiscount[index].innerHTML = '₹ ' + data.productDiscount.toLocaleString();
+              outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
+              totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();
+              discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
+              deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
+              data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
+              payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+            }
+
+            if (data.error) {
+              Swal.fire({
+                title: data.title || 'Error!',
+                text: data.error,
+                icon: data.icon || 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              })
+            }
+          })
+      }
+    }
+
+    // function for removing product from the cart
+    window.removeProduct = function(productID) {
+      // using fetch for sending product id to backend
+      fetch(`/remove-cart-item/${productID}`, {
+          method: 'DELETE'
+        }).then(response => response.json())
+        .then(data => {
+          if (data.delete) {
+            Swal.fire({
+              title: 'Deleted!',
+              text: 'Product removed successfully',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            }).then(res => {
+              if (res.isConfirmed) {
+                window.location.reload();
+              }
+            })
+          }
+
+          if (data.error) {
+            Swal.fire({
+              title: 'Error!',
+              text: data.error,
+              icon: 'error',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            })
+          }
+        })
+    }
+  });
+</script>
 <!-- ----------------------------------------------------------------------- -->

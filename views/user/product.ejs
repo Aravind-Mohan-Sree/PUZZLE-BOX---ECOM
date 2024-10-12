@@ -91,7 +91,7 @@
               <div class="row">
                 <div class="col me-auto">
                   <h6 class="mb-4 mt-3">
-                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice %></strong>
+                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
                   </h6>
                 </div>
                 <div class="col-auto">
@@ -241,15 +241,6 @@
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // for searching products
-    const searchButton = document.getElementById('search-button');
-
-    searchButton.addEventListener('click', function() {
-      const searchTerm = document.getElementById('search-input').value;
-
-      window.location.href = `/products?searchTerm=${searchTerm}`;
-    });
-
     // Sort Modal Initialization
     const modalElement = document.getElementById('sortModal')
     let modalInstance = mdb.Modal.getInstance(modalElement);
@@ -272,7 +263,7 @@
       const sort = document.querySelector('input[name="sort"]:checked');
       const priceAlert = document.querySelector('#price-alert');
 
-      if (/[a-zA-Z]/.test(minPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minPrice) || /\s/.test(minPrice) || /[a-zA-Z]/.test(maxPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(maxPrice) || /\s/.test(maxPrice) || Number(minPrice) > Number(maxPrice)) {
+      if (/[a-zA-Z]/.test(minPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minPrice) || /\s/.test(minPrice) || /[a-zA-Z]/.test(maxPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(maxPrice) || /\s/.test(maxPrice) || Number(minPrice || 0) > Number(maxPrice || Infinity)) {
         if (/[a-zA-Z]/.test(minPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minPrice) || /[a-zA-Z]/.test(maxPrice) || /[^\w\s.]|(\..*\.)|(\.$)/.test(maxPrice)) {
           priceAlert.style.display = 'inline';
           priceAlert.innerText = `Input is not valid`;

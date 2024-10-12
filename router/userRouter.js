@@ -61,6 +61,9 @@ user.post('/update-password', checkUserSession, profileController.updatePassword
 // will handle user cart route
 user.get('/cart', checkUserSession, cartController.cart);
 user.post('/add-to-cart', checkUserSession, cartController.addToCartPost);
+user.delete('/remove-cart-item/:productID', checkUserSession, cartController.removeCartItem);
+user.put('/increment-product/:productID', checkUserSession, cartController.increaseProductQuantity);
+user.put('/decrement-product/:productID', checkUserSession, cartController.decreaseProductQuantity);
 
 // will handle update navbar route
 user.post('/update-navbar', updateNavbarController.updateNavbarPost);

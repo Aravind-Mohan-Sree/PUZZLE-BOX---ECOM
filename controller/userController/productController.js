@@ -1,5 +1,6 @@
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
+const cartSchema = require('../../model/cartSchema');
 
 // will list products based on the conditions
 const product = async (req, res) => {
@@ -10,7 +11,7 @@ const product = async (req, res) => {
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
 
-    // Pagination parameters
+    // pagination parameters
     const productsPerPage = 8;
     const currentPage = parseInt(req.query.page) || 1;
     const skip = (currentPage - 1) * productsPerPage;
@@ -47,14 +48,14 @@ const product = async (req, res) => {
     if (req.query.sort) {
       if (req.query.sort === 'lowToHigh' || req.query.sort === 'highToLow') {
         const sortOrder = req.query.sort === 'lowToHigh' ? 1 : -1;
-        activeProductsQuery.sort({ productDiscountedPrice: sortOrder });
+        activeProductsQuery.sort({ productDiscountedPrice: sortOrder, _id: 1 });
       } else if (req.query.sort === 'aToZ' || req.query.sort === 'zToA') {
         const sortOrder = req.query.sort === 'aToZ' ? 1 : -1;
-        activeProductsQuery.sort({ productName: sortOrder });
+        activeProductsQuery.sort({ productName: sortOrder, _id: 1 });
       } else {
         const sortOrder = -1;
-        activeProductsQuery.sort({ createdAt: sortOrder });
-      }      
+        activeProductsQuery.sort({ createdAt: sortOrder, _id: 1 });
+      }
     }
 
     const activeProducts = await activeProductsQuery;
@@ -119,6 +120,10 @@ const productDetail = async (req, res) => {
 
       const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
 
+      const cart = await cartSchema
+        .findOne({ userID: req.session.user })
+        .populate('items.productID');
+
       res.render('user/productDetail', {
         title: 'Product Details',
         alert: req.flash('alert'),
@@ -126,7 +131,8 @@ const productDetail = async (req, res) => {
         product,
         similarProducts,
         activeCategoryNames,
-        content: ''
+        content: '',
+        cart
       });
     } else {
       req.flash('alert', { message: 'Unable to view product. Try again', color: 'bg-danger' });

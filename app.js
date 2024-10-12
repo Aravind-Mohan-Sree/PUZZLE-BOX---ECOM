@@ -108,7 +108,7 @@ app.use(async (err, req, res, next) => {
 
   const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
 
-  res.render('error', { title: 'Error', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '', message: err.message || 'Internal Server Error' });
+  res.render('error', { title: 'Error', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '', message: 'Internal Server Error' });
 });
 
 // listening port
