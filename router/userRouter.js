@@ -6,6 +6,7 @@ const homeController = require('../controller/userController/homeController');
 const productController = require('../controller/userController/productController');
 const profileController = require('../controller/userController/profileController');
 const cartController = require('../controller/userController/cartController');
+const checkoutController = require('../controller/userController/checkoutController');
 const updateNavbarController = require('../controller/userController/updateNavbarController');
 const checkUserSession = require('../middleware/userSession');
 const checkUserBlocked = require('../middleware/checkUserBlocked');
@@ -64,6 +65,11 @@ user.post('/add-to-cart', checkUserSession, cartController.addToCartPost);
 user.delete('/remove-cart-item/:productID', checkUserSession, cartController.removeCartItem);
 user.put('/increment-product/:productID', checkUserSession, cartController.increaseProductQuantity);
 user.put('/decrement-product/:productID', checkUserSession, cartController.decreaseProductQuantity);
+user.get('/go-to-checkout', checkUserSession, cartController.goToCheckout);
+
+// will handle user checkout route
+user.get('/checkout', checkUserSession, checkoutController.checkout);
+user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
 
 // will handle update navbar route
 user.post('/update-navbar', updateNavbarController.updateNavbarPost);

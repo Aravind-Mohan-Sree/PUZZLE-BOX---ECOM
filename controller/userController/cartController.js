@@ -367,10 +367,42 @@ const removeCartItem = async (req, res) => {
 }
 /* -------------------------------------------------------------------------- */
 
+/* ---------------------- will proceed to checkout page --------------------- */
+const goToCheckout = async (req, res) => {
+  try {
+    const cart = await cartSchema.findOne({ userID: req.session.user });
+    let totalProductQuantity = 0;
+
+    /* ----- if one or more products is not available don't allow to proceed ---- */
+    cart.items.forEach(item => {
+      totalProductQuantity += item.productCount;
+
+      if (item.productCount <= 0) {
+        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+
+        return res.redirect("/cart");
+      }
+    });
+
+    /* ----------------- will add delivery charge if applicable ----------------- */
+    if (cart.payableAmount < 500) {
+      cart.payableAmount += (40 * totalProductQuantity);
+
+      await cart.save();
+    }
+
+    res.redirect("/checkout");
+  } catch (err) {
+    console.log('Error while rendering checkout page', err);
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   cart,
   addToCartPost,
   removeCartItem,
   increaseProductQuantity,
-  decreaseProductQuantity
+  decreaseProductQuantity,
+  goToCheckout
 };
