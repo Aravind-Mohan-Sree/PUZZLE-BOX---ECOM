@@ -30,20 +30,12 @@ const cart = async (req, res) => {
           ele.productCount = 1;
         }
 
-        /* -------- finding the total price by deducting the discount if any -------- */
-        if (ele.productID.productDiscount === 0) {
-          totalPrice += ele.productID.productPrice * ele.productCount;
-          totalPriceWithoutDiscount +=
-            ele.productID.productPrice * ele.productCount;
-        } else {
-          const discountPrice =
-            ele.productID.productPrice * ele.productCount -
-            (ele.productID.productDiscount / 100) *
-            (ele.productID.productPrice * ele.productCount);
-          totalPrice += discountPrice;
-          totalPriceWithoutDiscount +=
-            ele.productID.productPrice * ele.productCount;
-        }
+        ele.productPrice = ele.productID.productPrice;
+
+        // finding total amount and payable amount
+        totalPrice += ele.productID.productDiscountedPrice * ele.productCount;
+        totalPriceWithoutDiscount +=
+          ele.productID.productPrice * ele.productCount;
       });
 
       /* - updating the fields in collection if those varies from the total price - */
@@ -367,42 +359,10 @@ const removeCartItem = async (req, res) => {
 }
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------- will proceed to checkout page --------------------- */
-const goToCheckout = async (req, res) => {
-  try {
-    const cart = await cartSchema.findOne({ userID: req.session.user });
-    let totalProductQuantity = 0;
-
-    /* ----- if one or more products is not available don't allow to proceed ---- */
-    cart.items.forEach(item => {
-      totalProductQuantity += item.productCount;
-
-      if (item.productCount <= 0) {
-        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
-
-        return res.redirect("/cart");
-      }
-    });
-
-    /* ----------------- will add delivery charge if applicable ----------------- */
-    if (cart.payableAmount < 500) {
-      cart.payableAmount += (40 * totalProductQuantity);
-
-      await cart.save();
-    }
-
-    res.redirect("/checkout");
-  } catch (err) {
-    console.log('Error while rendering checkout page', err);
-  }
-};
-/* -------------------------------------------------------------------------- */
-
 module.exports = {
   cart,
   addToCartPost,
   removeCartItem,
   increaseProductQuantity,
   decreaseProductQuantity,
-  goToCheckout
 };

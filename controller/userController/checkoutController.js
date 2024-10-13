@@ -22,19 +22,46 @@ const checkout = async (req, res) => {
     /* ----------------- getting addresses from the user address ---------------- */
     const addresses = userAddress.address;
 
-    const cart = await cartSchema.findOne({ userID: req.session.user }).populate("items.productID");
-
-    /* ------------------- getting the products from the cart ------------------- */
-    const products = cart.items;
+    const cart = await cartSchema
+      .findOne({ userID: req.session.user })
+      .populate({
+        path: 'items.productID',
+        populate: {
+          path: 'productCategory'
+        }
+      });
+  
+    let totalProductQuantity = 0;
 
     /* ---- checking whether any of the product is available or not ---- */
-    for (const product of products) {
-      if (product.productID.productQuantity === 0 || product.productID.productQuantity < product.productCount) {
-        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+    if (cart) {
+      cart.totalPrice = 0;
 
-        return res.redirect('/cart');
+      for (const product of cart.items) {
+        totalProductQuantity += product.productCount;
+        product.productPrice = product.productID.productPrice;
+        cart.totalPrice += product.productID.productPrice * product.productCount;
+
+        if (product.productID.productQuantity === 0 || product.productID.productQuantity < product.productCount || product.productCount === 0) {
+          req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+
+          return res.redirect('/cart');
+        }
       }
+    } else {
+      req.flash('alert', { message: 'Your cart is empty. Try again!', color: 'bg-danger' });
+
+      return res.redirect('/home');
     }
+
+    /* ----------------- will add delivery charge if applicable ----------------- */
+    if (cart.payableAmount < 500) {
+      cart.payableAmount += (40 * totalProductQuantity);
+    }
+
+    await cart.save();
+
+    cart.items.sort((a, b) => b.createdAt - a.createdAt);
 
     /* ---------- querying active categories for including in the navbar --------- */
     const activeCategories = await productSchema.find({
@@ -49,7 +76,7 @@ const checkout = async (req, res) => {
       title: 'Checkout',
       alert: req.flash('alert'),
       cart,
-      products,
+      products: cart.items,
       userAddress,
       addresses,
       user: req.session.user,

@@ -114,15 +114,15 @@
           <div class="card mb-4">
             <div class="card-body">
               <p><strong>Expected Delivery</strong></p>
-              <p class="mb-0">In 7 days</p>
+              <p class="mb-0">In 7 days, <span id="date"></span></p>
             </div>
           </div>
           <div class="card mb-4 mb-lg-0">
             <div class="card-body">
               <p><strong>Payment Options</strong></p>
-              <a href="https://razorpay.com/" target="_blank" class="me-4"> <img referrerpolicy="origin" src = "https://badges.razorpay.com/badge-dark.png " style = "height: 45px; width: 113px;" alt = "Razorpay | Payment Gateway | Neobank"></a>
-              <a href="#" target="_blank"> <img referrerpolicy="origin" src = "/image/cash-on-delivery.png" style = "width: 45px;" alt = "Razorpay | Payment Gateway | Neobank"></a>
-            </div>            
+              <a href="https://razorpay.com/" target="_blank" class="me-4"> <img referrerpolicy="origin" src="https://badges.razorpay.com/badge-dark.png " style="height: 45px; width: 113px;" alt="Razorpay | Payment Gateway | Neobank"></a>
+              <a href="#" target="_blank"> <img referrerpolicy="origin" src="/image/cash-on-delivery.png" style="width: 45px;" alt="Razorpay | Payment Gateway | Neobank"></a>
+            </div>
           </div>
           <% } %>
         </div>
@@ -154,7 +154,7 @@
                 </li>
               </ul>
 
-              <a href="/go-to-checkout">
+              <a href="/checkout">
                 <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">
                   Go to checkout
                 </button>
@@ -328,6 +328,27 @@
             })
           }
         })
+    }
+
+    // assigning the date to DOM element
+    document.getElementById('date').innerHTML = getDateAfterSevenDays();
+
+    // returns the date 7 days from today in 'dd-m-yyyy' format
+    function getDateAfterSevenDays() {
+      const today = new Date();
+
+      // add 7 days to the current date
+      today.setDate(today.getDate() + 7);
+
+      // get the day, month, and year from the new date
+      const day = today.getDate();
+      const month = today.getMonth() + 1; // months are zero-indexed, so add 1
+      const year = today.getFullYear();
+
+      // format the date as dd-m-yyyy
+      const formattedDate = `${day}-${month}-${year}`;
+
+      return formattedDate;
     }
   });
 </script>

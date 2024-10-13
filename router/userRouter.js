@@ -65,7 +65,6 @@ user.post('/add-to-cart', checkUserSession, cartController.addToCartPost);
 user.delete('/remove-cart-item/:productID', checkUserSession, cartController.removeCartItem);
 user.put('/increment-product/:productID', checkUserSession, cartController.increaseProductQuantity);
 user.put('/decrement-product/:productID', checkUserSession, cartController.decreaseProductQuantity);
-user.get('/go-to-checkout', checkUserSession, cartController.goToCheckout);
 
 // will handle user checkout route
 user.get('/checkout', checkUserSession, checkoutController.checkout);

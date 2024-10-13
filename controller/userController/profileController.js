@@ -77,7 +77,11 @@ const addAddress = async (req, res) => {
 
       req.flash('alert', { message: 'Address saved successfully!', color: 'bg-success' });
 
-      res.redirect('/profile');
+      if (req.query.route === 'checkout') {
+        res.redirect('/checkout');
+      } else {
+        res.redirect('/profile');
+      }
     }
   } catch (err) {
     console.log('Error while saving new user address', err);
@@ -107,7 +111,12 @@ const updateAddress = async (req, res) => {
 
     req.flash('alert', { message: 'Address updated successfully!', color: 'bg-success' });
 
-    res.redirect('/profile');
+    if (req.query.route === 'checkout') {
+      res.redirect('/checkout');
+    } else {
+      res.redirect('/profile');
+    }
+    console.log(req.path);
   } catch (err) {
     console.log('Error while updating user address', err);
   }
@@ -126,7 +135,11 @@ const deleteAddress = async (req, res) => {
 
     req.flash('alert', { message: 'Address deleted successfully!', color: 'bg-success' });
 
-    res.json({ url: '/profile' });
+    if (req.query.route === 'checkout') {
+      res.json({ url: '/checkout' });
+    } else {
+      res.json({ url: '/profile' });
+    }    
   } catch (err) {
     res.json({ error: true });
 

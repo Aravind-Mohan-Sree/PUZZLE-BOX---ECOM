@@ -1,9 +1,31 @@
 <!-- ------------------------------- styles -------------------------------- -->
 <style>
-  .profile-container {
+  .checkout-container {
     flex-grow: 1;
-    padding-top: 6.25rem;
+    padding-top: 4.25rem;
     padding-bottom: 2.875rem;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
   }
 </style>
 <!-- ----------------------------------------------------------------------- -->
@@ -12,16 +34,252 @@
 <%- include('navbar') %>
 <!-- ----------------------------------------------------------------------- -->
 
-<!-- -------------------------- profile container -------------------------- -->
-<div class="profile-container">
-  <!-- ----------------------- profile details section ----------------------- -->
-  <section>
-    <div class="container px-4 px-sm-2 pt-md-3">
-      <div class="row">
+<!-- -------------------------- checkout container -------------------------- -->
+<div class="checkout-container">
 
+  <!-- ----------------------- checkout section ----------------------- -->
+  <section class="h-100 gradient-custom">
+    <div class="container px-4 px-sm-2 pt-md-3">
+      <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <div class="row pe-0">
+                  <div>
+                    <p class="mb-0 text-dark pb-3 fw-semibold">SELECT ADDRESS</p>
+                  </div>
+                  <div class="pe-0 col">
+                    <select id="address" data-mdb-select-init class="form-control select" name="address">
+                      <% if (addresses.length===0) { %>
+                      <option value="" disabled selected hidden>None</option>
+                      <% } %>
+                      <% addresses.forEach((item, index)=> { %>
+                      <option value="<%= index %>">
+                        <%= item.contactName + ', ' + item.house + ', ' + item.area + ', ' + item.city + ', ' + item.state + ', ' + item.pincode + ', ' + item.phone %>
+                      </option>
+                      <% }) %>
+                    </select>
+                  </div>
+                </div>
+                <div class="row justify-content-start gy-2 justify-content-sm-end pe-0">
+                  <div class="col-auto pe-0">
+                    <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
+                      add address
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-body">
+              <div class="row">
+                <% let payableAmount1 = 0 %>
+                <% let totalProductQuantity1 = 0 %>
+                <% if (cart) { %>
+                <% cart.items.forEach((item, index) => { %>
+                <% totalProductQuantity1 += item.productCount %>
+                <% payableAmount1 += item.productID.productDiscountedPrice * item.productCount %>
+                <% }) %>
+                <% } %>
+                <% if (payableAmount1 < 500) { %>
+                payableAmount1 += (40 * totalProductQuantity)
+                <% } %>
+                <div class="row pe-0">
+                  <div>
+                    <p class="mb-0 text-dark pb-3 fw-semibold">SELECT PAYMENT METHOD</p>
+                  </div>
+                  <div class="pe-0 col">
+                    <div class="form-check mb-3">
+                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault1" <%= payableAmount1 >= 1000 ? 'disabled' : 'checked' %> />
+                      <label class="form-check-label" for="flexRadioDefault1"> Cash On Delivery</label>
+                      <span class="badge badge-danger ms-3"><%= payableAmount1 >= 1000 ? 'Available only for below ₹ 1000' : '' %></span>
+                    </div>
+                    <div class="form-check mb-3">
+                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault2" <%= payableAmount1 >= 1000 ? 'checked' : '' %> />
+                      <label class="form-check-label" for="flexRadioDefault2"> Razorpay </label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault3" />
+                      <label class="form-check-label" for="flexRadioDefault3"> Wallet </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-body">
+              <p><strong>Expected Delivery</strong></p>
+              <p class="mb-0">In 7 days, <span id="date"></span></p>
+            </div>
+          </div>
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0"><%= cart ? cart.items.length : '0' %> item(s)</h5>
+            </div>
+            <div class="card-body pt-0">
+              <% let payableAmount = 0 %>
+              <% let totalProductQuantity = 0 %>
+              <% if (cart) { %>
+              <% cart.items.forEach((item, index) => { %>
+              <% totalProductQuantity += item.productCount %>
+              <% payableAmount += item.productID.productDiscountedPrice * item.productCount %>
+              <!-- Single item -->
+              <hr class="mb-4" />
+
+              <div class="row mb-4">
+                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                  <!-- Image -->
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>">
+                      <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="Blue Jeans Jacket" />
+                    </a>
+                  </div>
+                  <!-- Image -->
+                </div>
+
+                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                  <!-- Data -->
+                  <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark">
+                    <p class="h5"><%= item.productID.productName %></p>
+                  </a>
+                  <p>Category: <%= item.productID.productCategory.categoryName %></p>
+                  <p>Dimensions: <%= item.productID.productDimension.split('-')[0] + ' x ' + item.productID.productDimension.split('-')[1] + ' x ' + item.productID.productDimension.split('-')[2] + ' cm' %></p>
+                  <!-- Data -->
+                </div>
+
+                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                  <!-- Quantity -->
+                  <div class="d-flex mb-4" style="max-width: 300px">
+                    <div data-mdb-input-init class="form-outline">
+                      <input name="quantity" value="<%= item.productCount %>" type="number" class="form-control bg-white quantity-count" disabled />
+                      <label class="form-label" for="form1">Quantity</label>
+                    </div>
+                  </div>
+                  <!-- Quantity -->
+
+                  <!-- Price -->
+                  <p class="mb-4 mt-3">
+                    <s class="text-danger per-product-amount <%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
+                  </p>
+                  <!-- Price -->
+                </div>
+              </div>
+              <!-- Single item -->
+              <% }) %>
+              <% } %>
+            </div>
+          </div>
+        </div>
+        <% if (cart) { %>
+        <div class="col-md-4">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Total Amount
+                  <span id="total-amount"><%= '₹ ' + cart.totalPrice.toLocaleString() %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Discount
+                  <span id="discount" class="text-danger"><%= '- ₹ ' + (cart.totalPrice - payableAmount).toLocaleString() %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                  Delivery Charge
+                  <span id="delivery-charge" class="<%= payableAmount < 500 ? '' : 'text-danger' %>"><%= payableAmount < 500 ? '+ ₹ ' + (40 * totalProductQuantity) : 'Free' %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                  <div>
+                    <strong>Payable Amount</strong>
+                  </div>
+                  <span><strong id="payable-amount"><%= payableAmount < 500 ? '₹ ' + (payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + payableAmount.toLocaleString() %></strong></span>
+                </li>
+              </ul>
+              <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark mb-2">
+                place order
+              </button>
+              <a href="/cart">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark">
+                  cancel
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <% } %>
       </div>
     </div>
   </section>
+  <!-- ----------------------------------------------------------------------- -->
+
+  <!-- ---------------------------- add address modal ---------------------------- -->
+  <!-- Modal -->
+  <form action="/add-address?route=checkout" method="post" id="form">
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Enter Details</h5>
+            <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="position-relative">
+              <label class="form-label" for="form12">Contact Name <span class="text-danger">*</span></label>
+              <input type="text" id="form1" class="form-control mb-3" name="contactName" placeholder="type..." />
+              <small class="contact-name-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
+              <input type="tel" id="form2" class="form-control mb-3" name="phone" placeholder="type..." />
+              <small class="phone-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">Pincode <span class="text-danger">*</span></label>
+              <input type="tel" id="form3" class="form-control mb-3" name="pincode" placeholder="type..." />
+              <small class="pincode-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">State <span class="text-danger">*</span></label>
+              <input type="text" id="form4" class="form-control mb-3" name="state" placeholder="type..." />
+              <small class="state-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">City <span class="text-danger">*</span></label>
+              <input type="text" id="form5" class="form-control mb-3" name="city" placeholder="type..." />
+              <small class="city-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">House No., Building Name <span class="text-danger">*</span></label>
+              <input type="text" id="form6" class="form-control mb-3" name="house" placeholder="type..." />
+              <small class="house-alert position-absolute top-100 text-danger"></small>
+            </div>
+
+            <div class="position-relative">
+              <label class="form-label" for="form12">Road Name, Area, Colony <span class="text-danger">*</span></label>
+              <input type="text" id="form7" class="form-control mb-3" name="area" placeholder="type..." />
+              <small class="area-alert position-absolute top-100 text-danger"></small>
+            </div>
+          </div>
+          <div class="modal-footer mx-auto">
+            <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- --------------------------- testimonials included --------------------------- -->
@@ -32,4 +290,365 @@
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal Initialization
+    const modalElement = document.getElementById('exampleModal');
+    let modalInstance = mdb.Modal.getInstance(modalElement);
+
+    // If no instance exists, create a new one
+    if (!modalInstance) {
+      modalInstance = new mdb.Modal(modalElement);
+    }
+
+    // Open modal on button click
+    document.getElementById('open-modal-btn').addEventListener('click', function() {
+      modalInstance.show();
+    });
+
+    // address validation
+    document.querySelector('body').addEventListener('submit', function(event) {
+      const target = event.target;
+
+      if (target.id === 'form' || target.id === 'form2') {
+        event.preventDefault();
+        const formElement = document.getElementById(target.id);
+
+        const contactName = formElement.querySelector('input[name="contactName"]').value;
+        const phone = formElement.querySelector('input[name="phone"]').value;
+        const pincode = formElement.querySelector('input[name="pincode"]').value;
+        const state = formElement.querySelector('input[name="state"]').value;
+        const city = formElement.querySelector('input[name="city"]').value;
+        const house = formElement.querySelector('input[name="house"]').value;
+        const area = formElement.querySelector('input[name="area"]').value;
+
+        const contactNameAlert = formElement.querySelectorAll('.contact-name-alert');
+        const phoneAlert = formElement.querySelectorAll('.phone-alert');
+        const pincodeAlert = formElement.querySelectorAll('.pincode-alert');
+        const stateAlert = formElement.querySelectorAll('.state-alert');
+        const cityAlert = formElement.querySelectorAll('.city-alert');
+        const houseAlert = formElement.querySelectorAll('.house-alert');
+        const areaAlert = formElement.querySelectorAll('.area-alert');
+
+        // Hide all alerts before validation
+        [contactNameAlert, phoneAlert, pincodeAlert, stateAlert, cityAlert, houseAlert, areaAlert].forEach(alerts => {
+          alerts.forEach(alert => alert.style.display = 'none');
+        });
+
+        let hasErrors = false;
+
+        // Validate contact name
+        if (contactName === '' || /[^\w\s]/.test(contactName) || /\d/.test(contactName) || /^\s|\s{2,}|\s$/.test(contactName) || contactName.replace(/\s+/g, '').length < 3 || contactName.replace(/\s+/g, '').length > 15) {
+          contactNameAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (contactName === '') {
+              alert.innerText = 'Name is required';
+            } else if (/[^\w\s]/.test(contactName)) {
+              alert.innerText = `Name can't contain special characters`;
+            } else if (/\d/.test(contactName)) {
+              alert.innerText = `Name can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(contactName)) {
+              alert.innerText = `Name can't contain unwanted spaces`;
+            } else if (contactName.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `Name minimum length is 3`;
+            } else {
+              alert.innerText = `Name maximum length is 15`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // Validate phone
+        if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+          phoneAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (phone === '') {
+              alert.innerText = `Phone is required`;
+            } else if (/[a-zA-Z]/.test(phone)) {
+              alert.innerText = `Phone can't contain alphabets`;
+            } else if (/[^\w\s]/.test(phone)) {
+              alert.innerText = `Phone can't contain special characters`;
+            } else if (/\s/.test(phone)) {
+              alert.innerText = `Phone can't contain spaces`;
+            } else {
+              alert.innerText = `Phone length must be 10`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // Validate pincode
+        if (pincode === '' || /[a-zA-Z]/.test(pincode) || /[^\w\s]/.test(pincode) || /\s/.test(pincode) || pincode.length < 4 || pincode.length > 10) {
+          pincodeAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (pincode === '') {
+              alert.innerText = `Pincode is required`;
+            } else if (/[a-zA-Z]/.test(pincode)) {
+              alert.innerText = `Pincode can't contain alphabets`;
+            } else if (/[^\w\s]/.test(pincode)) {
+              alert.innerText = `Pincode can't contain special characters`;
+            } else if (/\s/.test(pincode)) {
+              alert.innerText = `Pincode can't contain spaces`;
+            } else if (pincode.length < 4) {
+              alert.innerText = `Minimum length is 4`;
+            } else {
+              alert.innerText = `Maximum length is 10`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (state === '' || /[^\w\s]/.test(state) || /\d/.test(state) || /^\s|\s{2,}|\s$/.test(state) || state.replace(/\s+/g, '').length < 3 || state.replace(/\s+/g, '').length > 36) {
+          stateAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (state === '') {
+              alert.innerText = 'State is required';
+            } else if (/[^\w\s]/.test(state)) {
+              alert.innerText = `State can't contain special characters`;
+            } else if (/\d/.test(state)) {
+              alert.innerText = `State can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(state)) {
+              alert.innerText = `State can't contain unwanted spaces`;
+            } else if (state.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `State minimum length is 3`;
+            } else {
+              alert.innerText = `State maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (city === '' || /[^\w\s]/.test(city) || /\d/.test(city) || /^\s|\s{2,}|\s$/.test(city) || city.replace(/\s+/g, '').length < 3 || city.replace(/\s+/g, '').length > 36) {
+          cityAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (city === '') {
+              alert.innerText = 'City is required';
+            } else if (/[^\w\s]/.test(city)) {
+              alert.innerText = `City can't contain special characters`;
+            } else if (/\d/.test(city)) {
+              alert.innerText = `City can't contain numbers`;
+            } else if (/^\s|\s{2,}|\s$/.test(city)) {
+              alert.innerText = `City can't contain unwanted spaces`;
+            } else if (city.replace(/\s+/g, '').length < 3) {
+              alert.innerText = `City minimum length is 3`;
+            } else {
+              alert.innerText = `City maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (house === '' || /^\s|\s{2,}|\s$/.test(house) || house.replace(/\s+/g, '').length < 8 || house.replace(/\s+/g, '').length > 36) {
+          houseAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (house === '') {
+              alert.innerText = 'Field is required';
+            } else if (/^\s|\s{2,}|\s$/.test(house)) {
+              alert.innerText = `Can't contain unwanted spaces`;
+            } else if (house.replace(/\s+/g, '').length < 8) {
+              alert.innerText = `Minimum length is 8`;
+            } else {
+              alert.innerText = `Maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        if (area === '' || /^\s|\s{2,}|\s$/.test(area) || area.replace(/\s+/g, '').length < 8 || area.replace(/\s+/g, '').length > 36) {
+          areaAlert.forEach(alert => {
+            alert.style.display = 'inline';
+            if (area === '') {
+              alert.innerText = 'Field is required';
+            } else if (/^\s|\s{2,}|\s$/.test(area)) {
+              alert.innerText = `Can't contain unwanted spaces`;
+            } else if (area.replace(/\s+/g, '').length < 8) {
+              alert.innerText = `Minimum length is 8`;
+            } else {
+              alert.innerText = `Maximum length is 36`;
+            }
+
+            alert.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          });
+
+          hasErrors = true;
+        }
+
+        // If no errors, submit the form
+        if (!hasErrors) {
+          formElement.submit();
+        }
+      }
+    });
+
+    // for editing user address
+    let index;
+    let addresses = JSON.parse('<%- JSON.stringify(addresses) %>');
+
+    document.getElementById('address').addEventListener('change', function() {
+      index = this.value;
+    })
+
+    function createAndShowModalForm() {
+      index = index || document.getElementById('address').value;
+      const selectedAddress = addresses[index];
+
+      // Check if the modal already exists
+      let existingModal = document.getElementById('form2');
+      if (existingModal) {
+        // If it exists, remove it
+        existingModal.remove();
+      }
+
+      const form = document.createElement('form');
+      form.action = `/update-address?index=${index}&route=checkout`;
+      form.method = "post";
+      form.id = "form2";
+
+      const modalHTML = `
+    <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Details</h5>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            ${createInputField("contact-name", "Contact Name", "contactName", "text", `${selectedAddress.contactName}`)}
+            ${createInputField("phone", "Phone Number", "phone", "tel", `${selectedAddress.phone}`)}
+            ${createInputField("pincode", "Pincode", "pincode", "tel", `${selectedAddress.pincode}`)}
+            ${createInputField("state", "State", "state", "text", `${selectedAddress.state}`)}
+            ${createInputField("city", "City", "city", "text", `${selectedAddress.city}`)}
+            ${createInputField("house", "House No., Building Name", "house", "text", `${selectedAddress.house}`)}
+            ${createInputField("area", "Road Name, Area, Colony", "area", "text", `${selectedAddress.area}`)}
+          </div>
+          <div class="modal-footer mx-auto">
+            <button type="button" class="btn btn-dark" data-mdb-dismiss="modal">Close</button>
+            <button id="delete-address" type="button" class="btn btn-dark">Delete</button>
+            <button type="submit" class="btn btn-dark">Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+      form.innerHTML = modalHTML;
+      document.body.appendChild(form);
+
+      // Initialize the modal
+      const modal = new mdb.Modal(document.getElementById('exampleModal2'));
+
+      // Show the modal
+      modal.show();
+    }
+
+    function createInputField(className, label, name, type, value) {
+      return `
+    <div class="position-relative">
+      <label class="form-label" for="${name}">${label} <span class="text-danger">*</span></label>
+      <input type="${type}" id="${name}" class="form-control mb-3" name="${name}" placeholder="type..." value="${value}" />
+      <small class="position-absolute top-100 text-danger ${className}-alert"></small>
+    </div>
+  `;
+    }
+
+    // Event listener for the button click
+    if (addresses.length > 0) {
+      document.getElementById('createModalButton').addEventListener('click', createAndShowModalForm);
+    }
+
+    // using fetch for deleting user address
+    document.querySelector('body').addEventListener('click', function(event) {
+      const target = event.target;
+
+      if (target.id === 'delete-address') {
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/delete-address?index=${index}&route=checkout`, {
+                method: "GET"
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.log(error);
+                } else {
+                  window.location.href = data.url;
+                }
+              })
+          }
+        })
+      }
+    });
+
+    // assigning the date to DOM element
+    document.getElementById('date').innerHTML = getDateAfterSevenDays();
+
+    // returns the date 7 days from today in 'dd-m-yyyy' format
+    function getDateAfterSevenDays() {
+      const today = new Date();
+
+      // add 7 days to the current date
+      today.setDate(today.getDate() + 7);
+
+      // get the day, month, and year from the new date
+      const day = today.getDate();
+      const month = today.getMonth() + 1; // months are zero-indexed, so add 1
+      const year = today.getFullYear();
+
+      // format the date as dd-m-yyyy
+      const formattedDate = `${day}-${month}-${year}`;
+
+      return formattedDate;
+    }
+  });
+</script>
 <!-- ----------------------------------------------------------------------- -->

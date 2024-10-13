@@ -530,7 +530,9 @@
     }
 
     // Event listener for the button click
-    document.getElementById('createModalButton').addEventListener('click', createAndShowModalForm);
+    if (addresses.length > 0) {
+      document.getElementById('createModalButton').addEventListener('click', createAndShowModalForm);
+    }
 
     // using fetch for deleting user address
     document.querySelector('body').addEventListener('click', function(event) {
