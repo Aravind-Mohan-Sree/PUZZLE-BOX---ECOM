@@ -42,6 +42,8 @@
     <div class="container px-4 px-sm-2 pt-md-3">
       <div class="row d-flex justify-content-center my-4">
         <div class="col-md-8">
+          <h5 class="mb-0 h3 text-dark">CHECKOUT</h5>
+          <hr>
           <div class="card mb-4">
             <div class="card-body">
               <div class="row">
@@ -86,7 +88,7 @@
                 <% }) %>
                 <% } %>
                 <% if (payableAmount1 < 500) { %>
-                payableAmount1 += (40 * totalProductQuantity)
+                <% payableAmount1 += (40 * totalProductQuantity1) %>
                 <% } %>
                 <div class="row pe-0">
                   <div>
@@ -94,16 +96,16 @@
                   </div>
                   <div class="pe-0 col">
                     <div class="form-check mb-3">
-                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault1" <%= payableAmount1 >= 1000 ? 'disabled' : 'checked' %> />
+                      <input class="form-check-input me-3" type="radio" value="0" name="paymentMethod" id="flexRadioDefault1" <%= payableAmount1 >= 1000 ? 'disabled' : 'checked' %> />
                       <label class="form-check-label" for="flexRadioDefault1"> Cash On Delivery</label>
                       <span class="badge badge-danger ms-3"><%= payableAmount1 >= 1000 ? 'Available only for below ₹ 1000' : '' %></span>
                     </div>
                     <div class="form-check mb-3">
-                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault2" <%= payableAmount1 >= 1000 ? 'checked' : '' %> />
+                      <input class="form-check-input me-3" type="radio" value="1" name="paymentMethod" id="flexRadioDefault2" <%= payableAmount1 >= 1000 ? 'checked' : '' %> />
                       <label class="form-check-label" for="flexRadioDefault2"> Razorpay </label>
                     </div>
                     <div class="form-check">
-                      <input class="form-check-input me-3" type="radio" name="flexRadioDefault" id="flexRadioDefault3" />
+                      <input class="form-check-input me-3" type="radio" value="2" name="paymentMethod" id="flexRadioDefault3" />
                       <label class="form-check-label" for="flexRadioDefault3"> Wallet </label>
                     </div>
                   </div>
@@ -136,7 +138,7 @@
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
                     <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>">
-                      <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="Blue Jeans Jacket" />
+                      <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="" />
                     </a>
                   </div>
                   <!-- Image -->
@@ -144,7 +146,7 @@
 
                 <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
                   <!-- Data -->
-                  <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark">
+                  <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= item.productID.productName %></p>
                   </a>
                   <p>Category: <%= item.productID.productCategory.categoryName %></p>
@@ -202,7 +204,7 @@
                   <span><strong id="payable-amount"><%= payableAmount < 500 ? '₹ ' + (payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
-              <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark mb-2">
+              <button id="order-btn" type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark mb-2">
                 place order
               </button>
               <a href="/cart">
@@ -649,6 +651,83 @@
 
       return formattedDate;
     }
+
+    // check if user has selected an address or payment method
+    const paymentMethod = document.querySelectorAll('input[name="paymentMethod"]');
+    addressIndex = index || document.getElementById('address').value;
+    const selectedAddress = addresses[addressIndex];
+    let paymentMode;
+
+    paymentMethod.forEach(ele => {
+      ele.addEventListener('change', function() {
+        paymentMode = ele.value;
+      })
+
+      if (ele.checked) {
+        paymentMode = ele.value;
+      }
+    });
+
+    // proceed with order placement if user has selected a valid address or payment method
+    document.getElementById('order-btn').addEventListener('click', function() {
+      if (!selectedAddress || !paymentMode) {
+        if (!selectedAddress) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Please select an address',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          })
+        } else {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Please select a payment method',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          })
+        }
+      } else {
+        if (parseInt(paymentMode) === 0) {
+          const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+          fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                window.location.href = '/order-confirmation';
+              }
+
+              if (data.failed) {
+                window.location.href = '/cart';
+              }
+
+              if (data.error) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.error,
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                })
+              }
+            })
+        }
+      }
+    });
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

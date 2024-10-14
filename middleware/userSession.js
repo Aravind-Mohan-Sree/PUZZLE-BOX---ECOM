@@ -2,7 +2,7 @@ const userSchema = require("../model/userSchema");
 
 async function checkUserSession(req, res, next) {
   try {
-    req.session.user = '66ee9333ea7cb10f8f5a34c6';
+    // req.session.user = '66ee9333ea7cb10f8f5a34c6';
     if (req.session.user) {
       const userDetails = await userSchema.findById(req.session.user);
 

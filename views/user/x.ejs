@@ -1,10 +1,9 @@
 <!-- ------------------------------- styles -------------------------------- -->
 <style>
-  .order-confirmation-container {
-    background-image: url('/image/bg.webp');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+  .order-container {
+    flex-grow: 1;
+    padding-top: 6.25rem;
+    padding-bottom: 2.875rem;
   }
 </style>
 <!-- ----------------------------------------------------------------------- -->
@@ -13,31 +12,23 @@
 <%- include('navbar') %>
 <!-- ----------------------------------------------------------------------- -->
 
-<!-- -------------------------- order confirmation container -------------------------- -->
-<div class="order-confirmation-container d-flex vh-100 justify-content-center align-items-center">
-  <!-- ----------------------- order confirmation section ----------------------- -->
+<!-- -------------------------- order container -------------------------- -->
+<div class="order-container">
+  <!-- ----------------------- order details section ----------------------- -->
   <section>
-    <div class="container px-4">
+    <div class="container px-4 px-sm-2 pt-md-3">
       <div class="row">
-        <div class="col rounded-9 bg-opacity-25 bg-light bg-white p-5 text-dark">
-          <h1>Order Confirmed!</h1>
-          <p>Thank you for purchasing from Puzzle Box...</p>
-          <a href="/orders">
-            <button class="btn btn-dark d-block mx-auto mt-4">go to orders</button>
-          </a>
-        </div>
+
       </div>
     </div>
   </section>
   <!-- ----------------------------------------------------------------------- -->
-</div>
-<!-- ----------------------------------------------------------------------- -->
 
-<div class="mb-5">
   <!-- --------------------------- testimonials included --------------------------- -->
   <%- include('testimonial') %>
   <!-- ----------------------------------------------------------------------- -->
 </div>
+<!-- ----------------------------------------------------------------------- -->
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>

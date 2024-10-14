@@ -7,6 +7,7 @@ const productController = require('../controller/userController/productControlle
 const profileController = require('../controller/userController/profileController');
 const cartController = require('../controller/userController/cartController');
 const checkoutController = require('../controller/userController/checkoutController');
+const orderController = require('../controller/userController/orderController');
 const updateNavbarController = require('../controller/userController/updateNavbarController');
 const checkUserSession = require('../middleware/userSession');
 const checkUserBlocked = require('../middleware/checkUserBlocked');
@@ -68,7 +69,15 @@ user.put('/decrement-product/:productID', checkUserSession, cartController.decre
 
 // will handle user checkout route
 user.get('/checkout', checkUserSession, checkoutController.checkout);
+user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
+
+// will handle the user order route
+user.get('/orders',checkUserSession,orderController.order);
+// user.get('/cancelled-orders',checkUserSession,orderController.cancelledOrder);
+// user.post('/cancel-order/:orderID',checkUserSession,orderController.cancelOrderPost);
+// user.post('/return-order/:orderID',checkUserSession,orderController.returnOrderPost);
+// user.post('/add-review/:productID',checkUserSession,orderController.addReview);
 
 // will handle update navbar route
 user.post('/update-navbar', updateNavbarController.updateNavbarPost);

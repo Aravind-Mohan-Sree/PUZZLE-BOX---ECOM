@@ -1,0 +1,204 @@
+<!-- styles -->
+<style>
+  .datatable thead {
+    color: rgb(255, 255, 255);
+    background-color: #332d2d;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    caret-color: rgb(255, 255, 255);
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent !important;
+  }
+
+  #orders {
+    background-color: rgba(51, 45, 45, .05);
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+<!-- sidenav included -->
+<%- include('sidenav') %>
+
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">ORDERS</h2>
+
+<hr>
+
+<!-- category table container -->
+<div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="5" data-mdb-full-pagination="true" id="content">
+  <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
+    <table class="table datatable-table" id="exampleTable">
+      <thead class="datatable-header">
+        <tr>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Order ID</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Ordered Date</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Payment Method</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Price</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
+        </tr>
+      </thead>
+      <tbody class="datatable-body">
+        <% if(orders.length != 0) { %>
+        <% orders.forEach((ele, index) => { %>
+        <tr>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-bold mb-1 name">
+              <%= ele._id %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_1" false="">
+            <p class="fw-normal mb-1">
+              <%= new Date(ele.createdAt).toDateString() %>
+            </p>
+            <p class="fw-normal mb-0">
+              <%= new Date(ele.createdAt).toTimeString().slice(0, 8) %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_2" false="">
+            <p class="fw-normal mb-1">
+              <%= ele.paymentMethod  %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_3" false="">
+            <h6 class="mb-4 mt-3 badge <% if (ele.orderStatus === 'Pending') { %>
+              badge-secondary
+            <% } else if (ele.orderStatus === 'Confirmed') { %>
+              badge-primary
+            <% } else if (ele.orderStatus === 'Shipping') { %>
+              badge-info
+            <% } else if (ele.orderStatus === 'Delivered') { %>
+              badge-success
+            <% } else if (ele.orderStatus === 'Pending-Returned') { %>
+              badge-secondary
+            <% } else if (ele.orderStatus === 'Returned') { %>
+              badge-warning
+            <% } else if (ele.orderStatus === 'Cancelled') { %>
+              badge-danger
+            <% } %>">
+              <% if (ele.orderStatus === 'Pending') { %>
+              Pending
+              <% } else if (ele.orderStatus === 'Confirmed') { %>
+                Confirmed
+              <% } else if (ele.orderStatus === 'Shipping') { %>
+                Shipping
+              <% } else if (ele.orderStatus === 'Delivered') { %>
+                Delivered
+              <% } else if (ele.orderStatus === 'Pending-Returned') { %>
+                Pending-Returned
+              <% } else if (ele.orderStatus === 'Returned') { %>
+                Returned
+              <% } else if (ele.orderStatus === 'Cancelled') { %>
+                Cancelled
+              <% } %>
+            </h6>
+          </td>
+          <td class="" data-mdb-field="field_2" false="">
+            <p class="fw-normal mb-1">
+              <%= '₹ ' + ele.totalPrice.toLocaleString()  %>
+              </p>
+          </td>
+          <td class="" data-mdb-field=" field_4" false="">
+            <!-- action button -->
+            <a href="/admin/view-order/?orderID=<%= ele._id %>">
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= ele._id %>">
+                <i class="fa-duotone fa-solid fa-xl fa-pen-to-square" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+              </button>
+            </a>
+          </td>
+        </tr>
+        <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- footer included -->
+<%- include('footer') %>
+
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
+
+  // dynamically adds padding to h2 tag
+  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+
+  // dynamically adds padding to table container
+  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+
+  // using fetch to add category
+  document.getElementById('add-category').addEventListener('click', function() {
+    Swal.fire({
+      title: "New Category",
+      input: "text",
+      inputLabel: "Enter the category name below",
+      inputPlaceholder: "type...",
+      showCancelButton: true,
+      allowOutsideClick: false,
+      customClass: {
+        container: 'swal-css'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return "Please enter something";
+        }
+      }
+    }).then(result => {
+      if (result.value) {
+        const categoryName = result.value;
+
+        fetch('/admin/categories', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              categoryName
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong. Try again',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            } else if (data.exist) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Category already exist',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            } else {
+              window.location.reload();
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  });
+</script>

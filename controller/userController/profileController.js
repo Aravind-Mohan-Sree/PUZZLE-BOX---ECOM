@@ -116,7 +116,6 @@ const updateAddress = async (req, res) => {
     } else {
       res.redirect('/profile');
     }
-    console.log(req.path);
   } catch (err) {
     console.log('Error while updating user address', err);
   }
