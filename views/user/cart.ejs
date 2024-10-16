@@ -45,15 +45,14 @@
             <div class="card-header py-3">
               <h5 class="mb-0">CART - <%= cart ? cart.items.length : '0' %> item(s)</h5>
             </div>
-            <div class="card-body pt-0">
+            <div class="card-body pt-0 pb-0">
               <% let totalProductQuantity = 0 %>
               <% if (cart) { %>
-              <% cart.items.forEach((item, index) => { %>
+              <% cart.items.forEach((item, index, array) => { %>
               <% totalProductQuantity += item.productCount %>
-              <!-- Single item -->
-              <hr class="mb-4" />
 
-              <div class="row mb-4">
+              <!-- Single item -->
+              <div class="row mb-4 mt-4">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
@@ -64,7 +63,7 @@
                   <!-- Image -->
                 </div>
 
-                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                <div class="col-lg-5 mb-4 mb-lg-0">
                   <!-- Data -->
                   <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= item.productID.productName %></p>
@@ -77,10 +76,10 @@
                   <!-- Data -->
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <div class="col-lg-4 mb-0 mb-lg-0">
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 me-2 minus-btn" onclick="decreaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount <= 0 ? 'disabled' : '' %>>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary px-3 me-2 minus-btn shadow-0" onclick="decreaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount <= 0 ? 'disabled' : '' %>>
                       <i class="fas fa-minus"></i>
                     </button>
 
@@ -89,19 +88,22 @@
                       <label class="form-label" for="form1">Quantity</label>
                     </div>
 
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark px-3 ms-2 plus-btn" onclick="increaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount >= 5 ? 'disabled' : '' %>>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-success px-3 ms-2 plus-btn shadow-0" onclick="increaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount >= 5 ? 'disabled' : '' %>>
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
                   <!-- Quantity -->
 
                   <!-- Price -->
-                  <p class="mb-4 mt-3">
-                    <s class="text-danger per-product-amount <%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
+                  <p class="mb-0 mt-3">
+                    <s class="text-danger per-product-amount <%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
                   </p>
                   <p class="badge badge-danger out-of-stock"><%= item.productCount === 0 ? 'Out of stock' : '' %></p>
                   <!-- Price -->
                 </div>
+                <% if (index !== array.length - 1) { %>
+                <div class="mt-4 p-0 card-header"></div>
+                <% } %>
               </div>
               <!-- Single item -->
               <% }) %>
@@ -127,7 +129,7 @@
           <% } %>
         </div>
         <% if (cart) { %>
-        <div class="col-md-4">
+        <div class="col-md-8 col-lg-4">
           <div class="card mb-4">
             <div class="card-header py-3">
               <h5 class="mb-0">Summary</h5>
@@ -155,7 +157,7 @@
               </ul>
 
               <a href="/checkout">
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg btn-block">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-lg btn-block">
                   Go to checkout
                 </button>
               </a>
@@ -216,7 +218,7 @@
             if ((data.productCount) >= 0) {
               quantityCount[index].value = data.productCount;
               perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
-              data.productDiscount === 0 ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
+              data.productTotal === data.productDiscount ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
               perProductDiscount[index].innerHTML = '₹ ' + data.productDiscount.toLocaleString();
               outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
               totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();
@@ -266,7 +268,7 @@
             if ((data.productCount) >= 0) {
               quantityCount[index].value = data.productCount;
               perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
-              data.productDiscount === 0 ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
+              data.productTotal === data.productDiscount ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
               perProductDiscount[index].innerHTML = '₹ ' + data.productDiscount.toLocaleString();
               outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
               totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();

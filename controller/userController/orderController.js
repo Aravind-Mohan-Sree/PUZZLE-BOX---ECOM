@@ -19,12 +19,12 @@ const order = async (req, res) => {
         populate: {
           path: 'productCategory'
         }
-      })
+      })      
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(productsPerPage);
 
-    const orderCount = orders.length;
+    const orderCount = await orderSchema.countDocuments();
 
     // const paginatedOrderDetails = orderDetails.slice(skip, skip + productsPerPage);
 

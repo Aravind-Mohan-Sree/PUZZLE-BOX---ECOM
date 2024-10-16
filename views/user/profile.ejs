@@ -106,7 +106,7 @@
                     <input type="text" value="" class="w-100 border-bottom border-dark" placeholder="Enter new password" name="newPassword">
                     <small class="text-danger" id="new-password-alert"></small>
                   </div>
-                  <button class="btn btn-sm btn-dark mt-3" id="change-password">update</button>
+                  <button class="btn btn-sm btn-info mt-3" id="change-password">update</button>
                 </div>
               </div>
               <hr>
@@ -132,7 +132,7 @@
                   <div class="col-auto pe-0">
                     <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
+                    <button type="button" class="btn btn-primary" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
                       add address
                     </button>
                   </div>
@@ -209,8 +209,8 @@
           </div>
         </div>
         <div class="modal-footer mx-auto">
-          <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Save</button>
+          <button type="button" class="btn btn-secondary shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-success shadow-0" data-mdb-ripple-init>Save</button>
         </div>
       </div>
     </div>
@@ -500,9 +500,9 @@
             ${createInputField("area", "Road Name, Area, Colony", "area", "text", `${selectedAddress.area}`)}
           </div>
           <div class="modal-footer mx-auto">
-            <button type="button" class="btn btn-dark" data-mdb-dismiss="modal">Close</button>
-            <button id="delete-address" type="button" class="btn btn-dark">Delete</button>
-            <button type="submit" class="btn btn-dark">Update</button>
+            <button type="button" class="btn btn-secondary shadow-0" data-mdb-dismiss="modal">Close</button>
+            <button id="delete-address" type="button" class="btn btn-danger shadow-0">Delete</button>
+            <button type="submit" class="btn btn-info shadow-0">Update</button>
           </div>
         </div>
       </div>

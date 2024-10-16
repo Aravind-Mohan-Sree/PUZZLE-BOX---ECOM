@@ -27,6 +27,10 @@
     box-shadow: none;
     border-color: rgb(255, 255, 255);
   }
+
+  #flexRadioDefault1, #flexRadioDefault2, #flexRadioDefault3 {
+    z-index: 0;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -42,8 +46,7 @@
     <div class="container px-4 px-sm-2 pt-md-3">
       <div class="row d-flex justify-content-center my-4">
         <div class="col-md-8">
-          <h5 class="mb-0 h3 text-dark">CHECKOUT</h5>
-          <hr>
+          <h5 class="mb-4 h4 text-dark d-inline-block border-bottom border-3 border-dark pb-1">CHECKOUT</h5>
           <div class="card mb-4">
             <div class="card-body">
               <div class="row">
@@ -68,7 +71,7 @@
                   <div class="col-auto pe-0">
                     <button id="createModalButton" type="button" class="btn btn-dark">Edit</button>
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
+                    <button type="button" class="btn btn-primary" data-mdb-ripple-init data-mdb-modal-init data-mdb-target="#exampleModal" id="open-modal-btn">
                       add address
                     </button>
                   </div>
@@ -123,17 +126,16 @@
             <div class="card-header py-3">
               <h5 class="mb-0"><%= cart ? cart.items.length : '0' %> item(s)</h5>
             </div>
-            <div class="card-body pt-0">
+            <div class="card-body pt-0 pb-0">
               <% let payableAmount = 0 %>
               <% let totalProductQuantity = 0 %>
               <% if (cart) { %>
-              <% cart.items.forEach((item, index) => { %>
+              <% cart.items.forEach((item, index, array) => { %>
               <% totalProductQuantity += item.productCount %>
               <% payableAmount += item.productID.productDiscountedPrice * item.productCount %>
-              <!-- Single item -->
-              <hr class="mb-4" />
 
-              <div class="row mb-4">
+              <!-- Single item -->
+              <div class="row mb-4 mt-4">
                 <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
                   <!-- Image -->
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
@@ -144,17 +146,17 @@
                   <!-- Image -->
                 </div>
 
-                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                <div class="col-lg-6 mb-0 mb-lg-0">
                   <!-- Data -->
                   <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= item.productID.productName %></p>
                   </a>
                   <p>Category: <%= item.productID.productCategory.categoryName %></p>
-                  <p>Dimensions: <%= item.productID.productDimension.split('-')[0] + ' x ' + item.productID.productDimension.split('-')[1] + ' x ' + item.productID.productDimension.split('-')[2] + ' cm' %></p>
+                  <p class="mb-">Dimensions: <%= item.productID.productDimension.split('-')[0] + ' x ' + item.productID.productDimension.split('-')[1] + ' x ' + item.productID.productDimension.split('-')[2] + ' cm' %></p>
                   <!-- Data -->
                 </div>
 
-                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                <div class="col-lg-3 mb-0 mb-lg-0">
                   <!-- Quantity -->
                   <div class="d-flex mb-4" style="max-width: 300px">
                     <div data-mdb-input-init class="form-outline">
@@ -165,11 +167,14 @@
                   <!-- Quantity -->
 
                   <!-- Price -->
-                  <p class="mb-4 mt-3">
-                    <s class="text-danger per-product-amount <%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscount * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
+                  <p class="mb-0 mt-3">
+                    <s class="text-danger per-product-amount <%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
                   </p>
                   <!-- Price -->
                 </div>
+                <% if (index !== array.length - 1) { %>
+                <div class="mt-4 p-0 card-header"></div>
+                <% } %>
               </div>
               <!-- Single item -->
               <% }) %>
@@ -178,7 +183,7 @@
           </div>
         </div>
         <% if (cart) { %>
-        <div class="col-md-4">
+        <div class="col-md-8 col-lg-4">
           <div class="card mb-4">
             <div class="card-header py-3">
               <h5 class="mb-0">Summary</h5>
@@ -204,11 +209,11 @@
                   <span><strong id="payable-amount"><%= payableAmount < 500 ? '₹ ' + (payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
-              <button id="order-btn" type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark mb-2">
+              <button id="order-btn" type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-success mb-2">
                 place order
               </button>
               <a href="/cart">
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-dark">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-secondary">
                   cancel
                 </button>
               </a>
@@ -275,8 +280,8 @@
             </div>
           </div>
           <div class="modal-footer mx-auto">
-            <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-dark" data-mdb-ripple-init>Save</button>
+            <button type="button" class="btn btn-secondary shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-success shadow-0" data-mdb-ripple-init>Save</button>
           </div>
         </div>
       </div>
@@ -566,9 +571,9 @@
             ${createInputField("area", "Road Name, Area, Colony", "area", "text", `${selectedAddress.area}`)}
           </div>
           <div class="modal-footer mx-auto">
-            <button type="button" class="btn btn-dark" data-mdb-dismiss="modal">Close</button>
-            <button id="delete-address" type="button" class="btn btn-dark">Delete</button>
-            <button type="submit" class="btn btn-dark">Update</button>
+            <button type="button" class="btn btn-secondary shadow-0" data-mdb-dismiss="modal">Close</button>
+            <button id="delete-address" type="button" class="btn btn-danger shadow-0">Delete</button>
+            <button type="submit" class="btn btn-info shadow-0">Update</button>
           </div>
         </div>
       </div>
@@ -653,9 +658,7 @@
     }
 
     // check if user has selected an address or payment method
-    const paymentMethod = document.querySelectorAll('input[name="paymentMethod"]');
-    addressIndex = index || document.getElementById('address').value;
-    const selectedAddress = addresses[addressIndex];
+    const paymentMethod = document.querySelectorAll('input[name="paymentMethod"]');        
     let paymentMode;
 
     paymentMethod.forEach(ele => {
@@ -670,6 +673,9 @@
 
     // proceed with order placement if user has selected a valid address or payment method
     document.getElementById('order-btn').addEventListener('click', function() {
+      addressIndex = index || document.getElementById('address').value;
+      const selectedAddress = addresses[addressIndex];
+
       if (!selectedAddress || !paymentMode) {
         if (!selectedAddress) {
           Swal.fire({

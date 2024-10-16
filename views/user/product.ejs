@@ -50,7 +50,7 @@
       <div class="row mt-4">
         <div class="row mb-4">
           <div class="col-auto">
-            <button class="btn btn-dark" id="sortButton">filter options <i class="fa-regular fa-bars-sort ms-2" style="color: #ffffff;"></i></button>
+            <button class="btn btn-primary" id="sortButton">filter options <i class="fa-regular fa-bars-sort ms-2" style="color: #ffffff;"></i></button>
           </div>
         </div>
         <% activeProducts.forEach(product=> { %>
@@ -112,13 +112,13 @@
                   </h6>
                 </div>
               </div>
-              <div class="row">                
+              <div class="row">
                 <div class="col text-center">
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star"></i>
-                  <i class="fa fa-star-half-stroke"></i>
-                  <i class="fa-light fa-star"></i>
+                  <i class="fa-light fa-star text-warning"></i>
+                  <i class="fa-light fa-star text-warning"></i>
+                  <i class="fa-light fa-star text-warning"></i>
+                  <i class="fa-light fa-star text-warning"></i>
+                  <i class="fa-light fa-star text-warning"></i>
                 </div>
               </div>
             </div>
@@ -216,8 +216,8 @@
           </ul>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-dark" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-          <button type="button" id="applySort" class="btn btn-dark" data-mdb-ripple-init>Apply</button>
+          <button type="button" class="btn btn-secondary shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="button" id="applySort" class="btn btn-success shadow-0" data-mdb-ripple-init>Apply</button>
         </div>
       </div>
     </div>
