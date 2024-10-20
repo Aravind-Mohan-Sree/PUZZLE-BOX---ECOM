@@ -99,6 +99,7 @@
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-10 col-lg-8">
           <h5 class="mb-4 h4 text-dark border-bottom border-3 border-dark d-inline-block pb-1">ORDERS - <%= orderCount %> item(s)</h5>
+          <% let totalPriceWithoutDiscount = 0 %>
           <% if(orders.length!=0) { %>
           <% orders.forEach((ele,index)=> { %>
           <div class="card card-stepper mb-4" style="border-radius: 16px;">
@@ -113,6 +114,7 @@
                   <% scrambledArray[i] = str[newIndex]; %>
                   <% }) %>
 
+                  <% scrambledArray.splice(20); %>
                   <% return scrambledArray.join(''); %>
                   <% } %>
 
@@ -121,24 +123,23 @@
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
                 <div class="d-none d-md-block">
-                  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>                  
+                  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
                 </div>
               </div>
               <div class="mt-3 d-md-none">
-                <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>                  
+                <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
               </div>
             </div>
             <div class="card-body p-4 pb-0">
               <% ele.products.forEach((product,index,array)=> { %>
-              <div class="d-flex flex-row mb-4 pb-2">
+              <% totalPriceWithoutDiscount += product.price * product.quantity %>
+              <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">
                 <div class="flex-fill">
                   <a href="/product-details?productId=<%= product.productID._id %>&productCategory=<%= product.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <h4 class="mb-3"> ₹ <%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString() %> <span class="small text-muted"> via <%= ele.paymentMethod %> </span></h4>
-                  <p class="text-muted">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
-                  <button class="btn btn-warning btn-sm shadow-0 text-black"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
+                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
                 </div>
                 <!-- Image -->
                 <div class="col-2">
@@ -149,7 +150,8 @@
                   </div>
                 </div>
                 <!-- Image -->
-              </div>              
+              </div>
+              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <ul id="progressbar-1" class="mx-0 mt-0 mb-5 px-0 pt-0 pb-4">
                 <li class="step0 active" id="step1"><span style="margin-left: 22px; margin-top: 12px;">PLACED</span></li>
                 <li class="step0 active text-center" id="step2"><span>SHIPPED</span></li>
@@ -160,11 +162,16 @@
               <% } %>
               <% }) %>
             </div>
+            <div class="card-footer">
+              <h4 class="mb-3 mt-2"> ₹ <%= ele.totalPrice.toLocaleString() %> <span class="small text-muted"> via <%= ele.paymentMethod %> </span></h4>
+              <h4 class="h5"><span class="small text-muted">Total Savings :</span> ₹ <%= ele.totalPrice < totalPriceWithoutDiscount ? (totalPriceWithoutDiscount - ele.totalPrice).toLocaleString() : '0' %></h4>
+            </div>
             <div class="card-footer p-4">
               <h1 class="h5 mb-3">Shipping Address</h1>
               <p class="m-0"><%= ele.address.contactName + ', ' + ele.address.house + ', ' + ele.address.area + ', ' + ele.address.city + ', ' + ele.address.state + ', ' + 'Pin: ' + ele.address.pincode + ', ' + 'Phone: ' + ele.address.phone %></p>
             </div>
           </div>
+          <% totalPriceWithoutDiscount = 0 %>
           <% }) %>
           <% } else { %>
           <p class="h4">You have no orders yet...</p>
@@ -173,6 +180,10 @@
       </div>
     </div>
   </section>
+  <!-- ----------------------------------------------------------------------- -->
+   
+  <!-- -------------------- modal for order cancellation --------------------- -->
+  
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- --------------------------- pagination included --------------------------- -->
