@@ -61,6 +61,8 @@
                     Cancelled
                     <% } %>
                     </h6>
+                  <p class="text-decoration-underline mt-2">Change Status</p>
+                  <button class="btn btn-info btn-sm">shipped</button>
                 </div>
                 <!-- Image -->
                 <div class="col-2">
@@ -70,12 +72,6 @@
                 </div>
                 <!-- Image -->
               </div>
-              <p class="text-dark text-center">Change Status</p>
-              <select id="return" data-mdb-select-init class="form-control select">
-                <option value="1">Incorrect item ordered</option>
-                <option value="2">Change of mind</option>
-                <option value="3">Delayed delivery</option>
-              </select>
               <% if (index !== array.length - 1) { %>
               <div class="mb-4 p-0 card-header"></div>
               <% } %>
