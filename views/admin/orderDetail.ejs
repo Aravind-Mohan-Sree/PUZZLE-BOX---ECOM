@@ -9,6 +9,28 @@
   .card-stepper {
     z-index: 0
   }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -44,25 +66,29 @@
                   <p class="h5"><%= product.productName %></p>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <p class="text-decoration-underline mb-0"">Current Status</p>
-                  <h6 class=" mt-3 badge fs-6 <% if (order.orderStatus === 'Pending') { %> badge-secondary <% } else if (order.orderStatus === 'Confirmed') { %> badge-primary <% } else if (order.orderStatus === 'Shipped') { %> badge-info <% } else if (order.orderStatus === 'Delivered') { %> badge-success <% } else if (order.orderStatus === 'Pending-Return') { %> badge-secondary <% } else if (order.orderStatus === 'Returned') { %> badge-warning <% } else if (order.orderStatus === 'Cancelled') { %> badge-danger <% } %>">
-                    <% if (order.orderStatus === 'Pending') { %>
-                    Pending
-                    <% } else if (order.orderStatus === 'Confirmed') { %>
-                    Confirmed
-                    <% } else if (order.orderStatus === 'Shipped') { %>
-                    Shipping
-                    <% } else if (order.orderStatus === 'Delivered') { %>
-                    Delivered
-                    <% } else if (order.orderStatus === 'Pending-Return') { %>
-                    Pending-Returned
-                    <% } else if (order.orderStatus === 'Returned') { %>
-                    Returned
-                    <% } else if (order.orderStatus === 'Cancelled') { %>
-                    Cancelled
+                  <h6 class=" mt-3 badge fs-6 <% if (product.status === 'Pending') { %> badge-secondary <% } else if (product.status === 'Confirmed') { %> badge-primary <% } else if (product.status === 'Shipped') { %> badge-info <% } else if (product.status === 'Delivered') { %> badge-success <% } else if (product.status === 'Pending-Return') { %> badge-secondary <% } else if (product.status === 'Returned') { %> badge-warning <% } else if (product.status === 'Cancelled') { %> badge-danger <% } %>">
+                    <% if (product.status === 'Pending') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Confirmed') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Shipped') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Delivered') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Pending-Return') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Returned') { %>
+                    <%= product.status %>
+                    <% } else if (product.status === 'Cancelled') { %>
+                    <%= product.status %>
                     <% } %>
                     </h6>
                   <p class="text-decoration-underline mt-2">Change Status</p>
-                  <button class="btn btn-info btn-sm">shipped</button>
+                  <% if (product.status === 'Confirmed') { %>
+                  <button class="btn btn-info btn-sm item-shipped" data-order-id="<%= order._id %>" data-index="<%= index %>">shipped</button>
+                  <% } else if (product.status === 'Shipped') { %>
+                  <button class="btn btn-success btn-sm item-delivered" data-order-id="<%= order._id %>" data-index="<%= index %>">Delivered</button>
+                  <% } %>
                 </div>
                 <!-- Image -->
                 <div class="col-2">
@@ -102,7 +128,41 @@
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.item-shipped').forEach(ele => {
+      ele.addEventListener('click', function() {
+        const productIndex = ele.getAttribute('data-index');
+        const orderID = ele.getAttribute('data-order-id');
 
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/edit-order-status?orderStatus=0&productIndex=${productIndex}&orderID=${orderID}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.log(data.error);
+                }
+
+                if (data.success) {
+                  window.location.reload();
+                }
+              })
+          }
+        })
+      });
+    })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

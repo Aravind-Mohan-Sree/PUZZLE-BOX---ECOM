@@ -130,7 +130,8 @@ const orderPlacement = async (req, res) => {
         quantity: ele.productCount,
         price: ele.productID.productPrice,
         discount: ele.productID.productDiscount,
-        productImage: ele.productID.productImage[0]
+        productImage: ele.productID.productImage[0],
+        status: "Confirmed"
       });
 
       totalQuantity += ele.productCount;
@@ -153,8 +154,7 @@ const orderPlacement = async (req, res) => {
         house: userDetails.address[addressIndex].house,
         area: userDetails.address[addressIndex].area
       },
-      paymentMethod: paymentMethod[paymentMode],
-      orderStatus: "Confirmed"
+      paymentMethod: paymentMethod[paymentMode],      
     });
 
     await newOrder.save();

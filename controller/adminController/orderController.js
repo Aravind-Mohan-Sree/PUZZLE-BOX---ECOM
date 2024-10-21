@@ -36,7 +36,35 @@ const viewOrder = async (req, res) => {
 }
 /* -------------------------------------------------------------------------- */
 
+/* ------------------- will update the status of an order ------------------- */
+const editOrderStatus = async (req, res) => {
+  try {
+    const statusEnum = ['Shipped', 'Delivered', 'Returned'];
+    const orderStatus = req.query.orderStatus;    
+    const productIndex = req.query.productIndex;    
+    const orderID = req.query.orderID;    
+
+    const order = await orderSchema.findById(orderID).populate('products.productID')
+
+    if (statusEnum[orderStatus] === 'Shipped') {
+      order.products[productIndex].status = statusEnum[orderStatus];
+
+      req.flash('alert', { message: 'Order status changed successfully!', color: 'bg-success' });
+    }
+
+    await order.save();
+
+    res.status(200).json({success: true});
+  } catch (error) {
+    res.status(500).json({error});
+
+    console.log('Error while updating order status', err);
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   order,
-  viewOrder
+  viewOrder,
+  editOrderStatus
 };

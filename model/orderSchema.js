@@ -8,21 +8,31 @@ const schema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId ,
             ref:"product"
         },
+
         productName: { 
             type: String 
         },
+
         quantity: { 
             type: Number 
         },
+
         price: { 
             type: Number 
         },
+
         discount: { 
             type: Number 
         },
+
         productImage: { 
             type: String 
-        }
+        },
+
+        status: { 
+          type: String, 
+          enum:['Pending','Confirmed','Shipped', 'Delivered','Pending-Return', 'Returned', 'Cancelled']
+      },
     }],
 
     totalQuantity: { 
@@ -51,12 +61,7 @@ const schema = new mongoose.Schema({
 
     deliveryDate:{
         type:Date,
-    },
-
-    orderStatus: { 
-        type: String, 
-        enum:['Pending','Confirmed','Shipped', 'Delivered','Pending-Return', 'Returned', 'Cancelled']
-    },
+    },    
 
     reasonForCancel: {
         type:String
