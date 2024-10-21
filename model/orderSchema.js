@@ -49,18 +49,13 @@ const schema = new mongoose.Schema({
         enum: [ 'Cash on delivery']
     },
 
-    isCancelled: {
-        type: Boolean,
-        default: false
-    },
-
     deliveryDate:{
         type:Date,
     },
 
     orderStatus: { 
         type: String, 
-        enum:['Pending','Confirmed','Shipping', 'Delivered','Pending-Returned', 'Returned', 'Cancelled']
+        enum:['Pending','Confirmed','Shipped', 'Delivered','Pending-Return', 'Returned', 'Cancelled']
     },
 
     reasonForCancel: {

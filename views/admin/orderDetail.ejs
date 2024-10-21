@@ -1,0 +1,112 @@
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  .order-container {
+    flex-grow: 1;
+    padding-top: 6.25rem;
+    padding-bottom: 2.875rem;
+  }
+
+  .card-stepper {
+    z-index: 0
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
+<%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------------- order container -------------------------- -->
+<div class="order-container">
+  <!-- ----------------------- order details section ----------------------- -->
+  <section>
+    <div class="container px-4 px-sm-2 pt-md-3 mb-5">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-md-10 col-lg-8">
+          <% let totalPriceWithoutDiscount = 0 %>
+          <div class="card card-stepper mb-4" style="border-radius: 16px;">
+            <div class="card-header p-4">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= order._id %></span></p>
+                  <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+                </div>
+              </div>
+              <div class="mt-3 d-md-none">
+                <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
+              </div>
+            </div>
+            <div class="card-body p-4 pb-0">
+              <% order.products.forEach((product,index,array)=> { %>
+              <% totalPriceWithoutDiscount += product.price * product.quantity %>
+              <div class="d-flex flex-row mb-2 mb-lg-0 pb-2">
+                <div class="flex-fill">
+                  <p class="h5"><%= product.productName %></p>
+                  <p class="text-muted"> Qt: <%= product.quantity %></p>
+                  <p class="text-decoration-underline mb-0"">Current Status</p>
+                  <h6 class=" mt-3 badge fs-6 <% if (order.orderStatus === 'Pending') { %> badge-secondary <% } else if (order.orderStatus === 'Confirmed') { %> badge-primary <% } else if (order.orderStatus === 'Shipped') { %> badge-info <% } else if (order.orderStatus === 'Delivered') { %> badge-success <% } else if (order.orderStatus === 'Pending-Return') { %> badge-secondary <% } else if (order.orderStatus === 'Returned') { %> badge-warning <% } else if (order.orderStatus === 'Cancelled') { %> badge-danger <% } %>">
+                    <% if (order.orderStatus === 'Pending') { %>
+                    Pending
+                    <% } else if (order.orderStatus === 'Confirmed') { %>
+                    Confirmed
+                    <% } else if (order.orderStatus === 'Shipped') { %>
+                    Shipping
+                    <% } else if (order.orderStatus === 'Delivered') { %>
+                    Delivered
+                    <% } else if (order.orderStatus === 'Pending-Return') { %>
+                    Pending-Returned
+                    <% } else if (order.orderStatus === 'Returned') { %>
+                    Returned
+                    <% } else if (order.orderStatus === 'Cancelled') { %>
+                    Cancelled
+                    <% } %>
+                    </h6>
+                </div>
+                <!-- Image -->
+                <div class="col-2">
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <img src="<%= product.productImage %>" class="w-100" alt="" width="120" />
+                  </div>
+                </div>
+                <!-- Image -->
+              </div>
+              <p class="text-dark text-center">Change Status</p>
+              <select id="return" data-mdb-select-init class="form-control select">
+                <option value="1">Incorrect item ordered</option>
+                <option value="2">Change of mind</option>
+                <option value="3">Delayed delivery</option>
+              </select>
+              <% if (index !== array.length - 1) { %>
+              <div class="mb-4 p-0 card-header"></div>
+              <% } %>
+              <% }) %>
+            </div>
+            <div class="card-footer">
+              <h4 class="mb-3 mt-2"> ₹ <%= order.totalPrice.toLocaleString() %> <span class="small text-muted"> via <%= order.paymentMethod %> </span></h4>
+              <h4 class="h5"><span class="small text-muted">Total Savings :</span> ₹ <%= order.totalPrice < totalPriceWithoutDiscount ? (totalPriceWithoutDiscount - order.totalPrice).toLocaleString() : '0' %></h4>
+            </div>
+            <div class="card-footer p-4">
+              <h1 class="h5 mb-3">Shipping Address</h1>
+              <p class="m-0"><%= order.address.contactName + ', ' + order.address.house + ', ' + order.address.area + ', ' + order.address.city + ', ' + order.address.state + ', ' + 'Pin: ' + order.address.pincode + ', ' + 'Phone: ' + order.address.phone %></p>
+            </div>
+          </div>
+          <% totalPriceWithoutDiscount = 0 %>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+  });
+</script>
+<!-- ----------------------------------------------------------------------- -->

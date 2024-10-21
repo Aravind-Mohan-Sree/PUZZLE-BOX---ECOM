@@ -40,7 +40,6 @@
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Order ID</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Ordered Date</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Payment Method</th>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Price</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
         </tr>
@@ -66,40 +65,7 @@
             <p class="fw-normal mb-1">
               <%= ele.paymentMethod  %>
             </p>
-          </td>
-          <td class="" data-mdb-field="field_3" false="">
-            <h6 class="mb-4 mt-3 badge <% if (ele.orderStatus === 'Pending') { %>
-              badge-secondary
-            <% } else if (ele.orderStatus === 'Confirmed') { %>
-              badge-primary
-            <% } else if (ele.orderStatus === 'Shipping') { %>
-              badge-info
-            <% } else if (ele.orderStatus === 'Delivered') { %>
-              badge-success
-            <% } else if (ele.orderStatus === 'Pending-Returned') { %>
-              badge-secondary
-            <% } else if (ele.orderStatus === 'Returned') { %>
-              badge-warning
-            <% } else if (ele.orderStatus === 'Cancelled') { %>
-              badge-danger
-            <% } %>">
-              <% if (ele.orderStatus === 'Pending') { %>
-              Pending
-              <% } else if (ele.orderStatus === 'Confirmed') { %>
-                Confirmed
-              <% } else if (ele.orderStatus === 'Shipping') { %>
-                Shipping
-              <% } else if (ele.orderStatus === 'Delivered') { %>
-                Delivered
-              <% } else if (ele.orderStatus === 'Pending-Returned') { %>
-                Pending-Returned
-              <% } else if (ele.orderStatus === 'Returned') { %>
-                Returned
-              <% } else if (ele.orderStatus === 'Cancelled') { %>
-                Cancelled
-              <% } %>
-            </h6>
-          </td>
+          </td>          
           <td class="" data-mdb-field="field_2" false="">
             <p class="fw-normal mb-1">
               <%= '₹ ' + ele.totalPrice.toLocaleString()  %>

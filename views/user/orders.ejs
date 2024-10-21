@@ -139,7 +139,7 @@
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
+                  <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black open-modal-btn" data-mdb-modal-init data-mdb-target="#exampleModal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
                 </div>
                 <!-- Image -->
                 <div class="col-2">
@@ -181,9 +181,59 @@
     </div>
   </section>
   <!-- ----------------------------------------------------------------------- -->
-   
+
+  <!-- -------------------- modal for order return --------------------- -->
+  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Return Order</h5>
+          <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <select id="return" data-mdb-select-init class="form-control select">
+            <option value="" selected disabled>Choose Return Reason</option>
+            <option value="1">Damaged or defective product</option>
+            <option value="2">Incorrect item received</option>
+            <option value="3">Poor quality</option>
+            <option value="4">Product not as described</option>
+            <option value="5">Change of mind</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
+        </div>
+      </div>
+    </div>
+  </div> -->
+  <!-- ----------------------------------------------------------------------- -->
+
   <!-- -------------------- modal for order cancellation --------------------- -->
-  
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Cancel Order</h5>
+          <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <select id="return" data-mdb-select-init class="form-control select">
+            <option value="" selected disabled>Choose Cancel Reason</option>
+            <option value="1">Incorrect item ordered</option>
+            <option value="2">Change of mind</option>
+            <option value="3">Delayed delivery</option>
+            <option value="4">Found a better price elsewhere</option>
+            <option value="5">Payment issues</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- --------------------------- pagination included --------------------------- -->
@@ -198,4 +248,26 @@
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Modal Initialization
+    const modalElement = document.getElementById('exampleModal');
+    let modalInstance = mdb.Modal.getInstance(modalElement);
+
+    // If no instance exists, create a new one
+    if (!modalInstance) {
+      modalInstance = new mdb.Modal(modalElement);
+    }
+
+    // Open modal on button click
+    document.querySelectorAll('.open-modal-btn').forEach(ele => {
+      ele.addEventListener('click', function() {
+        modalInstance.show();
+      });
+    });
+  });
+</script>
 <!-- ----------------------------------------------------------------------- -->
