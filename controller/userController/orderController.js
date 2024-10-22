@@ -55,6 +55,17 @@ const order = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* --------------- will initialize request for returning order -------------- */
+const returnOrderPost = (req, res) => {
+  try {
+
+  } catch (err) {
+
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   order,
+  returnOrderPost
 };

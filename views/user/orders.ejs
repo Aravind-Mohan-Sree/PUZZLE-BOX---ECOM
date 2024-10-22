@@ -6,79 +6,121 @@
     padding-bottom: 2.875rem;
   }
 
-  #progressbar-1 {
-    color: #455A64;
-    /* margin-bottom: 4rem !important; */
+  .stepper-container {
+    max-width: 550px;
+    margin-inline: auto;
   }
 
-  #progressbar-1 li {
-    list-style-type: none;
-    font-size: 13px;
-    width: 33.33%;
-    float: left;
+  .stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
     position: relative;
   }
 
-  #progressbar-1 #step1:before {
-    content: "1";
-    color: #fff;
-    width: 29px;
-    margin-left: 22px;
-    padding-left: 11px;
-  }
-
-  #progressbar-1 #step2:before {
-    content: "2";
-    color: #fff;
-    width: 29px;
-  }
-
-  #progressbar-1 #step3:before {
-    content: "3";
-    color: #fff;
-    width: 29px;
-    margin-right: 22px;
-    text-align: center;
-  }
-
-  #progressbar-1 li:before {
-    line-height: 29px;
-    display: block;
-    font-size: 12px;
-    background: #455A64;
-    border-radius: 50%;
-    margin: auto;
-  }
-
-  #progressbar-1 li:after {
-    content: '';
-    width: 121%;
-    height: 2px;
-    background: #455A64;
+  .progress-bar {
     position: absolute;
-    left: 0%;
-    right: 0%;
-    top: 15px;
-    z-index: -1;
+    top: 20px;
+    left: 50px;
+    background-color: #e5e7eb;
+    height: 4px;
+    width: calc(100% - 100px);
+    z-index: 1;
   }
 
-  #progressbar-1 li:nth-child(2):after {
-    left: 50%
+  .progress-bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #14a44d;
+    height: 100%;
+    transition: width 0.5s ease;
+    width: 0%;
+    /* Start at 0% */
   }
 
-  #progressbar-1 li:nth-child(1):after {
-    left: 25%;
-    width: 121%
+  .step {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
   }
 
-  #progressbar-1 li:nth-child(3):after {
-    left: 25%;
-    width: 50%;
+  .step-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    border: 2px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    transition: all 0.3s ease;
   }
 
-  #progressbar-1 li.active:before,
-  #progressbar-1 li.active:after {
-    background: #00a30e;
+  .step-circle svg {
+    width: 20px;
+    height: 20px;
+    color: #9ca3af;
+  }
+
+  .step-title {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .step.completed .step-circle {
+    background-color: #14a44d;
+    border-color: #14a44d;
+  }
+
+  .step.completed .step-circle svg {
+    color: white;
+  }
+
+  .step.completed .step-title {
+    color: #14a44d;
+  }
+
+  .step.active .step-circle {
+    border-color: #14a44d;
+  }
+
+  .step.active .step-title {
+    color: #14a44d;
+  }
+
+  .step.active::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    right: 43%;
+    transform: translateX(16px);
+    width: 12px;
+    height: 12px;
+    background-color: #14a44d;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: translateX(16px) scale(1);
+      opacity: 1;
+    }
+
+    50% {
+      transform: translateX(16px) scale(1.3);
+      opacity: 0.5;
+    }
+
+    100% {
+      transform: translateX(16px) scale(1);
+      opacity: 1;
+    }
   }
 
   .card-stepper {
@@ -139,7 +181,12 @@
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black open-modal-btn" data-mdb-modal-init data-mdb-target="#exampleModal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
+                  <% if (product.status !== 'Delivered') { %>
+                  <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
+                  <% } else { %>
+                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
+                  <small class="d-block">Available till <span class="date" data-delivery-date="<%= product.deliveryDate %>"></span></small>
+                  <% } %>
                 </div>
                 <!-- Image -->
                 <div class="col-2">
@@ -151,12 +198,50 @@
                 </div>
                 <!-- Image -->
               </div>
+              <% if (product.status === 'Delivered') { %>
+              <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+              <% } else { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
-              <ul id="progressbar-1" class="mx-0 mt-0 mb-5 px-0 pt-0 pb-4">
-                <li class="step0 active" id="step1"><span style="margin-left: 22px; margin-top: 12px;">PLACED</span></li>
-                <li class="step0 active text-center" id="step2"><span>SHIPPED</span></li>
-                <li class="step0 text-muted text-end" id="step3"><span style="margin-right: 22px;">DELIVERED</span></li>
-              </ul>
+              <% } %>
+              <div class="stepper-container mb-4" data-order-status="<%= product.status %>">
+                <div class="stepper">
+                  <div class="progress-bar">
+                    <div class="progress-bar-fill"></div>
+                  </div>
+                  <div class="step" data-status="pending">
+                    <div class="step-circle">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div class="step-title">Pending</div>
+                  </div>
+                  <div class="step" data-status="confirmed">
+                    <div class="step-circle">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                      </svg>
+                    </div>
+                    <div class="step-title">Confirmed</div>
+                  </div>
+                  <div class="step" data-status="shipped">
+                    <div class="step-circle">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <div class="step-title">Shipped</div>
+                  </div>
+                  <div class="step" data-status="delivered">
+                    <div class="step-circle">
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div class="step-title">Delivered</div>
+                  </div>
+                </div>
+              </div>
               <% if (index !== array.length - 1) { %>
               <div class="mb-4 p-0 card-header"></div>
               <% } %>
@@ -183,7 +268,7 @@
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- -------------------- modal for order return --------------------- -->
-  <!-- <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="return-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -202,15 +287,15 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
+          <button type="button" id="apply-return" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
         </div>
       </div>
     </div>
-  </div> -->
+  </div>
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- -------------------- modal for order cancellation --------------------- -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="cancel-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -229,7 +314,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
+          <button type="button" id="apply-cancel" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
         </div>
       </div>
     </div>
@@ -254,20 +339,114 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Modal Initialization
-    const modalElement = document.getElementById('exampleModal');
-    let modalInstance = mdb.Modal.getInstance(modalElement);
+    const returnModal = document.getElementById('return-modal');
+    const cancelModal = document.getElementById('cancel-modal');
+    let returnModalInstance = mdb.Modal.getInstance(returnModal);
+    let cancelModalInstance = mdb.Modal.getInstance(cancelModal);
+    let productIndex;
 
     // If no instance exists, create a new one
-    if (!modalInstance) {
-      modalInstance = new mdb.Modal(modalElement);
+    if (!returnModalInstance) {
+      returnModalInstance = new mdb.Modal(returnModal);
+    }
+
+    if (!cancelModalInstance) {
+      cancelModalInstance = new mdb.Modal(cancelModal);
     }
 
     // Open modal on button click
-    document.querySelectorAll('.open-modal-btn').forEach(ele => {
+    document.querySelectorAll('.return-modal-btn').forEach(ele => {
       ele.addEventListener('click', function() {
-        modalInstance.show();
+        productIndex = ele.getAttribute('data-index');
+
+        returnModalInstance.show();
       });
     });
+
+    document.querySelectorAll('.cancel-modal-btn').forEach(ele => {
+      ele.addEventListener('click', function() {
+        cancelModalInstance.show();
+      });
+    });
+
+    // for changing order status
+    const stepperContainer = document.querySelectorAll('.stepper-container');
+    const statuses = ['Pending', 'Confirmed', 'Shipped', 'Delivered'];
+
+    stepperContainer.forEach(ele => {
+      const steps = Array.from(ele.querySelectorAll('.step'));
+      const progressBar = ele.querySelectorAll('.progress-bar-fill');
+      const status = ele.getAttribute('data-order-status');
+
+      progressBar.forEach(ele => {
+        // function to calculate progress width
+        function calculateProgressWidth(currentIndex) {
+          if (currentIndex === 0) return 0;
+          return ((currentIndex) / (steps.length - 1)) * 100;
+        }
+
+        // function to update stepper status
+        function updateStepperStatus(newStatus) {
+          const currentIndex = statuses.indexOf(newStatus);
+          if (currentIndex === -1) return;
+
+          // update progress bar with calculated width
+          const progressWidth = calculateProgressWidth(currentIndex);
+          ele.style.width = `${progressWidth}%`;
+
+          // update steps
+          steps.forEach((step, index) => {
+            step.classList.remove('active', 'completed');
+            if (index <= currentIndex) {
+              step.classList.add('completed');
+            }
+            if (index === currentIndex) {
+              step.classList.add('active');
+            }
+          });
+        }
+
+        // initialize stepper with current status
+        updateStepperStatus(status);
+      })
+    })
+
+    // will initialize order return request and order cancel using fetch
+    document.querySelector('body').addEventListener('click', function (event) {
+      const target = event.target;
+
+      if (target.id === 'apply-return') {
+        
+      }
+    })    
+
+    // assigning the date to DOM element
+    document.querySelectorAll('.date').forEach(ele => {
+      const deliveryDate = ele.getAttribute('data-delivery-date');
+      ele.innerHTML = getDateAfterSevenDays(deliveryDate);
+
+      // returns the date 7 days from today in 'dd-m-yyyy' format
+      function getDateAfterSevenDays(deliveryDate) {
+        const date = new Date(deliveryDate);
+
+        // add 7 days to the delivery date
+        date.setDate(date.getDate() + 7);
+
+        // get the day, month, and year from the new date
+        let day = date.getDate();
+        let month = date.getMonth() + 1; // months are zero-indexed, so add 1
+        const year = date.getFullYear();
+
+        // format day and month to have two digits
+        day = day < 10 ? `0${day}` : day;
+        month = month < 10 ? `0${month}` : month;
+
+        // format the date as dd-mm-yyyy
+        const formattedDate = `${day}-${month}-${year}`;
+
+        return formattedDate;
+      }
+    })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

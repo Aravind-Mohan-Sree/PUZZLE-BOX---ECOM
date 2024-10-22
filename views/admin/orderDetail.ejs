@@ -83,7 +83,9 @@
                     <%= product.status %>
                     <% } %>
                     </h6>
+                    <% if (product.status !== 'Delivered') { %>
                   <p class="text-decoration-underline mt-2">Change Status</p>
+                  <% } %>
                   <% if (product.status === 'Confirmed') { %>
                   <button class="btn btn-info btn-sm item-shipped" data-order-id="<%= order._id %>" data-index="<%= index %>">shipped</button>
                   <% } else if (product.status === 'Shipped') { %>
@@ -128,6 +130,7 @@
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
+    // for updating order status to shipped
     document.querySelectorAll('.item-shipped').forEach(ele => {
       ele.addEventListener('click', function() {
         const productIndex = ele.getAttribute('data-index');
@@ -145,6 +148,43 @@
         }).then((result) => {
           if (result.isConfirmed) {
             fetch(`/admin/edit-order-status?orderStatus=0&productIndex=${productIndex}&orderID=${orderID}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.log(data.error);
+                }
+
+                if (data.success) {
+                  window.location.reload();
+                }
+              })
+          }
+        })
+      });
+    })
+
+    // for updating order status to delivered
+    document.querySelectorAll('.item-delivered').forEach(ele => {
+      ele.addEventListener('click', function() {
+        const productIndex = ele.getAttribute('data-index');
+        const orderID = ele.getAttribute('data-order-id');
+
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/edit-order-status?orderStatus=1&productIndex=${productIndex}&orderID=${orderID}`, {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json'

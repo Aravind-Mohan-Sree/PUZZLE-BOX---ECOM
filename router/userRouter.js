@@ -73,10 +73,10 @@ user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
 
 // will handle the user order route
-user.get('/orders',checkUserSession,orderController.order);
+user.get('/orders', checkUserSession, orderController.order);
 // user.get('/cancelled-orders',checkUserSession,orderController.cancelledOrder);
 // user.post('/cancel-order/:orderID',checkUserSession,orderController.cancelOrderPost);
-// user.post('/return-order/:orderID',checkUserSession,orderController.returnOrderPost);
+user.post('/return-order', checkUserSession, orderController.returnOrderPost);
 // user.post('/add-review/:productID',checkUserSession,orderController.addReview);
 
 // will handle update navbar route

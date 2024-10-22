@@ -48,12 +48,16 @@ const editOrderStatus = async (req, res) => {
 
     if (statusEnum[orderStatus] === 'Shipped') {
       order.products[productIndex].status = statusEnum[orderStatus];
-
-      req.flash('alert', { message: 'Order status changed successfully!', color: 'bg-success' });
     }
 
+    if (statusEnum[orderStatus] === 'Delivered') {
+      order.products[productIndex].status = statusEnum[orderStatus];
+      order.products[productIndex].deliveryDate = new Date();
+    }
+    
     await order.save();
-
+    
+    req.flash('alert', { message: 'Order status changed successfully!', color: 'bg-success' });
     res.status(200).json({success: true});
   } catch (error) {
     res.status(500).json({error});

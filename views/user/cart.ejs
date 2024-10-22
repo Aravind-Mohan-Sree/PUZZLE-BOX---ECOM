@@ -337,17 +337,21 @@
 
     // returns the date 7 days from today in 'dd-m-yyyy' format
     function getDateAfterSevenDays() {
-      const today = new Date();
+      const date = new Date();
 
-      // add 7 days to the current date
-      today.setDate(today.getDate() + 7);
+      // add 7 days to the delivery date
+      date.setDate(date.getDate() + 7);
 
       // get the day, month, and year from the new date
-      const day = today.getDate();
-      const month = today.getMonth() + 1; // months are zero-indexed, so add 1
-      const year = today.getFullYear();
+      let day = date.getDate();
+      let month = date.getMonth() + 1; // months are zero-indexed, so add 1
+      const year = date.getFullYear();
 
-      // format the date as dd-m-yyyy
+      // format day and month to have two digits
+      day = day < 10 ? `0${day}` : day;
+      month = month < 10 ? `0${month}` : month;
+
+      // format the date as dd-mm-yyyy
       const formattedDate = `${day}-${month}-${year}`;
 
       return formattedDate;
