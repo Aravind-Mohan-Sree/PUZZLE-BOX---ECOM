@@ -83,7 +83,7 @@ const returnOrderPost = async (req, res) => {
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log(error);
+    console.log('Error while requesting return', error);
 
     res.status(500).json({ error });
   }

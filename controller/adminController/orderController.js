@@ -62,7 +62,32 @@ const editOrderStatus = async (req, res) => {
   } catch (error) {
     res.status(500).json({error});
 
-    console.log('Error while updating order status', err);
+    console.log('Error while updating order status', error);
+  }
+};
+/* -------------------------------------------------------------------------- */
+
+/* ------------------- for rejecting order return request ------------------- */
+const rejectReturnOrder = async (req, res) => {
+  try {
+    const statusEnum = ['Delivered'];
+    const productIndex = req.query.productIndex;    
+    const rejectReason = req.query.rejectReason;    
+    const orderID = req.query.orderID;    
+
+    const order = await orderSchema.findById(orderID).populate('products.productID');
+
+    order.products[productIndex].status = statusEnum[0];
+    order.products[productIndex].reasonForRejection = rejectReason;
+
+    await order.save();
+    
+    req.flash('alert', { message: 'Return request rejected!', color: 'bg-success' });
+    res.status(200).json({success: true});
+  } catch (error) {
+    res.status(500).json({error});
+
+    console.log('Error while rejecting order return request', error);
   }
 };
 /* -------------------------------------------------------------------------- */
@@ -70,5 +95,6 @@ const editOrderStatus = async (req, res) => {
 module.exports = {
   order,
   viewOrder,
-  editOrderStatus
+  editOrderStatus,
+  rejectReturnOrder
 };

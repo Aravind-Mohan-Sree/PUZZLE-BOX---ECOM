@@ -262,7 +262,7 @@
       const rejectAlert = document.querySelector('#reject-alert');
 
       if (target.id === 'apply-reject' && rejectReason) {
-        fetch(`/return-order?orderID=${orderID}&productIndex=${productIndex}&returnReason=${rejectReason}`, {
+        fetch(`/admin/reject-return?orderID=${orderID}&productIndex=${productIndex}&rejectReason=${rejectReason}`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -288,9 +288,9 @@
           }).catch(err => {
             console.log(err);
           })
-      } else if (target.id === 'apply-return' && !returnReason) {
-        returnAlert.style.display = 'inline';
-        returnAlert.innerHTML = 'Please select an option';
+      } else if (target.id === 'apply-reject' && !rejectReason) {
+        rejectAlert.style.display = 'inline';
+        rejectAlert.innerHTML = 'Please select an option';
       }
     })
   });

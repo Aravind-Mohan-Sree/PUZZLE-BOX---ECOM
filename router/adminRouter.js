@@ -38,11 +38,11 @@ admin.get('/customers', checkAdminSession, customerController.customer);
 admin.post('/customers', checkAdminSession, customerController.customerPost);
 
 // will handle admin orders route
-admin.get('/orders',checkAdminSession, orderController.order);
-admin.get('/view-order',checkAdminSession,orderController.viewOrder);
+admin.get('/orders', checkAdminSession, orderController.order);
+admin.get('/view-order', checkAdminSession, orderController.viewOrder);
 admin.post('/edit-order-status', checkAdminSession, orderController.editOrderStatus);
 // admin.put('/allow-return',checkAdminSession,orderController.allowOrderReturn);
-admin.post('/reject-return',checkAdminSession,orderController.rejectReturnOrder);
+admin.post('/reject-return', checkAdminSession, orderController.rejectReturnOrder);
 
 // will handle admin logout route
 admin.post('/logout', adminController.logout);
