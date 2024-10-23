@@ -7,7 +7,7 @@
   }
 
   .stepper-container {
-    max-width: 550px;
+    max-width: 34.375rem;
     margin-inline: auto;
   }
 
@@ -20,11 +20,11 @@
 
   .progress-bar {
     position: absolute;
-    top: 20px;
-    left: 50px;
+    top: 1.25rem;
+    left: 3.125rem;
     background-color: #e5e7eb;
-    height: 4px;
-    width: calc(100% - 100px);
+    height: .25rem;
+    width: calc(100% - 6.25rem);
     z-index: 1;
   }
 
@@ -47,8 +47,8 @@
   }
 
   .step-circle {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     background-color: white;
     border: 2px solid #e5e7eb;
@@ -60,14 +60,14 @@
   }
 
   .step-circle svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
     color: #9ca3af;
   }
 
   .step-title {
-    margin-top: 8px;
-    font-size: 14px;
+    margin-top: .5rem;
+    font-size: .875rem;
     color: #6b7280;
     font-weight: 500;
   }
@@ -96,11 +96,11 @@
   .step.active::after {
     content: '';
     position: absolute;
-    top: 2px;
+    top: .125rem;
     right: 43%;
     transform: translateX(16px);
-    width: 12px;
-    height: 12px;
+    width: .75rem;
+    height: .75rem;
     background-color: #14a44d;
     border-radius: 50%;
     animation: pulse 2s infinite;
@@ -108,17 +108,17 @@
 
   @keyframes pulse {
     0% {
-      transform: translateX(16px) scale(1);
+      transform: translateX(1rem) scale(1);
       opacity: 1;
     }
 
     50% {
-      transform: translateX(16px) scale(1.3);
+      transform: translateX(1rem) scale(1.3);
       opacity: 0.5;
     }
 
     100% {
-      transform: translateX(16px) scale(1);
+      transform: translateX(1rem) scale(1);
       opacity: 1;
     }
   }
@@ -208,7 +208,9 @@
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <% if (product.status !== 'Delivered') { %>
+                  <% if (product.status === 'Pending-Return') { %>
+                  <button class="mt-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending return</button>
+                  <% } else if (product.status !== 'Delivered') { %>
                   <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
                   <% } else { %>
                   <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-delivery-date="<%= product.deliveryDate %>" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
@@ -265,7 +267,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
-                    <div class="step-title">Delivered</div>
+                    <div class="step-title"><%= product.status === 'Pending-Return' || product.status === 'Returned' ? 'Returned' : 'Delivered' %></div>
                   </div>
                 </div>
               </div>
@@ -407,7 +409,10 @@
     stepperContainer.forEach(ele => {
       const steps = Array.from(ele.querySelectorAll('.step'));
       const progressBar = ele.querySelectorAll('.progress-bar-fill');
-      const status = ele.getAttribute('data-order-status');
+      let status = ele.getAttribute('data-order-status');
+
+      if (status === 'Pending-Return') status = 'Pending';
+      if (status === 'Returned') status = 'Delivered';
 
       progressBar.forEach(ele => {
         // function to calculate progress width

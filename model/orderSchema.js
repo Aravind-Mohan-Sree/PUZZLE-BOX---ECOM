@@ -38,7 +38,15 @@ const schema = new mongoose.Schema({
       type: Date,
     },
 
+    returnDate: {
+      type: Date,
+    },
+
     reasonForCancel: {
+      type: String
+    },
+
+    reasonForReturn: {
       type: String
     },
 

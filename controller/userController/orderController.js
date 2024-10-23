@@ -72,7 +72,7 @@ const returnOrderPost = async (req, res) => {
 
     if (currentDate <= returnExpiryDate) {
       order.products[productIndex].status = statusEnum[0];
-      order.products[productIndex].reasonForCancel = returnReason;
+      order.products[productIndex].reasonForReturn = returnReason;
 
       await order.save();
 

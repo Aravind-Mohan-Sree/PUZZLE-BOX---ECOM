@@ -54,9 +54,6 @@
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
               </div>
-              <div class="mt-3 d-md-none">
-                <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
-              </div>
             </div>
             <div class="card-body p-4 pb-0">
               <% order.products.forEach((product,index,array)=> { %>
@@ -65,25 +62,11 @@
                 <div class="flex-fill">
                   <p class="h5"><%= product.productName %></p>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <p class="text-decoration-underline mb-0"">Current Status</p>
-                  <h6 class=" mt-3 badge fs-6 <% if (product.status === 'Pending') { %> badge-secondary <% } else if (product.status === 'Confirmed') { %> badge-primary <% } else if (product.status === 'Shipped') { %> badge-info <% } else if (product.status === 'Delivered') { %> badge-success <% } else if (product.status === 'Pending-Return') { %> badge-secondary <% } else if (product.status === 'Returned') { %> badge-warning <% } else if (product.status === 'Cancelled') { %> badge-danger <% } %>">
-                    <% if (product.status === 'Pending') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Confirmed') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Shipped') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Delivered') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Pending-Return') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Returned') { %>
-                    <%= product.status %>
-                    <% } else if (product.status === 'Cancelled') { %>
-                    <%= product.status %>
-                    <% } %>
-                    </h6>
-                    <% if (product.status !== 'Delivered') { %>
+                  <% if (product.status === 'Pending-Return') { %>
+                  <p class="text-decoration-underline mt-2">Return Request Initiated <span><i title="REASON: <%= product.reasonForReturn %>" class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i> </span></p>
+                  <button class="mt-2 btn btn-danger btn-sm text-black reject-modal-btn" data-index="<%= index %>" data-order-id="<%= order._id %>" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">reject</button>
+                  <button class="ms-2 btn btn-success btn-sm allow-return" data-order-id="<%= order._id %>" data-index="<%= index %>">allow</button>
+                  <% } else if (product.status !== 'Delivered') { %>
                   <p class="text-decoration-underline mt-2">Change Status</p>
                   <% } %>
                   <% if (product.status === 'Confirmed') { %>
@@ -100,6 +83,26 @@
                 </div>
                 <!-- Image -->
               </div>
+              <div class="text-center pb-4">
+                <p class="text-decoration-underline mb-0"">Current Status</p>
+                <h6 class=" text-uppercase mt-3 mb-1 badge fs-6 <% if (product.status === 'Pending') { %> badge-secondary <% } else if (product.status === 'Confirmed') { %> badge-primary <% } else if (product.status === 'Shipped') { %> badge-info <% } else if (product.status === 'Delivered') { %> badge-success <% } else if (product.status === 'Pending-Return') { %> badge-secondary <% } else if (product.status === 'Returned') { %> badge-warning <% } else if (product.status === 'Cancelled') { %> badge-danger <% } %>">
+                  <% if (product.status === 'Pending') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Confirmed') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Shipped') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Delivered') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Pending-Return') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Returned') { %>
+                  <%= product.status %>
+                  <% } else if (product.status === 'Cancelled') { %>
+                  <%= product.status %>
+                  <% } %>
+                  </h6>
+              </div>
               <% if (index !== array.length - 1) { %>
               <div class="mb-4 p-0 card-header"></div>
               <% } %>
@@ -110,7 +113,7 @@
               <h4 class="h5"><span class="small text-muted">Total Savings :</span> ₹ <%= order.totalPrice < totalPriceWithoutDiscount ? (totalPriceWithoutDiscount - order.totalPrice).toLocaleString() : '0' %></h4>
             </div>
             <div class="card-footer p-4">
-              <h1 class="h5 mb-3">Shipping Address</h1>
+              <h1 class="h5 mb-3">Billing Address</h1>
               <p class="m-0"><%= order.address.contactName + ', ' + order.address.house + ', ' + order.address.area + ', ' + order.address.city + ', ' + order.address.state + ', ' + 'Pin: ' + order.address.pincode + ', ' + 'Phone: ' + order.address.phone %></p>
             </div>
           </div>
@@ -120,6 +123,33 @@
     </div>
   </section>
   <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------- modal for return rejection --------------------- -->
+<div class="modal fade" id="return-reject-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reject Return</h5>
+        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <select id="reject-reason" data-mdb-select-init class="form-control select">
+          <option value="" selected disabled>Choose Reject Reason</option>
+          <option>Product is damaged or used</option>
+          <option>Return policy does not cover the product</option>
+          <option>Missing or incomplete packaging</option>
+          <option>Receipt or proof of purchase not provided</option>
+        </select>
+        <small id="reject-alert" class="text-danger"></small>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" id="apply-reject" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
+      </div>
+    </div>
+  </div>
 </div>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -202,6 +232,66 @@
           }
         })
       });
+    })
+
+    // Modal Initialization
+    const returnRejectModal = document.getElementById('return-reject-modal');
+    let rejectModalInstance = mdb.Modal.getInstance(returnRejectModal);
+    let productIndex;
+    let orderID;
+
+    // If no instance exists, create a new one
+    if (!rejectModalInstance) {
+      rejectModalInstance = new mdb.Modal(returnRejectModal);
+    }
+
+    // Open modal on button click
+    document.querySelectorAll('.reject-modal-btn').forEach(ele => {
+      ele.addEventListener('click', function() {
+        productIndex = ele.getAttribute('data-index');
+        orderID = ele.getAttribute('data-order-id');
+
+        rejectModalInstance.show();
+      });
+    });
+
+    // will reject return request using fetch
+    document.querySelector('body').addEventListener('click', function(event) {
+      const target = event.target;
+      const rejectReason = document.querySelector('#reject-reason').value;
+      const rejectAlert = document.querySelector('#reject-alert');
+
+      if (target.id === 'apply-reject' && rejectReason) {
+        fetch(`/return-order?orderID=${orderID}&productIndex=${productIndex}&returnReason=${rejectReason}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong. Try again',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            if (data.success) {
+              window.location.reload();
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      } else if (target.id === 'apply-return' && !returnReason) {
+        returnAlert.style.display = 'inline';
+        returnAlert.innerHTML = 'Please select an option';
+      }
     })
   });
 </script>
