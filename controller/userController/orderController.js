@@ -12,14 +12,14 @@ const order = async (req, res) => {
     const currentPage = parseInt(req.query.page) || 1;
     const skip = (currentPage - 1) * productsPerPage;
 
-    let orders = await orderSchema
+    const orders = await orderSchema
       .find({ userID: req.session.user })
       .populate({
         path: 'products.productID',
         populate: {
           path: 'productCategory'
         }
-      })      
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(productsPerPage);
@@ -56,11 +56,36 @@ const order = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 
 /* --------------- will initialize request for returning order -------------- */
-const returnOrderPost = (req, res) => {
+const returnOrderPost = async (req, res) => {
   try {
+    const orderID = req.query.orderID;
+    const productIndex = req.query.productIndex;
+    const returnReason = req.query.returnReason;
+    const statusEnum = ['Pending-Return'];
 
-  } catch (err) {
+    const order = await orderSchema.findById(orderID).populate('products.productID');
 
+    const currentDate = new Date();
+    const returnExpiryDate = order.products[productIndex].deliveryDate;
+
+    returnExpiryDate.setDate(returnExpiryDate.getDate() + 7);
+
+    if (currentDate <= returnExpiryDate) {
+      order.products[productIndex].status = statusEnum[0];
+      order.products[productIndex].reasonForCancel = returnReason;
+
+      await order.save();
+
+      req.flash('alert', { message: 'Return request successful!', color: 'bg-success' });
+    } else {
+      req.flash('alert', { message: 'Return request unsuccessful!', color: 'bg-danger' });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({ error });
   }
 };
 /* -------------------------------------------------------------------------- */

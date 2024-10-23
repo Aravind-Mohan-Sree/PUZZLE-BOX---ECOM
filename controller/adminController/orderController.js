@@ -44,7 +44,7 @@ const editOrderStatus = async (req, res) => {
     const productIndex = req.query.productIndex;    
     const orderID = req.query.orderID;    
 
-    const order = await orderSchema.findById(orderID).populate('products.productID')
+    const order = await orderSchema.findById(orderID).populate('products.productID');
 
     if (statusEnum[orderStatus] === 'Shipped') {
       order.products[productIndex].status = statusEnum[orderStatus];

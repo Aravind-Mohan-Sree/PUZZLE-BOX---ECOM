@@ -126,6 +126,33 @@
   .card-stepper {
     z-index: 0
   }
+
+  #return-alert {
+    display: none;
+    font-size: .75rem;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -176,7 +203,7 @@
               <% ele.products.forEach((product,index,array)=> { %>
               <% totalPriceWithoutDiscount += product.price * product.quantity %>
               <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">
-                <div class="flex-fill">
+                <div class="flex-fill product-detail">
                   <a href="/product-details?productId=<%= product.productID._id %>&productCategory=<%= product.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= product.productName %></p>
                   </a>
@@ -184,8 +211,8 @@
                   <% if (product.status !== 'Delivered') { %>
                   <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
                   <% } else { %>
-                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
-                  <small class="d-block">Available till <span class="date" data-delivery-date="<%= product.deliveryDate %>"></span></small>
+                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-delivery-date="<%= product.deliveryDate %>" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
+                  <small class="d-block date-wrapper">Available till <span class="date" data-delivery-date="<%= product.deliveryDate %>"></span></small>
                   <% } %>
                 </div>
                 <!-- Image -->
@@ -276,14 +303,15 @@
           <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <select id="return" data-mdb-select-init class="form-control select">
+          <select id="return-reason" data-mdb-select-init class="form-control select">
             <option value="" selected disabled>Choose Return Reason</option>
-            <option value="1">Damaged or defective product</option>
-            <option value="2">Incorrect item received</option>
-            <option value="3">Poor quality</option>
-            <option value="4">Product not as described</option>
-            <option value="5">Change of mind</option>
+            <option>Damaged or defective product</option>
+            <option>Incorrect item received</option>
+            <option>Poor quality</option>
+            <option>Product not as described</option>
+            <option>Change of mind</option>
           </select>
+          <small id="return-alert" class="text-danger"></small>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -303,14 +331,15 @@
           <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <select id="return" data-mdb-select-init class="form-control select">
+          <select id="cancel-reason" data-mdb-select-init class="form-control select">
             <option value="" selected disabled>Choose Cancel Reason</option>
-            <option value="1">Incorrect item ordered</option>
-            <option value="2">Change of mind</option>
-            <option value="3">Delayed delivery</option>
-            <option value="4">Found a better price elsewhere</option>
-            <option value="5">Payment issues</option>
+            <option>Incorrect item ordered</option>
+            <option>Change of mind</option>
+            <option>Delayed delivery</option>
+            <option>Found a better price elsewhere</option>
+            <option>Payment issues</option>
           </select>
+          <small id="cancel-alert" class="text-danger"></small>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
@@ -344,6 +373,7 @@
     let returnModalInstance = mdb.Modal.getInstance(returnModal);
     let cancelModalInstance = mdb.Modal.getInstance(cancelModal);
     let productIndex;
+    let orderID;
 
     // If no instance exists, create a new one
     if (!returnModalInstance) {
@@ -358,6 +388,7 @@
     document.querySelectorAll('.return-modal-btn').forEach(ele => {
       ele.addEventListener('click', function() {
         productIndex = ele.getAttribute('data-index');
+        orderID = ele.getAttribute('data-order-id');
 
         returnModalInstance.show();
       });
@@ -411,40 +442,83 @@
       })
     })
 
-    // will initialize order return request and order cancel using fetch
-    document.querySelector('body').addEventListener('click', function (event) {
-      const target = event.target;
+    // assigning the return expiry date to DOM element
+    document.querySelectorAll('.product-detail').forEach(ele => {
+      const dateWrapper = ele.querySelector('.date-wrapper')
+      const dateElement = ele.querySelector('.date');
+      const returnBtn = ele.querySelector('.return-modal-btn');
 
-      if (target.id === 'apply-return') {
-        
-      }
-    })    
-
-    // assigning the date to DOM element
-    document.querySelectorAll('.date').forEach(ele => {
-      const deliveryDate = ele.getAttribute('data-delivery-date');
-      ele.innerHTML = getDateAfterSevenDays(deliveryDate);
-
-      // returns the date 7 days from today in 'dd-m-yyyy' format
-      function getDateAfterSevenDays(deliveryDate) {
+      if (dateElement) {
+        const deliveryDate = dateElement.getAttribute('data-delivery-date');
         const date = new Date(deliveryDate);
 
         // add 7 days to the delivery date
         date.setDate(date.getDate() + 7);
 
-        // get the day, month, and year from the new date
-        let day = date.getDate();
-        let month = date.getMonth() + 1; // months are zero-indexed, so add 1
-        const year = date.getFullYear();
+        dateElement.innerHTML = getDateAfterSevenDays(deliveryDate);
 
-        // format day and month to have two digits
-        day = day < 10 ? `0${day}` : day;
-        month = month < 10 ? `0${month}` : month;
+        if (new Date() > date) {
+          returnBtn.classList.add('disabled');
+          dateWrapper.classList.add('opacity-50')
+        }
 
-        // format the date as dd-mm-yyyy
-        const formattedDate = `${day}-${month}-${year}`;
+        // returns the date 7 days from today in 'dd-m-yyyy' format
+        function getDateAfterSevenDays(deliveryDate) {
+          // get the day, month, and year from the new date
+          let day = date.getDate();
+          let month = date.getMonth() + 1; // months are zero-indexed, so add 1
+          const year = date.getFullYear();
 
-        return formattedDate;
+          // format day and month to have two digits
+          day = day < 10 ? `0${day}` : day;
+          month = month < 10 ? `0${month}` : month;
+
+          // format the date as dd-mm-yyyy
+          const formattedDate = `${day}-${month}-${year}`;
+
+          return formattedDate;
+        }
+      }
+    })
+
+    // will initialize order return request and order cancel using fetch
+    document.querySelector('body').addEventListener('click', function(event) {
+      const target = event.target;
+      const returnReason = document.querySelector('#return-reason').value;
+      const returnAlert = document.querySelector('#return-alert');
+      const cancelReason = document.querySelector('#cancel-reason').value;
+      const cancelAlert = document.querySelector('#cancel-alert');
+
+      if (target.id === 'apply-return' && returnReason) {
+        fetch(`/return-order?orderID=${orderID}&productIndex=${productIndex}&returnReason=${returnReason}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong. Try again',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            if (data.success) {
+              window.location.reload();
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      } else if (target.id === 'apply-return' && !returnReason) {
+        returnAlert.style.display = 'inline';
+        returnAlert.innerHTML = 'Please select an option';
       }
     })
   });

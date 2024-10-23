@@ -31,7 +31,7 @@ const schema = new mongoose.Schema({
 
     status: {
       type: String,
-      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Returned', 'Cancelled']
+      enum: ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Pending-Return', 'Returned', 'Cancelled']
     },
 
     deliveryDate: {
