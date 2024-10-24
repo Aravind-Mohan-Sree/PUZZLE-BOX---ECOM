@@ -101,21 +101,21 @@
 
 <!-- -------------------------- order container -------------------------- -->
 <div class="order-container container" id="content">
-  <h2 class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">ADD PRODUCT</h2>
+  <!-- title -->
+  <h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">ORDER DETAILS</h2>
 
   <hr>
-
   <!-- ----------------------- order details section ----------------------- -->
   <section>
-    <div class=" px-4 px-sm-2 pt-md-3 mb-5">
+    <div class="px-4 px-sm-2 pt-md-3 mb-5">
       <div class="row d-flex justify-content-center align-items-center h-100">
-        <div class="col-md-10 col-lg-8">
+        <div class="col-md-10 col-lg-12">
           <% let totalPriceWithoutDiscount = 0 %>
           <div class="card card-stepper mb-4" style="border-radius: 16px;">
             <div class="card-header p-4">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <p class="text-muted mb-2 text-truncate"> Order ID: <span class="fw-bold text-body"><%= order._id %></span></p>
+                  <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= order._id %></span></p>
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
               </div>
@@ -160,7 +160,7 @@
                   <% } else if (product.status !== 'Delivered') { %>
                   <p class="text-decoration-underline mt-2">Change Status</p>
                   <% } %>
-                  <% if (product.status === 'Confirmed') { %> 
+                  <% if (product.status === 'Confirmed') { %>
                   <button class="btn btn-info btn-sm item-shipped" data-order-id="<%= order._id %>" data-index="<%= index %>">shipped</button>
                   <% } else if (product.status === 'Shipped') { %>
                   <button class="btn btn-success btn-sm item-delivered" data-order-id="<%= order._id %>" data-index="<%= index %>">Delivered</button>
@@ -218,12 +218,11 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <!-- -------------------- modal for return rejection --------------------- -->
-<div class="modal fade" id="return-reject-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal p-0" id="return-reject-modal" data-mdb-backdrop="static" tabindex="1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Reject Return</h5>
-        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <select id="reject-reason" data-mdb-select-init class="form-control select">
@@ -236,7 +235,7 @@
         <small id="reject-alert" class="text-danger"></small>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" id="close-modal" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
         <button type="button" id="apply-reject" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Apply</button>
       </div>
     </div>
@@ -342,9 +341,17 @@
         productIndex = ele.getAttribute('data-index');
         orderID = ele.getAttribute('data-order-id');
 
+        // for hiding page content when modal shows up
+        document.querySelector('#content').style.display = 'none';
+
         rejectModalInstance.show();
       });
     });
+
+    // for showing page content when modal closes
+    document.querySelector('#close-modal').addEventListener('click', function () {
+      document.querySelector('#content').style.display = 'block';
+    });    
 
     // will reject return request using fetch
     document.querySelector('body').addEventListener('click', function(event) {
