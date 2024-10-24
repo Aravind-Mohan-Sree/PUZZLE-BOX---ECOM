@@ -95,11 +95,19 @@
 <%- include('navbar') %>
 <!-- ----------------------------------------------------------------------- -->
 
+<!-- --------------------------- sidenav included --------------------------- -->
+<%- include('sidenav') %>
+<!-- ----------------------------------------------------------------------- -->
+
 <!-- -------------------------- order container -------------------------- -->
-<div class="order-container">
+<div class="order-container container" id="content">
+  <h2 class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">ADD PRODUCT</h2>
+
+  <hr>
+
   <!-- ----------------------- order details section ----------------------- -->
   <section>
-    <div class="container px-4 px-sm-2 pt-md-3 mb-5">
+    <div class=" px-4 px-sm-2 pt-md-3 mb-5">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col-md-10 col-lg-8">
           <% let totalPriceWithoutDiscount = 0 %>
@@ -147,10 +155,12 @@
                   <% } else if (product.status === 'Returned') { %>
                   <p class="text-muted mt-4 mb-0"> Returned on <span class="text-body fw-bold"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                   <small class="text-warning">REASON: <%= product.reasonForReturn %></small>
+                  <% } else if (product.status === 'Cancelled') { %>
+                  <small class="text-danger">CANCELLATION REASON: <%= product.reasonForCancel %></small>
                   <% } else if (product.status !== 'Delivered') { %>
                   <p class="text-decoration-underline mt-2">Change Status</p>
                   <% } %>
-                  <% if (product.status === 'Confirmed') { %>
+                  <% if (product.status === 'Confirmed') { %> 
                   <button class="btn btn-info btn-sm item-shipped" data-order-id="<%= order._id %>" data-index="<%= index %>">shipped</button>
                   <% } else if (product.status === 'Shipped') { %>
                   <button class="btn btn-success btn-sm item-delivered" data-order-id="<%= order._id %>" data-index="<%= index %>">Delivered</button>
@@ -159,7 +169,7 @@
                 <!-- Image -->
                 <div class="col-2">
                   <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
-                    <img src="<%= product.productImage %>" class="w-100" alt="" width="120" />
+                    <img src="<%= product.productImage %>" class="w-100 img-fluid" alt="" width="120" />
                   </div>
                 </div>
                 <!-- Image -->

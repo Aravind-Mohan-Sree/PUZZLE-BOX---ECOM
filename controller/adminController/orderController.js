@@ -1,4 +1,5 @@
 const orderSchema = require("../../model/orderSchema");
+const productSchema = require("../../model/productSchema");
 
 /* -------------------- will render the admin order page -------------------- */
 const order = async (req, res) => {
@@ -45,24 +46,32 @@ const editOrderStatus = async (req, res) => {
     const orderID = req.query.orderID;    
 
     const order = await orderSchema.findById(orderID).populate('products.productID');
+    const product = await productSchema.findById(order.products[productIndex].productID);
 
-    if (statusEnum[orderStatus] === 'Shipped') {
-      order.products[productIndex].status = statusEnum[orderStatus];
-    }
-
-    if (statusEnum[orderStatus] === 'Delivered') {
-      order.products[productIndex].status = statusEnum[orderStatus];
-      order.products[productIndex].deliveryDate = new Date();
-    }
-
-    if (statusEnum[orderStatus] === 'Returned') {
-      order.products[productIndex].status = statusEnum[orderStatus];
-      order.products[productIndex].returnedDate = new Date();
+    if (order.products[productIndex].status !== 'Cancelled') {
+      if (statusEnum[orderStatus] === 'Shipped') {
+        order.products[productIndex].status = statusEnum[orderStatus];
+      }
+  
+      if (statusEnum[orderStatus] === 'Delivered') {
+        order.products[productIndex].status = statusEnum[orderStatus];
+        order.products[productIndex].deliveryDate = new Date();
+      }
+  
+      if (statusEnum[orderStatus] === 'Returned') {
+        order.products[productIndex].status = statusEnum[orderStatus];
+        order.products[productIndex].returnedDate = new Date();
+        product.productQuantity += order.products[productIndex].quantity;
+      }
+      
+      await order.save();
+      await product.save();
+      
+      req.flash('alert', { message: 'Order status changed successfully!', color: 'bg-success' });
+    } else {
+      req.flash('alert', { message: 'Error while changing order status!', color: 'bg-danger' });      
     }
     
-    await order.save();
-    
-    req.flash('alert', { message: 'Order status changed successfully!', color: 'bg-success' });
     res.status(200).json({success: true});
   } catch (error) {
     res.status(500).json({error});

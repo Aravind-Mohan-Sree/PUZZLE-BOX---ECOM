@@ -65,11 +65,11 @@
             <p class="fw-normal mb-1">
               <%= ele.paymentMethod  %>
             </p>
-          </td>          
+          </td>
           <td class="" data-mdb-field="field_2" false="">
             <p class="fw-normal mb-1">
               <%= '₹ ' + ele.totalPrice.toLocaleString()  %>
-              </p>
+            </p>
           </td>
           <td class="" data-mdb-field=" field_4" false="">
             <!-- action button -->
@@ -92,5 +92,12 @@
 
 <!-- javaScript -->
 <script>
-  
+  document.addEventListener('DOMContentLoaded', function() {
+    // dynamically adds padding to table container
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+    document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+  });
 </script>

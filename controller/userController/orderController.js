@@ -55,6 +55,39 @@ const order = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* --------------- will initialize order cancellation -------------- */
+const cancelOrderPost = async (req, res) => {
+  try {
+    const orderID = req.query.orderID;
+    const productIndex = req.query.productIndex;
+    const cancelReason = req.query.cancelReason;
+    const statusEnum = ['Cancelled'];
+
+    const order = await orderSchema.findById(orderID).populate('products.productID');
+    const product = await productSchema.findById(order.products[productIndex].productID);
+
+    if (order.products[productIndex].status !== 'Delivered') {
+      order.products[productIndex].status = statusEnum[0];
+      order.products[productIndex].reasonForCancel = cancelReason;
+      product.productQuantity += order.products[productIndex].quantity;
+  
+      await order.save();
+      await product.save();
+  
+      req.flash('alert', { message: 'Order cancellation successful!', color: 'bg-success' });
+    } else {
+      req.flash('alert', { message: 'Order cancellation unsuccessful!', color: 'bg-danger' });
+    }
+
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log('Error while cancelling order', error);
+
+    res.status(500).json({ error });
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 /* --------------- will initialize request for returning order -------------- */
 const returnOrderPost = async (req, res) => {
   try {
@@ -63,7 +96,7 @@ const returnOrderPost = async (req, res) => {
     const returnReason = req.query.returnReason;
     const statusEnum = ['Pending-Return'];
 
-    const order = await orderSchema.findById(orderID).populate('products.productID');
+    const order = await orderSchema.findById(orderID).populate('products.productID');    
 
     const currentDate = new Date();
     const returnExpiryDate = order.products[productIndex].deliveryDate;
@@ -99,5 +132,6 @@ const returnOrderPost = async (req, res) => {
 
 module.exports = {
   order,
+  cancelOrderPost,
   returnOrderPost
 };

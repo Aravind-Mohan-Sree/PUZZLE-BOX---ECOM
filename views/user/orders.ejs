@@ -249,7 +249,7 @@
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
                 <div class="d-none d-md-block">
-                  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
+                  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
                 </div>
               </div>
               <div class="mt-3 d-md-none">
@@ -278,14 +278,19 @@
                     </details>
                   </div>
                   <% } else if (product.status === 'Returned') { %>
-                  <button class="mt-2 mb-2 btn btn-warning btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">returned</button>
+                  <button class="mt-2 mb-2 btn btn-warning btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">item returned</button>
                   <div>
                     <small class="text-warning">REASON: <%= product.reasonForReturn %></small>
                   </div>
+                  <% } else if (product.status === 'Cancelled') { %>
+                  <button class="mt-2 mb-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">item cancelled</button>
+                  <div>
+                    <small class="text-danger">REASON: <%= product.reasonForCancel %></small>
+                  </div>
                   <% } else if (product.status !== 'Delivered') { %>
-                  <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
+                  <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" data-order-id="<%= ele._id %>" data-index="<%= index %>" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel item</button>
                   <% } else { %>
-                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-delivery-date="<%= product.deliveryDate %>" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
+                  <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-delivery-date="<%= product.deliveryDate %>" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return item</button>
                   <small class="d-block date-wrapper">Available till <span class="date" data-delivery-date="<%= product.deliveryDate %>"></span></small>
                   <% } %>
                   <% if (product.reasonForRejection) { %>
@@ -313,9 +318,10 @@
               <p class="text-muted text-center"> Returned on <span class="text-body"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else if (product.status === 'Delivered') { %>
               <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
-              <% } else { %>
+              <% } else if (product.status !== 'Cancelled') { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } %>
+              <% if (product.status !== 'Cancelled') { %>
               <div class="stepper-container mb-4" data-order-status="<%= product.status %>">
                 <div class="stepper">
                   <div class="progress-bar">
@@ -355,6 +361,7 @@
                   </div>
                 </div>
               </div>
+              <% } %>
               <% if (index !== array.length - 1) { %>
               <div class="mb-4 p-0 card-header"></div>
               <% } %>
@@ -482,6 +489,9 @@
 
     document.querySelectorAll('.cancel-modal-btn').forEach(ele => {
       ele.addEventListener('click', function() {
+        productIndex = ele.getAttribute('data-index');
+        orderID = ele.getAttribute('data-order-id');
+
         cancelModalInstance.show();
       });
     });
@@ -570,10 +580,6 @@
       }
     })
 
-    // will initialize tooltip component
-    const tooltip = document.querySelector('.tool-tip');
-    let tooltipInstance = mdb.Tooltip.getInstance(tooltip);
-
     // will initialize order return request and order cancel using fetch
     document.querySelector('body').addEventListener('click', function(event) {
       const target = event.target;
@@ -612,6 +618,38 @@
       } else if (target.id === 'apply-return' && !returnReason) {
         returnAlert.style.display = 'inline';
         returnAlert.innerHTML = 'Please select an option';
+      }
+
+      if (target.id === 'apply-cancel' && cancelReason) {
+        fetch(`/cancel-order?orderID=${orderID}&productIndex=${productIndex}&cancelReason=${cancelReason}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong. Try again',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            if (data.success) {
+              window.location.reload();
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      } else if (target.id === 'apply-cancel' && !cancelReason) {
+        cancelAlert.style.display = 'inline';
+        cancelAlert.innerHTML = 'Please select an option';
       }
     })
   });

@@ -74,8 +74,7 @@ user.get('/order-confirmation', checkUserSession, checkoutController.orderConfir
 
 // will handle the user order route
 user.get('/orders', checkUserSession, orderController.order);
-// user.get('/cancelled-orders',checkUserSession,orderController.cancelledOrder);
-// user.post('/cancel-order/:orderID',checkUserSession,orderController.cancelOrderPost);
+user.post('/cancel-order',checkUserSession,orderController.cancelOrderPost);
 user.post('/return-order', checkUserSession, orderController.returnOrderPost);
 // user.post('/add-review/:productID',checkUserSession,orderController.addReview);
 
