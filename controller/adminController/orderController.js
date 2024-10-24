@@ -54,6 +54,11 @@ const editOrderStatus = async (req, res) => {
       order.products[productIndex].status = statusEnum[orderStatus];
       order.products[productIndex].deliveryDate = new Date();
     }
+
+    if (statusEnum[orderStatus] === 'Returned') {
+      order.products[productIndex].status = statusEnum[orderStatus];
+      order.products[productIndex].returnedDate = new Date();
+    }
     
     await order.save();
     

@@ -31,6 +31,63 @@
     box-shadow: none;
     border-color: rgb(255, 255, 255);
   }
+
+  details {
+    display: inline-block;
+    position: relative;
+    margin: 10px;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    color: #2563eb;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tooltip-content {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    width: max-content;
+    z-index: 1000;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Right positioning */
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 8px;
+  }
+
+  details[open] .tooltip-content {
+    animation: simpleFade 0.15s ease-out;
+  }
+
+  @keyframes simpleFade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .tooltip-content::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: #333;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -50,7 +107,7 @@
             <div class="card-header p-4">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
-                  <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= order._id %></span></p>
+                  <p class="text-muted mb-2 text-truncate"> Order ID: <span class="fw-bold text-body"><%= order._id %></span></p>
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(order.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
               </div>
@@ -63,14 +120,33 @@
                   <p class="h5"><%= product.productName %></p>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <% if (product.status === 'Pending-Return') { %>
-                  <p class="text-decoration-underline mt-2">Return Request Initiated <span><i title="REASON: <%= product.reasonForReturn %>" class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i> </span></p>
+                  <div>
+                    <details class="m-0 mb-2">
+                      <summary class="text-decoration-underline text-dark">
+                        Return Request Initiated <i class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i>
+                      </summary>
+                      <div class="tooltip-content">
+                        REASON: <%= product.reasonForReturn %>
+                      </div>
+                    </details>
+                  </div>
                   <button class="mt-2 btn btn-danger btn-sm text-black reject-modal-btn" data-index="<%= index %>" data-order-id="<%= order._id %>" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">reject</button>
                   <button class="ms-2 btn btn-success btn-sm allow-return" data-order-id="<%= order._id %>" data-index="<%= index %>">allow</button>
                   <% } else if (product.status === 'Delivered') { %>
                   <p class="text-muted mt-4 mb-0"> Delivered on <span class="text-body fw-bold"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                   <% if (product.reasonForRejection) { %>
-                  <p class="text-decoration-underline mt-2 mb-0">Return Request Rejected <span><i title="REASON: <%= product.reasonForRejection %>" class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i> </span></p>
+                  <details class="m-0 mt-2">
+                    <summary class="text-decoration-underline text-dark">
+                      Return Request Rejected <i class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i>
+                    </summary>
+                    <div class="tooltip-content">
+                      REASON: <%= product.reasonForRejection %>
+                    </div>
+                  </details>
                   <% } %>
+                  <% } else if (product.status === 'Returned') { %>
+                  <p class="text-muted mt-4 mb-0"> Returned on <span class="text-body fw-bold"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+                  <small class="text-warning">REASON: <%= product.reasonForReturn %></small>
                   <% } else if (product.status !== 'Delivered') { %>
                   <p class="text-decoration-underline mt-2">Change Status</p>
                   <% } %>
@@ -297,6 +373,43 @@
         rejectAlert.style.display = 'inline';
         rejectAlert.innerHTML = 'Please select an option';
       }
+    })
+
+    // for updating order status to returned
+    document.querySelectorAll('.allow-return').forEach(ele => {
+      ele.addEventListener('click', function() {
+        const productIndex = ele.getAttribute('data-index');
+        const orderID = ele.getAttribute('data-order-id');
+
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/admin/edit-order-status?orderStatus=2&productIndex=${productIndex}&orderID=${orderID}`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  console.log(data.error);
+                }
+
+                if (data.success) {
+                  window.location.reload();
+                }
+              })
+          }
+        })
+      });
     })
   });
 </script>

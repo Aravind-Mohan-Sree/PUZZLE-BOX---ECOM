@@ -71,6 +71,13 @@ const returnOrderPost = async (req, res) => {
     returnExpiryDate.setDate(returnExpiryDate.getDate() + 7);
 
     if (currentDate <= returnExpiryDate) {
+      if (order.products[productIndex].reasonForRejection) {
+        await orderSchema.updateOne(
+          { _id: orderID },
+          { $unset: { [`products.${productIndex}.reasonForRejection`]: "" } }
+        );
+      }
+
       order.products[productIndex].status = statusEnum[0];
       order.products[productIndex].reasonForReturn = returnReason;
 

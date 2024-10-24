@@ -153,6 +153,63 @@
     box-shadow: none;
     border-color: rgb(255, 255, 255);
   }
+
+  details {
+    display: inline-block;
+    position: relative;
+    margin: 10px;
+  }
+
+  summary {
+    list-style: none;
+    cursor: pointer;
+    color: #2563eb;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .tooltip-content {
+    position: absolute;
+    background: #333;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+    width: max-content;
+    z-index: 1000;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Right positioning */
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 8px;
+  }
+
+  details[open] .tooltip-content {
+    animation: simpleFade 0.15s ease-out;
+  }
+
+  @keyframes simpleFade {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  .tooltip-content::before {
+    content: '';
+    position: absolute;
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-right-color: #333;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -209,12 +266,37 @@
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <% if (product.status === 'Pending-Return') { %>
-                  <button class="mt-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending return</button>
+                  <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending return</button>
+                  <div>
+                    <details class="m-0">
+                      <summary class="text-decoration-underline text-dark">
+                        Return Request Initiated <i class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i>
+                      </summary>
+                      <div class="tooltip-content">
+                        REASON: <%= product.reasonForReturn %>
+                      </div>
+                    </details>
+                  </div>
+                  <% } else if (product.status === 'Returned') { %>
+                  <button class="mt-2 mb-2 btn btn-warning btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button">returned</button>
+                  <div>
+                    <small class="text-warning">REASON: <%= product.reasonForReturn %></small>
+                  </div>
                   <% } else if (product.status !== 'Delivered') { %>
                   <button class="mt-2 btn btn-danger btn-sm shadow-0 text-black cancel-modal-btn" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-duotone fa-solid fa-ban fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>cancel order</button>
                   <% } else { %>
                   <button class="mt-2 btn btn-warning btn-sm shadow-0 text-black return-modal-btn" data-mdb-modal-init data-mdb-target="#return-modal" type="button" data-delivery-date="<%= product.deliveryDate %>" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-rotate-left fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>return order</button>
                   <small class="d-block date-wrapper">Available till <span class="date" data-delivery-date="<%= product.deliveryDate %>"></span></small>
+                  <% } %>
+                  <% if (product.reasonForRejection) { %>
+                  <details class="m-0 mt-2">
+                    <summary class="text-decoration-underline text-dark">
+                      Return Request Rejected <i class="ms-2 fa-duotone fa-solid fa-circle-info fa-lg" style="--fa-primary-color: #000000; --fa-secondary-color: #ffd500; --fa-secondary-opacity: 1;"></i>
+                    </summary>
+                    <div class="tooltip-content">
+                      REASON: <%= product.reasonForRejection %>
+                    </div>
+                  </details>
                   <% } %>
                 </div>
                 <!-- Image -->
@@ -227,7 +309,9 @@
                 </div>
                 <!-- Image -->
               </div>
-              <% if (product.status === 'Delivered') { %>
+              <% if (product.status === 'Returned') { %>
+              <p class="text-muted text-center"> Returned on <span class="text-body"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+              <% } else if (product.status === 'Delivered') { %>
               <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
@@ -485,6 +569,10 @@
         }
       }
     })
+
+    // will initialize tooltip component
+    const tooltip = document.querySelector('.tool-tip');
+    let tooltipInstance = mdb.Tooltip.getInstance(tooltip);
 
     // will initialize order return request and order cancel using fetch
     document.querySelector('body').addEventListener('click', function(event) {

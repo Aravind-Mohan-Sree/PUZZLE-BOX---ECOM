@@ -38,7 +38,7 @@ const schema = new mongoose.Schema({
       type: Date,
     },
 
-    returnDate: {
+    returnedDate: {
       type: Date,
     },
 
