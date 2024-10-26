@@ -23,7 +23,7 @@ const order = async (req, res) => {
       .skip(skip)
       .limit(productsPerPage);
 
-    const orderCount = await orderSchema.countDocuments();
+    const orderCount = await orderSchema.countDocuments({userID: req.session.user});
 
     /* ---------- querying active categories for including in the navbar --------- */
     const activeCategories = await productSchema.find({
@@ -179,7 +179,7 @@ const addReview = async (req, res) => {
     });
 
     /* --- average rating is being calculated and assigned to product review --- */
-    productReview.averageRating = totalRating / productReview.reviews.length;
+    productReview.averageRating = (totalRating / productReview.reviews.length).toFixed(1);
 
     await productReview.save();
 

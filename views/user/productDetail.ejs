@@ -95,12 +95,35 @@
           </h2>
           <i class="fa-duotone fa-solid fa-heart-circle-plus fs-3 mt-1" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <div class="col text-warning mt-3 mb-4">
-            <i class="fa-light fa-star text-warning"></i>
-            <i class="fa-light fa-star text-warning"></i>
-            <i class="fa-light fa-star text-warning"></i>
-            <i class="fa-light fa-star text-warning"></i>
-            <i class="fa-light fa-star text-warning"></i>
-            <strong class="text-dark ms-3"><span>3.5</span>/5</strong>
+            <% let rating = (productReview.averageRating ?? 0).toFixed() %>
+            <div class="row ps-2">
+              <div class="col-auto px-0">
+                <ul class="rating d-flex justify-content-center">
+                  <li>
+                    <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Bad"></i>
+                  </li>
+                  <% rating-- %>
+                  <li>
+                    <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Poor"></i>
+                  </li>
+                  <% rating-- %>
+                  <li>
+                    <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="OK"></i>
+                  </li>
+                  <% rating-- %>
+                  <li>
+                    <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Good"></i>
+                  </li>
+                  <% rating-- %>
+                  <li>
+                    <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Excellent"></i>
+                  </li>
+                </ul>
+              </div>
+              <div class="col">
+                <strong class="text-dark"><%= productReview.averageRating ?? 0 %> / 5</strong>
+              </div>
+            </div>
           </div>
           <h3 class="mb-4 mt-3">
             <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
@@ -185,10 +208,47 @@
         </div>
 
         <div id="reviews" class="tabcontent">
+          <% if (productReview) { %>
+          <h4 class="text-dark"><span class="h3 fw-bold"><%= productReview.reviews.length %></span> <%= productReview.reviews.length === 1 ? 'person' : 'people' %> reviewed this!</h4>
+          <h6 class="text-muted">Average <%= productReview.averageRating %> out of 5 stars</h6>
           <% productReview.reviews.forEach(review => { %>
-          <h4><%= review.userID.name %></h4>
-          <p><%= review.description %></p>
+          <% let rating = review.rating %>
+          <hr class="mt-4">
+          <div class="row">
+            <div class="col-auto">
+              <h5><%= review.userID.name %></h5>
+            </div>
+            <div class="col-12 col-md-auto mb-2 mb-md-0 px-0 lh-sm">
+              <ul class="rating d-flex justify-content-center">
+                <li>
+                  <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Bad"></i>
+                </li>
+                <% rating-- %>
+                <li>
+                  <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Poor"></i>
+                </li>
+                <% rating-- %>
+                <li>
+                  <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="OK"></i>
+                </li>
+                <% rating-- %>
+                <li>
+                  <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Good"></i>
+                </li>
+                <% rating-- %>
+                <li>
+                  <i class="<%= rating > 0 ? 'fa' : 'far' %> fa-star fa-sm text-warning" title="Excellent"></i>
+                </li>
+              </ul>
+            </div>
+            <div class="col-12">
+              <p class="m-0"><%= review.description %></p>
+            </div>
+          </div>
           <% }) %>
+          <% } else { %>
+          <h4 class="text-dark m-0">No reviews yet...</h4>
+          <% } %>
         </div>
       </div>
     </div>

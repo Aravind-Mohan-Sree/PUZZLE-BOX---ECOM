@@ -104,7 +104,7 @@ const productDetail = async (req, res) => {
     })
       .populate('productCategory');
 
-    const productReview = await reviewSchema.findOne({productID: req.query.productId}).populate('reviews.userID');
+    const productReview = await reviewSchema.findOne({productID: req.query.productId}).populate('reviews.userID') ?? '';
 
     if (product) {
       const similarProducts = await productSchema.find({
