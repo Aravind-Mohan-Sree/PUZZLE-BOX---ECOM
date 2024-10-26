@@ -127,7 +127,9 @@
     z-index: 0
   }
 
-  #return-alert {
+  #return-alert,
+  #rating-alert,
+  #review-alert {
     display: none;
     font-size: .75rem;
   }
@@ -315,8 +317,14 @@
                 <!-- Image -->
               </div>
               <% if (product.status === 'Returned') { %>
+              <div class="text-center">
+                <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
+              </div>
               <p class="text-muted text-center"> Returned on <span class="text-body"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else if (product.status === 'Delivered') { %>
+              <div class="text-center">
+                <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
+              </div>
               <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else if (product.status !== 'Cancelled') { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
@@ -443,6 +451,51 @@
   </div>
   <!-- ----------------------------------------------------------------------- -->
 
+  <!-- -------------------- modal for adding product review --------------------- -->
+  <div class="modal fade" id="review-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Rating and Review</h5>
+          <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-center mb-1">Rating</p>
+          <ul class="rating d-flex justify-content-center" data-mdb-toggle="rating">
+            <li value="0">
+              <i class="far fa-star fa-sm text-warning" title="Bad"></i>
+            </li>
+            <li>
+              <i class="far fa-star fa-sm text-warning" title="Poor"></i>
+            </li>
+            <li>
+              <i class="far fa-star fa-sm text-warning" title="OK"></i>
+            </li>
+            <li>
+              <i class="far fa-star fa-sm text-warning" title="Good"></i>
+            </li>
+            <li>
+              <i class="far fa-star fa-sm text-warning" title="Excellent"></i>
+            </li>
+          </ul>
+          <small id="rating-alert" class="text-danger"></small>
+          <hr>
+          <p class="mb-2">Review</p>
+          <div class="form-outline" data-mdb-input-init>
+            <textarea class="form-control" id="review" rows="4"></textarea>
+            <label class="form-label" for="review">What do you feel?</label>
+          </div>
+          <small id="review-alert" class="text-danger mb-2"></small>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+          <button type="button" id="post-review" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>post</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ----------------------------------------------------------------------- -->
+
   <!-- --------------------------- pagination included --------------------------- -->
   <%- include('pagination') %>
   <!-- ----------------------------------------------------------------------- -->
@@ -460,15 +513,18 @@
 <!-- ----------------------------- javaScript ------------------------------ -->
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Modal Initialization
+    // modals initialization
     const returnModal = document.getElementById('return-modal');
     const cancelModal = document.getElementById('cancel-modal');
+    const reviewModal = document.getElementById('review-modal');
     let returnModalInstance = mdb.Modal.getInstance(returnModal);
     let cancelModalInstance = mdb.Modal.getInstance(cancelModal);
+    let reviewModalInstance = mdb.Modal.getInstance(reviewModal);
     let productIndex;
     let orderID;
+    let productID;
 
-    // If no instance exists, create a new one
+    // if no instance exists, create a new one
     if (!returnModalInstance) {
       returnModalInstance = new mdb.Modal(returnModal);
     }
@@ -477,7 +533,11 @@
       cancelModalInstance = new mdb.Modal(cancelModal);
     }
 
-    // Open modal on button click
+    if (!reviewModalInstance) {
+      reviewModalInstance = new mdb.Modal(reviewModal);
+    }
+
+    // open modal on button click
     document.querySelectorAll('.return-modal-btn').forEach(ele => {
       ele.addEventListener('click', function() {
         productIndex = ele.getAttribute('data-index');
@@ -493,6 +553,14 @@
         orderID = ele.getAttribute('data-order-id');
 
         cancelModalInstance.show();
+      });
+    });
+
+    document.querySelectorAll('.review-modal-btn').forEach(ele => {
+      ele.addEventListener('click', function() {
+        productID = ele.getAttribute('data-product-id');
+
+        reviewModalInstance.show();
       });
     });
 
@@ -652,6 +720,69 @@
         cancelAlert.innerHTML = 'Please select an option';
       }
     })
+
+    // will assign rating value
+    let rating;
+    const ratingElement = document.querySelector('.rating');
+
+    ratingElement.addEventListener('onSelect.mdb.rating', function(event) {
+      rating = event.value;
+    });
+
+    // will add product review using fetch
+    document.querySelector('#post-review').addEventListener('click', function() {
+      const review = document.querySelector('#review').value;
+      const ratingAlert = document.querySelector('#rating-alert');
+      const reviewAlert = document.querySelector('#review-alert');
+
+      ratingAlert.style.display = 'none';
+      reviewAlert.style.display = 'none';
+
+      if (rating && review.length > 7 && review.length < 221) {
+        fetch(`/add-review?productID=${productID}&rating=${rating}&review=${review}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }).then(response => response.json())
+          .then(data => {
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Something went wrong. Try again',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            if (data.success) {
+              window.location.reload();
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      } else {
+        if (!rating) {
+          ratingAlert.style.display = 'inline';
+          ratingAlert.innerHTML = 'Rating is required';
+        }
+
+        if (!review) {
+          reviewAlert.style.display = 'inline';
+          reviewAlert.innerHTML = 'Review is required';
+        } else if (review.length < 8) {
+          reviewAlert.style.display = 'inline';
+          reviewAlert.innerHTML = 'Review min length is 8';
+        } else if (review.length > 220) {
+          reviewAlert.style.display = 'inline';
+          reviewAlert.innerHTML = 'Review max length is 220';
+        }
+      }
+    });
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

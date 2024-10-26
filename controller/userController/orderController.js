@@ -1,8 +1,7 @@
-const userSchema = require("../../model/userSchema");
 const categorySchema = require("../../model/categorySchema");
 const productSchema = require("../../model/productSchema");
 const orderSchema = require("../../model/orderSchema");
-// const reviewSchema = require("../../model/reviewSchema");
+const reviewSchema = require("../../model/reviewSchema");
 
 /* ----------------------- will render the order page ----------------------- */
 const order = async (req, res) => {
@@ -25,8 +24,6 @@ const order = async (req, res) => {
       .limit(productsPerPage);
 
     const orderCount = await orderSchema.countDocuments();
-
-    // const paginatedOrderDetails = orderDetails.slice(skip, skip + productsPerPage);
 
     /* ---------- querying active categories for including in the navbar --------- */
     const activeCategories = await productSchema.find({
@@ -61,19 +58,18 @@ const cancelOrderPost = async (req, res) => {
     const orderID = req.query.orderID;
     const productIndex = req.query.productIndex;
     const cancelReason = req.query.cancelReason;
-    const statusEnum = ['Cancelled'];
 
     const order = await orderSchema.findById(orderID).populate('products.productID');
     const product = await productSchema.findById(order.products[productIndex].productID);
 
     if (order.products[productIndex].status !== 'Delivered') {
-      order.products[productIndex].status = statusEnum[0];
+      order.products[productIndex].status = 'Cancelled';
       order.products[productIndex].reasonForCancel = cancelReason;
       product.productQuantity += order.products[productIndex].quantity;
-  
+
       await order.save();
       await product.save();
-  
+
       req.flash('alert', { message: 'Order cancellation successful!', color: 'bg-success' });
     } else {
       req.flash('alert', { message: 'Order cancellation unsuccessful!', color: 'bg-danger' });
@@ -94,9 +90,8 @@ const returnOrderPost = async (req, res) => {
     const orderID = req.query.orderID;
     const productIndex = req.query.productIndex;
     const returnReason = req.query.returnReason;
-    const statusEnum = ['Pending-Return'];
 
-    const order = await orderSchema.findById(orderID).populate('products.productID');    
+    const order = await orderSchema.findById(orderID).populate('products.productID');
 
     const currentDate = new Date();
     const returnExpiryDate = order.products[productIndex].deliveryDate;
@@ -111,7 +106,7 @@ const returnOrderPost = async (req, res) => {
         );
       }
 
-      order.products[productIndex].status = statusEnum[0];
+      order.products[productIndex].status = 'Pending-Return';
       order.products[productIndex].reasonForReturn = returnReason;
 
       await order.save();
@@ -130,8 +125,77 @@ const returnOrderPost = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* --------------- for adding reviews for products -------------- */
+const addReview = async (req, res) => {
+  try {
+    const productID = req.query.productID;
+    const rating = req.query.rating;
+    const description = req.query.review;
+    let totalRating = 0;
+    let userReviewed = false;
+
+    const productReview = await reviewSchema.findOne({productID});
+
+    /* ---------------------- checks if product has reviews --------------------- */
+    if (productReview) {
+      /* ------------------ if user already reviewed then update ------------------ */
+      productReview.reviews.forEach(review => {
+        if (review.userID.toString() === req.session.user.toString()) {
+          review.rating = rating;
+          review.description = description;
+          userReviewed = true;
+        }
+      });
+
+      /* ------------ if user didn't reviewed yet then post new review ----------- */
+      if (!userReviewed) {
+        productReview.reviews.push({
+          userID: req.session.user,
+          rating,
+          description
+        })
+      }
+    } else {
+      /* ---------------- if product has no review, then create one --------------- */
+      const newReview = new reviewSchema({
+        productID,
+        averageRating: rating,
+        reviews: [{
+          userID: req.session.user,
+          rating,
+          description
+        }]
+      });
+
+      await newReview.save();
+
+      req.flash('alert', { message: 'Review posted successfully!', color: 'bg-success' });
+      return res.status(200).json({ success: true });
+    }
+
+    /* ----------------- calculating total rating of the product ---------------- */
+    productReview.reviews.forEach(review => {
+      totalRating += review.rating;
+    });
+
+    /* --- average rating is being calculated and assigned to product review --- */
+    productReview.averageRating = totalRating / productReview.reviews.length;
+
+    await productReview.save();
+
+    req.flash('alert', { message: 'Review posted successfully!', color: 'bg-success' });
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.log('Error while adding product review', error);
+
+    res.status(500).json({ error });
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   order,
   cancelOrderPost,
-  returnOrderPost
+  returnOrderPost,
+  addReview
 };

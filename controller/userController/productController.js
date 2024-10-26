@@ -1,6 +1,7 @@
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
 const cartSchema = require('../../model/cartSchema');
+const reviewSchema = require('../../model/reviewSchema');
 
 // will list products based on the conditions
 const product = async (req, res) => {
@@ -103,6 +104,8 @@ const productDetail = async (req, res) => {
     })
       .populate('productCategory');
 
+    const productReview = await reviewSchema.findOne({productID: req.query.productId}).populate('reviews.userID');
+
     if (product) {
       const similarProducts = await productSchema.find({
         _id: { $nin: [req.query.productId] },
@@ -129,6 +132,7 @@ const productDetail = async (req, res) => {
         alert: req.flash('alert'),
         user: req.session.user,
         product,
+        productReview,
         similarProducts,
         activeCategoryNames,
         content: '',

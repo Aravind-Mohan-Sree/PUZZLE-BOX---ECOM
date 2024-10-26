@@ -162,8 +162,8 @@
     <div class="container px-4 px-sm-2">
       <div class="row px-3">
         <div class="tab px-0 mt-4">
-          <button class="tablinks btn btn-dark me-md-3 " onclick="tab(event, 'details')">Details</button>
-          <button class="tablinks btn btn-warning" onclick="tab(event, 'reviews')">Ratings & Reviews</button>
+          <button class="tablinks btn btn-dark me-md-3 " onclick="tab(event, 'details')"><i class="fa-solid fa-circle-info fa-lg me-2"></i> Details</button>
+          <button class="tablinks btn btn-warning" onclick="tab(event, 'reviews')"><i class="fa-solid fa-star fa-lg me-2"></i> Ratings & Reviews</button>
         </div>
 
         <div id="details" class="tabcontent">
@@ -185,7 +185,10 @@
         </div>
 
         <div id="reviews" class="tabcontent">
-
+          <% productReview.reviews.forEach(review => { %>
+          <h4><%= review.userID.name %></h4>
+          <p><%= review.description %></p>
+          <% }) %>
         </div>
       </div>
     </div>

@@ -84,14 +84,13 @@ const editOrderStatus = async (req, res) => {
 /* ------------------- for rejecting order return request ------------------- */
 const rejectReturnOrder = async (req, res) => {
   try {
-    const statusEnum = ['Delivered'];
     const productIndex = req.query.productIndex;    
     const rejectReason = req.query.rejectReason;    
     const orderID = req.query.orderID;    
 
     const order = await orderSchema.findById(orderID).populate('products.productID');
 
-    order.products[productIndex].status = statusEnum[0];
+    order.products[productIndex].status = 'Delivered';
     order.products[productIndex].reasonForRejection = rejectReason;
 
     await order.save();

@@ -76,7 +76,7 @@ user.get('/order-confirmation', checkUserSession, checkoutController.orderConfir
 user.get('/orders', checkUserSession, orderController.order);
 user.post('/cancel-order',checkUserSession,orderController.cancelOrderPost);
 user.post('/return-order', checkUserSession, orderController.returnOrderPost);
-// user.post('/add-review/:productID',checkUserSession,orderController.addReview);
+user.post('/add-review',checkUserSession,orderController.addReview);
 
 // will handle update navbar route
 user.post('/update-navbar', updateNavbarController.updateNavbarPost);
