@@ -18,12 +18,21 @@ const home = async (req, res) => {
     }).populate('productCategory');
 
     const productReviews = await reviewSchema.find().populate('reviews.userID');
+    const ratings = await reviewSchema.find({}, { productID: 1, averageRating: 1 });
+
+    const ratingsMap = ratings.reduce((acc, review) => {
+      acc[review.productID.toString()] = review.averageRating;
+      return acc;
+    }, {});
 
     const activeCategoryNames = Array.from(new Set(activeProducts.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
 
     const users = await userSchema.find({ isBlocked: false });
     const latestProducts = activeProducts.sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
-    const topProducts = activeProducts.sort((a, b) => a.productName.localeCompare(b.productName)).slice(0, 4);
+    const topProducts = activeProducts
+      .filter(product => ratingsMap[product._id.toString()] !== undefined)
+      .sort((a, b) => (ratingsMap[b._id.toString()] || 0) - (ratingsMap[a._id.toString()] || 0))
+      .slice(0, 4);
 
     res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, users, activeProducts, productReviews, latestProducts, topProducts, activeCategoryNames, content: '' });
   } catch (err) {

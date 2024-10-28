@@ -12,9 +12,9 @@
 
     <div class="row text-center">
       <div class="col-md-4 mb-5 mb-md-0">
-        <h5 class="mb-3">Arjun Varma</h5>
-        <p class="px-xl-3">
-          <i class="fas fa-quote-left pe-2"></i>Absolutely loved this puzzle! The pieces were sturdy, and the image quality was fantastic. It was challenging yet relaxing, and the difficulty was just right. Perfect for a weekend activity with family!
+        <h5 class="mb-3" id="name-one"></h5>
+        <p class="px-xl-3" id="review-one">
+          <i class="fas fa-quote-left pe-2"></i>
         </p>
         <ul class="list-unstyled d-flex justify-content-center mb-0">
           <li>
@@ -35,9 +35,9 @@
         </ul>
       </div>
       <div class="col-md-4 mb-5 mb-md-0">
-        <h5 class="mb-3">Farhan Ali</h5>
-        <p class="px-xl-3">
-          <i class="fas fa-quote-left pe-2"></i>This puzzle was a fun brain workout! The unique pieces and vibrant colors made it engaging from start to finish. The puzzle arrived in excellent condition, and I appreciated the eco-friendly packaging.
+        <h5 class="mb-3" id="name-two"></h5>
+        <p class="px-xl-3" id="review-two">
+          <i class="fas fa-quote-left pe-2"></i>
         </p>
         <ul class="list-unstyled d-flex justify-content-center mb-0">
           <li>
@@ -58,9 +58,9 @@
         </ul>
       </div>
       <div class="col-md-4 mb-0">
-        <h5 class="mb-3">Geeta Nair</h5>
-        <p class="px-xl-3">
-          <i class="fas fa-quote-left pe-2"></i>Great puzzle for both beginners and experts. It took me a few days to complete, and I enjoyed every moment. The satisfaction of placing the final piece was unbeatable. Highly recommend for puzzle enthusiasts!
+        <h5 class="mb-3" id="name-three"></h5>
+        <p class="px-xl-3" id="review-three">
+          <i class="fas fa-quote-left pe-2"></i>
         </p>
         <ul class="list-unstyled d-flex justify-content-center mb-0">
           <li>
@@ -83,4 +83,37 @@
     </div>
   </div>
 </section>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  fetch('/update-testimonial', {
+    method: 'POST'
+  }).then(response => response.json())
+  .then(data => {
+    const nameOne = document.querySelector('#name-one');
+    const nameTwo = document.querySelector('#name-two');
+    const nameThree = document.querySelector('#name-three');
+    const reviewOne = document.querySelector('#review-one');
+    const reviewTwo = document.querySelector('#review-two');
+    const reviewThree = document.querySelector('#review-three');
+
+    if (data.topRatedReviews) {      
+      nameOne.innerHTML = data.topRatedReviews[0].userID.name;
+      reviewOne.innerHTML = data.topRatedReviews[0].description;
+
+      nameTwo.innerHTML = data.topRatedReviews[1].userID.name;
+      reviewTwo.innerHTML = data.topRatedReviews[1].description;
+
+      nameThree.innerHTML = data.topRatedReviews[2].userID.name;
+      reviewThree.innerHTML = data.topRatedReviews[2].description;
+    }
+
+    if (data.err) {
+
+    }
+  })
+});
+</script>
 <!-- ----------------------------------------------------------------------- -->

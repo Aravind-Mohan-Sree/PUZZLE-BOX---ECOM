@@ -9,6 +9,7 @@ const cartController = require('../controller/userController/cartController');
 const checkoutController = require('../controller/userController/checkoutController');
 const orderController = require('../controller/userController/orderController');
 const updateNavbarController = require('../controller/userController/updateNavbarController');
+const testimonialController = require('../controller/userController/testimonialController');
 const checkUserSession = require('../middleware/userSession');
 const checkUserBlocked = require('../middleware/checkUserBlocked');
 
@@ -80,6 +81,9 @@ user.post('/add-review',checkUserSession,orderController.addReview);
 
 // will handle update navbar route
 user.post('/update-navbar', updateNavbarController.updateNavbarPost);
+
+// will handle update testimonial route
+user.post('/update-testimonial', testimonialController.updateTestimonialPost);
 
 // will handle user logout
 user.post('/logout', userController.logout);

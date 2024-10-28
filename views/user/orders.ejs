@@ -250,23 +250,22 @@
                   <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= orderID %></span></p>
                   <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
-                <div class="d-none d-md-block">
-                  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
-                </div>
-              </div>
-              <div class="mt-3 d-md-none">
-                <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
               </div>
             </div>
             <div class="card-body p-4 pb-0">
               <% ele.products.forEach((product,index,array)=> { %>
-              <% totalPriceWithoutDiscount += product.price * product.quantity %>
-              <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">
-                <div class="flex-fill product-detail">
+              <% totalPriceWithoutDiscount += product.price * product.quantity %>              
+              <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">                
+                <div class="flex-fill product-detail">                  
                   <a href="/product-details?productId=<%= product.productID._id %>&productCategory=<%= product.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
+                  <% if (product.status !== 'Pending' && !(product.status === 'Cancelled' && ele.paymentMethod === 'Cash on delivery')) { %>
+                  <div>
+                    <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
+                  </div>  
+                  <% } %>
                   <% if (product.status === 'Pending-Return') { %>
                   <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending-return</button>
                   <div>

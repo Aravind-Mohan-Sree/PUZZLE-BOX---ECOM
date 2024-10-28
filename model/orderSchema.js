@@ -76,7 +76,7 @@ const schema = new mongoose.Schema({
   paymentMethod: {
     type: String,
     required: true,
-    enum: ['Cash on delivery']
+    enum: ['Cash on delivery', 'Razorpay', 'Wallet']
   },
 }, { timestamps: true })
 
