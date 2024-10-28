@@ -27,8 +27,6 @@ const updateTestimonialPost = async (req, res) => {
 
     res.status(200).json({ topRatedReviews });
   } catch (err) {
-    res.status(500).json({ err });
-
     console.log('Error while updating testimonial', err);
   }
 };
