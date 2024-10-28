@@ -6,7 +6,7 @@
     </li>
     <% for(let i = 1; i <= pageNumber; i++) { %>
     <li class="page-item">
-      <a class="page-link" href="?page=<%= i %>&searchTerm=<%= typeof search !== 'undefined' ? search : '' %>&minPrice=<%= typeof minPrice !== 'undefined' ? minPrice : '' %>&maxPrice=<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>&productCategory=<%= typeof selectedCategory !== 'undefined' ? selectedCategory : '' %>&sort=<%= typeof sort !== 'undefined' ? sort : '' %>"><%= i %></a>
+      <a class="page-link" href="?page=<%= i %>&searchTerm=<%= typeof search !== 'undefined' ? search : '' %>&minPrice=<%= typeof minPrice !== 'undefined' ? minPrice : '' %>&maxPrice=<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>&productCategory=<%= typeof selectedCategory !== 'undefined' ? selectedCategory : '' %>&sort=<%= typeof sort !== 'undefined' ? sort : '' %>&productRating=<%= productRating %>"><%= i %></a>
     </li>
     <% } %>
     <li class="page-item">

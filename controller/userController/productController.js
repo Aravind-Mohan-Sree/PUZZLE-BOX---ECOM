@@ -11,6 +11,7 @@ const product = async (req, res) => {
     const search = req.query.searchTerm || '';
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
+    const productRating = parseInt(req.query.productRating);
 
     // pagination parameters
     const productsPerPage = 8;
@@ -29,15 +30,28 @@ const product = async (req, res) => {
       ? { $in: await categorySchema.find({ categoryName: selectedCategory }).select('_id') }
       : { $in: await categorySchema.find({ isActive: true }).select('_id') };
 
+    const ratedProductIds = await reviewSchema
+      .find({})
+      .populate("productID")
+      .then(reviews => {
+        return reviews
+          .filter(review => + review.averageRating.toFixed() === productRating)
+          .map(review => review.productID._id);
+      });
+
     // query for products with filters  
     const productQuery = {
       productName: { $regex: search, $options: "i" },
       productCategory: productCategoryQuery,
       isActive: true,
-      productDiscountedPrice: { $gte: minPrice, $lte: maxPrice },
-      // productRating: { $gte: productRating }
+      productDiscountedPrice: { $gte: minPrice, $lte: maxPrice }
     };
 
+    if (ratedProductIds.length > 0 || productRating) {
+      productQuery._id = { $in: ratedProductIds };
+    }
+
+    const productReviews = await reviewSchema.find();
     const productsCount = await productSchema.countDocuments(productQuery);
 
     const activeProductsQuery = productSchema.find(productQuery)
@@ -78,11 +92,13 @@ const product = async (req, res) => {
       alert: req.flash('alert'),
       user: req.session.user,
       activeProducts,
+      productReviews,
       activeCategoryNames,
       search,
       selectedCategory,
       minPrice,
       maxPrice,
+      productRating,
       sort: req.query.sort,
       pageNumber: Math.ceil(productsCount / productsPerPage),
       currentPage,
@@ -104,7 +120,7 @@ const productDetail = async (req, res) => {
     })
       .populate('productCategory');
 
-    const productReview = await reviewSchema.findOne({productID: req.query.productId}).populate('reviews.userID') ?? '';
+    const productReviews = await reviewSchema.find().populate('reviews.userID');
 
     if (product) {
       const similarProducts = await productSchema.find({
@@ -132,7 +148,7 @@ const productDetail = async (req, res) => {
         alert: req.flash('alert'),
         user: req.session.user,
         product,
-        productReview,
+        productReviews,
         similarProducts,
         activeCategoryNames,
         content: '',
