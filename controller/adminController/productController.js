@@ -116,7 +116,8 @@ const addProductPost = async (req, res) => {
         productDifficultyRate: req.body.difficulty,
         productDescription: req.body.description,
         productDiscountedPrice: discountPrice,
-        productImage: imageArray
+        productImage: imageArray,
+        isFeatured: req.body.productFeatured === 'true'
       })
 
       await newProduct.save();
@@ -192,7 +193,7 @@ const editProductPost = async (req, res) => {
     }
 
     // update the product using the values from form
-    productSchema.findByIdAndUpdate(productID, { productPrice: price, productQuantity: stock, productDiscount: discount, productDiscountedPrice: discountPrice, productDescription: description, productImage: imageArray })
+    productSchema.findByIdAndUpdate(productID, { productPrice: price, productQuantity: stock, productDiscount: discount, productDiscountedPrice: discountPrice, productDescription: description, productImage: imageArray, isFeatured: req.body.productFeatured === 'true' })
       .then((elem) => {
         req.flash('alert', { message: 'Product updated successfully', color: 'bg-success' });
 

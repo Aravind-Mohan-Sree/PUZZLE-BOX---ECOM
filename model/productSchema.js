@@ -51,6 +51,10 @@ const schema = new mongoose.Schema({
     type: Number,
   },
 
+  isFeatured: {
+    type: Boolean
+  },
+
   isActive: {
     type: Boolean,
     default: true,

@@ -172,11 +172,20 @@
         <small id="category-alert" class="position-absolute text-danger"></small>
       </div>
       <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Featured<span class="text-danger">*</span></label>
+        <select class="select" id="featured-select" data-mdb-select-init class="form-control" name="productFeatured">
+          <option value="" disabled selected hidden>select an option</option>
+          <option value="true">Yes</option>          
+          <option value="false">No</option>          
+        </select>
+        <small id="featured-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
         <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
         <input id="price-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="price">
         <small id="price-alert" class="position-absolute text-danger"></small>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
         <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
         <input id="stock-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="stock">
         <small id="stock-alert" class="position-absolute text-danger"></small>
@@ -198,7 +207,7 @@
         </div>
         <small id="dimension-alert" class="position-absolute text-danger"></small>
       </div>
-      <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
         <label class="w-100 text-dark mb-2" for="">Difficulty Rate(-/10)<span class="text-danger">*</span></label>
         <input id="difficulty-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="difficulty">
         <small id="difficulty-alert" class="position-absolute text-danger"></small>
@@ -261,6 +270,7 @@
 
     const name = document.getElementById('name-input').value;
     const category = document.getElementById('category-select').value;
+    const featured = document.getElementById('featured-select').value;
     const price = document.getElementById('price-input').value;
     const stock = document.getElementById('stock-input').value;
     const discount = document.getElementById('discount-input').value;
@@ -275,6 +285,7 @@
 
     const nameAlert = document.getElementById('name-alert');
     const categoryAlert = document.getElementById('category-alert');
+    const featuredAlert = document.getElementById('featured-alert');
     const priceAlert = document.getElementById('price-alert');
     const stockAlert = document.getElementById('stock-alert');
     const discountAlert = document.getElementById('discount-alert');
@@ -285,6 +296,7 @@
 
     nameAlert.style.display = 'none';
     categoryAlert.style.display = 'none';
+    featuredAlert.style.display = 'none';
     priceAlert.style.display = 'none';
     stockAlert.style.display = 'none';
     discountAlert.style.display = 'none';
@@ -316,7 +328,14 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
+    } else if (featured === '') {
+      featuredAlert.style.display = 'inline';
+      featuredAlert.innerText = 'Featured is required';
+      featuredAlert.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
       if (price === '') {
         priceAlert.style.display = 'inline';
         priceAlert.innerText = `Price is required`;

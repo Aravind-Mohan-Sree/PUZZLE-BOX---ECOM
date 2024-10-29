@@ -169,11 +169,22 @@
         <small id="category-alert" class="position-absolute text-danger"></small>
       </div>
       <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+        <label class="w-100 text-dark mb-2" for="">Featured<span class="text-danger">*</span></label>
+        <select class="select" id="featured-select" data-mdb-select-init class="form-control" name="productFeatured">
+          <option value="<%= product.productCategory.isFeatured %>" disabled selected hidden>
+            <%= product.isFeatured === true ? 'Yes' : 'No' %>
+          </option>
+          <option value="true">Yes</option>          
+          <option value="false">No</option>          
+        </select>
+        <small id="featured-alert" class="position-absolute text-danger"></small>
+      </div>
+      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
         <label class="w-100 text-dark mb-2" for="">Price<span class="text-danger">*</span></label>
         <input id="price-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="price" value="<%= product.productPrice %>">
         <small id="price-alert" class="position-absolute text-danger"></small>
       </div>
-      <div class="col-12 col-sm-6 col-lg-3 col-xl-3">
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
         <label class="w-100 text-dark mb-2" for="">Stock<span class="text-danger">*</span></label>
         <input id="stock-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="stock" value="<%= product.productQuantity %>">
         <small id="stock-alert" class="position-absolute text-danger"></small>
@@ -195,7 +206,7 @@
         </div>
         <small id="dimension-alert" class="position-absolute text-danger"></small>
       </div>
-      <div class="col-12 col-sm-6 col-lg-4 col-xl-4 offset-sm-3 offset-lg-0">
+      <div class="col-12 col-sm-6 col-lg-4 col-xl-4">
         <label class="w-100 text-dark mb-2" for="">Difficulty Rate(-/10)<span class="text-danger">*</span></label>
         <input id="difficulty-input" class="w-100 form-control" type="tel" inputmode="tel" placeholder="type..." name="difficulty" value="<%= product.productDifficultyRate %>" disabled>
         <small id="difficulty-alert" class="position-absolute text-danger"></small>
