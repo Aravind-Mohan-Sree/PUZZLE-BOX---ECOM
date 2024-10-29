@@ -1,6 +1,7 @@
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
 const cartSchema = require('../../model/cartSchema');
+const orderSchema = require('../../model/orderSchema');
 const reviewSchema = require('../../model/reviewSchema');
 
 // will list products based on the conditions
@@ -11,6 +12,7 @@ const product = async (req, res) => {
     const search = req.query.searchTerm || '';
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
+    const featured = req.query.featured && true;
     const productRating = parseInt(req.query.productRating);
 
     // pagination parameters
@@ -51,29 +53,55 @@ const product = async (req, res) => {
       productQuery._id = { $in: ratedProductIds };
     }
 
-    const productReviews = await reviewSchema.find();
-    const productsCount = await productSchema.countDocuments(productQuery);
-
-    const activeProductsQuery = productSchema.find(productQuery)
-      .skip(skip)
-      .limit(productsPerPage)
-      .populate('productCategory');
-
-    // apply sorting only if a option is selected
-    if (req.query.sort) {
-      if (req.query.sort === 'lowToHigh' || req.query.sort === 'highToLow') {
-        const sortOrder = req.query.sort === 'lowToHigh' ? 1 : -1;
-        activeProductsQuery.sort({ productDiscountedPrice: sortOrder, _id: 1 });
-      } else if (req.query.sort === 'aToZ' || req.query.sort === 'zToA') {
-        const sortOrder = req.query.sort === 'aToZ' ? 1 : -1;
-        activeProductsQuery.sort({ productName: sortOrder, _id: 1 });
-      } else {
-        const sortOrder = -1;
-        activeProductsQuery.sort({ createdAt: sortOrder, _id: 1 });
-      }
+    if (featured) {
+      productQuery.isFeatured = featured;
     }
 
-    const activeProducts = await activeProductsQuery;
+    const productReviews = await reviewSchema.find();
+
+    const activeProductsQuery = productSchema.find(productQuery)
+      .populate('productCategory');
+
+    // get sales count if popularity sort is requested
+    let salesCountMap = {};
+
+    if (req.query.sort === 'popularity') {
+      const salesData = await orderSchema.aggregate([
+        { $unwind: "$products" },
+        { $group: { _id: "$products.productID", totalSales: { $sum: "$products.quantity" } } }
+      ]);
+
+      // create a mapping of product ids to sales count
+      salesCountMap = salesData.reduce((acc, item) => {
+        acc[item._id.toString()] = item.totalSales;
+        return acc;
+      }, {});
+    }
+
+    let activeProducts = await activeProductsQuery;
+
+    // apply sorting only if a option is selected
+    if (req.query.sort === 'lowToHigh') {
+      activeProducts.sort((a, b) => a.productDiscountedPrice - b.productDiscountedPrice);
+    } else if (req.query.sort === 'highToLow') {
+      activeProducts.sort((a, b) => b.productDiscountedPrice - a.productDiscountedPrice);
+    } else if (req.query.sort === 'aToZ') {
+      activeProducts.sort((a, b) => a.productName.localeCompare(b.productName));
+    } else if (req.query.sort === 'zToA') {
+      activeProducts.sort((a, b) => b.productName.localeCompare(a.productName));
+    } else if (req.query.sort === 'newArrivals') {
+      activeProducts.sort((a, b) => b.createdAt - a.createdAt);
+    } else if (req.query.sort === 'popularity') {
+      activeProducts.sort((a, b) => {
+        const salesA = salesCountMap[a._id.toString()] || 0;
+        const salesB = salesCountMap[b._id.toString()] || 0;
+        return salesB - salesA;
+      });
+    }
+
+    const productsCount = activeProducts.length;
+
+    activeProducts = activeProducts.slice(skip, skip + productsPerPage);
 
     if (activeProducts.length === 0) {
       req.flash('alert', { message: 'Nothing match your search', color: 'bg-danger' });
@@ -98,6 +126,7 @@ const product = async (req, res) => {
       selectedCategory,
       minPrice,
       maxPrice,
+      featured,
       productRating,
       sort: req.query.sort,
       pageNumber: Math.ceil(productsCount / productsPerPage),

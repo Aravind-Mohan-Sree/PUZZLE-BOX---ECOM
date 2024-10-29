@@ -60,7 +60,14 @@
               <img src="<%= product.productImage[0] %>" class="w-100" />
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>">
                 <div class="mask">
-                  <div class="d-flex justify-content-start align-items-end h-100">
+                  <% if (product.isFeatured) { %>
+                  <div class="d-flex justify-content-end align-items-start h-50">
+                    <span class="badge badge-dark p-2 mt-1 me-1">
+                      <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-xl me-2" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1;"></i>Featured
+                    </span>
+                  </div>
+                  <% } %>
+                  <div class="d-flex justify-content-start align-items-end h-50 <%= product.isFeatured ? '' : 'h-100' %>">
                     <h5>
                       <span class="badge ms-2 p-1 <% if (product.productDifficultyRate > 6) { %>
                           badge-danger
@@ -82,7 +89,7 @@
                 </div>
               </a>
             </div>
-            <div class="card-body">
+            <div class=" card-body">
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
                 <h5 class="card-title mb-0 text-dark text-truncate">
                   <%= product.productName %>
@@ -206,6 +213,11 @@
             <input type="tel" class="form-control" placeholder="value" aria-label="Recipient's username" aria-describedby="basic-addon2" name="maxPrice" />
           </div>
           <hr class="mt-2 mb-2">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="featured" id="flexRadioDefault6" value="featured" />
+            <label class="form-check-label" for="flexRadioDefault6"> Featured </label>
+          </div>
+          <hr class="mt-2 mb-2">
           <p class="text-center mb-1">Rating</p>
           <ul class="rating rating-filter d-flex justify-content-center" data-mdb-toggle="rating">
             <li>
@@ -252,7 +264,11 @@
                   </div>
                   <div class="form-check">
                     <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault4" value="newArrivals" />
-                    <label class="form-check-label" for="flexRadioDefault4"> New arrivals</label>
+                    <label class="form-check-label" for="flexRadioDefault4"> New arrivals </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault7" value="popularity" />
+                    <label class="form-check-label" for="flexRadioDefault7"> Popularity </label>
                   </div>
                 </li>
               </ul>
@@ -306,12 +322,13 @@
     ratingElement.addEventListener('onSelect.mdb.rating', function(event) {
       productRating = event.value;
     });
-    
+
     // for product sorting     
     document.getElementById('applySort').addEventListener('click', function() {
       const categoryName = document.querySelector('[name = "productCategory"]').value;
       const minPrice = document.querySelector('[name = "minPrice"]').value;
       const maxPrice = document.querySelector('[name = "maxPrice"]').value;
+      const featured = document.querySelector('input[name="featured"]');
       const sort = document.querySelector('input[name="sort"]:checked');
       const priceAlert = document.querySelector('#price-alert');
 
@@ -326,13 +343,17 @@
           priceAlert.style.display = 'inline';
           priceAlert.innerText = `Max should be greater than or equal to Min`;
         }
-      } else {
+      } else {        
         const queries = {
           productCategory: categoryName,
           minPrice: minPrice,
           maxPrice: maxPrice,
           productRating: productRating ?? 0
         };
+
+        if (featured.checked) {
+          queries.featured = featured;
+        }
 
         if (sort) {
           queries.sort = sort.value;
