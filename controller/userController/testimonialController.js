@@ -17,17 +17,20 @@ const updateTestimonialPost = async (req, res) => {
     const activeProductReviews = await reviewSchema.find(
       { productID: { $in: activeProductIds } },
       { productID: 1, averageRating: 1, reviews: 1 }
-    ).populate('reviews.userID');
+    )
+      .sort({ createdAt: -1 })
+      .populate('reviews.userID');
 
-    const sortedReviews = activeProductReviews
-      .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
+    const topRatedReviews = activeProductReviews
+      .map(review => review.reviews.filter(r => r.rating >= 4))
+      .flat()
       .slice(0, 3);
-
-    const topRatedReviews = sortedReviews.map(review => review.reviews).flat();
 
     res.status(200).json({ topRatedReviews });
   } catch (err) {
     console.log('Error while updating testimonial', err);
+
+    res.status(500).json({ message: 'Error while updating testimonial' });
   }
 };
 /* -------------------------------------------------------------------------- */
