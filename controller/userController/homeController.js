@@ -18,10 +18,14 @@ const home = async (req, res) => {
     }).populate('productCategory');
 
     const productReviews = await reviewSchema.find().populate('reviews.userID');
-    const ratings = await reviewSchema.find({}, { productID: 1, averageRating: 1 });
+    const ratings = await reviewSchema.find({}, { productID: 1, averageRating: 1, createdAt: 1 });
 
     const ratingsMap = ratings.reduce((acc, review) => {
-      acc[review.productID.toString()] = review.averageRating;
+      acc[review.productID.toString()] = {
+        averageRating: review.averageRating,
+        createdAt: review.createdAt
+      };
+
       return acc;
     }, {});
 
@@ -31,7 +35,16 @@ const home = async (req, res) => {
     const latestProducts = activeProducts.sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
     const topProducts = activeProducts
       .filter(product => ratingsMap[product._id.toString()] !== undefined)
-      .sort((a, b) => (ratingsMap[b._id.toString()] || 0) - (ratingsMap[a._id.toString()] || 0))
+      .sort((a, b) => {
+        const ratingA = ratingsMap[a._id.toString()] || { averageRating: 0, createdAt: new Date(0) };
+        const ratingB = ratingsMap[b._id.toString()] || { averageRating: 0, createdAt: new Date(0) };
+
+        if (ratingB.averageRating !== ratingA.averageRating) {
+          return ratingB.averageRating - ratingA.averageRating;
+        }
+        
+        return ratingB.createdAt - ratingA.createdAt;
+      })
       .slice(0, 4);
 
     res.render('user/home', { title: 'Home', alert: req.flash('alert'), user: req.session.user, users, activeProducts, productReviews, latestProducts, topProducts, activeCategoryNames, content: '' });

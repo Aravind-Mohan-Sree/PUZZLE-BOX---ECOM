@@ -96,7 +96,14 @@
               <img src="<%= product.productImage[0] %>" class="w-100" />
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>">
                 <div class="mask">
-                  <div class="d-flex justify-content-start align-items-end h-100">
+                  <% if (product.isFeatured) { %>
+                  <div class="d-flex justify-content-end align-items-start h-50">
+                    <span class="badge badge-dark p-2 mt-1 me-1">
+                      <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-xl me-2" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1;"></i>Featured
+                    </span>
+                  </div>
+                  <% } %>
+                  <div class="d-flex justify-content-start align-items-end h-50 <%= product.isFeatured ? '' : 'h-100' %>">
                     <h5>
                       <span class="badge ms-2 p-1 <% if (product.productDifficultyRate > 6) { %>
                           badge-danger
@@ -221,7 +228,14 @@
               <img src="<%= product.productImage[0] %>" class="w-100" />
               <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>">
                 <div class="mask">
-                  <div class="d-flex justify-content-start align-items-end h-100">
+                  <% if (product.isFeatured) { %>
+                  <div class="d-flex justify-content-end align-items-start h-50">
+                    <span class="badge badge-dark p-2 mt-1 me-1">
+                      <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-xl me-2" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1;"></i>Featured
+                    </span>
+                  </div>
+                  <% } %>
+                  <div class="d-flex justify-content-start align-items-end h-50 <%= product.isFeatured ? '' : 'h-100' %>">  
                     <h5>
                       <span class="badge ms-2 p-1 <% if (product.productDifficultyRate > 6) { %>
                           badge-danger
