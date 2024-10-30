@@ -21,9 +21,21 @@ const updateTestimonialPost = async (req, res) => {
       .sort({ createdAt: -1 })
       .populate('reviews.userID');
 
+    const userIdsSeen = new Set();
     const topRatedReviews = activeProductReviews
       .map(review => review.reviews.filter(r => r.rating >= 4))
       .flat()
+      .filter(review => {
+        const userId = review.userID._id.toString();
+
+        if (userIdsSeen.has(userId)) {
+          return false;
+        } else {
+          userIdsSeen.add(userId);
+
+          return true;
+        }
+      })
       .slice(0, 3);
 
     res.status(200).json({ topRatedReviews });
