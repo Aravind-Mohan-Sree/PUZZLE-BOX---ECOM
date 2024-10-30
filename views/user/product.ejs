@@ -192,6 +192,7 @@
             <li class="nav-item px-3">
               <select data-mdb-select-init class="form-control select" name="productCategory">
                 <option value="" disabled selected hidden>Categories</option>
+                <option value="">None</option>
                 <% if (activeCategoryNames.length===0) { %>
                 <option value="">-</option>
                 <% } %>
@@ -214,8 +215,18 @@
           </div>
           <hr class="mt-2 mb-2">
           <div class="form-check">
-            <input class="form-check-input" type="radio" name="featured" id="flexRadioDefault6" value="featured" />
+            <input class="form-check-input" type="checkbox" name="featured" id="flexRadioDefault6" value="featured" />
             <label class="form-check-label" for="flexRadioDefault6"> Featured </label>
+          </div>
+          <hr class="mt-2 mb-2">
+          <div class="form-check">
+            <input class="form-check-input filter-checkbox" type="checkbox" name="inStock" id="flexRadioDefault9" value="1" onclick="handleFilterCheckbox(this)" />
+            <label class="form-check-label" for="flexRadioDefault9"> In stock </label>
+          </div>
+          <hr class="mt-2 mb-2">
+          <div class="form-check">
+            <input class="form-check-input filter-checkbox" type="checkbox" name="outOfStock" id="flexRadioDefault10" value="0" onclick="handleFilterCheckbox(this)" />
+            <label class="form-check-label" for="flexRadioDefault10"> Out of stock </label>
           </div>
           <hr class="mt-2 mb-2">
           <p class="text-center mb-1">Rating</p>
@@ -236,6 +247,7 @@
               <i class="far fa-star fa-sm text-warning" title="Excellent"></i>
             </li>
           </ul>
+          <small class="d-block text-center text-decoration-underline remove-rating">Remove</small>
           <hr class="mt-2">
           <!-- Dropdown -->
           <ul class="navbar-nav">
@@ -247,27 +259,27 @@
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <li class="nav-item border-bottom p-3">
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault1" value="lowToHigh" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault1" value="lowToHigh" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault1"> Price low to high </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault5" value="highToLow" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault5" value="highToLow" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault5"> Price high to low </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault2" value="aToZ" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault2" value="aToZ" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault2"> A to Z </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault3" value="zToA" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault3" value="zToA" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault3"> Z to A </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault4" value="newArrivals" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault4" value="newArrivals" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault4"> New arrivals </label>
                   </div>
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sort" id="flexRadioDefault7" value="popularity" />
+                    <input class="form-check-input sort-checkbox" type="checkbox" name="sort" id="flexRadioDefault7" value="popularity" onclick="handleSortCheckbox(this)" />
                     <label class="form-check-label" for="flexRadioDefault7"> Popularity </label>
                   </div>
                 </li>
@@ -316,12 +328,43 @@
     });
 
     // will assign rating value
-    let productRating;
+    let productRating = 0;
     const ratingElement = document.querySelector('.rating-filter');
 
     ratingElement.addEventListener('onSelect.mdb.rating', function(event) {
       productRating = event.value;
     });
+
+    document.querySelector('.remove-rating').addEventListener('click', function() {
+      const ratingInstance = new mdb.Rating(ratingElement);
+      ratingInstance.dispose();
+    });
+
+    // function for toggling filter check boxes
+    window.handleFilterCheckbox = function(checkbox) {
+      // Get all checkboxes with the class 'filter-checkbox'
+      const checkboxes = document.getElementsByClassName('filter-checkbox');
+
+      // Uncheck all other checkboxes
+      for (let item of checkboxes) {
+        if (item !== checkbox) {
+          item.checked = false;
+        }
+      }
+    }
+
+    // function for toggling sort check boxes
+    window.handleSortCheckbox = function(checkbox) {
+      // Get all checkboxes with the class 'filter-checkbox'
+      const checkboxes = document.getElementsByClassName('sort-checkbox');
+
+      // Uncheck all other checkboxes
+      for (let item of checkboxes) {
+        if (item !== checkbox) {
+          item.checked = false;
+        }
+      }
+    }
 
     // for product sorting     
     document.getElementById('applySort').addEventListener('click', function() {
@@ -329,6 +372,8 @@
       const minPrice = document.querySelector('[name = "minPrice"]').value;
       const maxPrice = document.querySelector('[name = "maxPrice"]').value;
       const featured = document.querySelector('input[name="featured"]');
+      const inStock = document.querySelector('input[name="inStock"]');
+      const outOfStock = document.querySelector('input[name="outOfStock"]');
       const sort = document.querySelector('input[name="sort"]:checked');
       const priceAlert = document.querySelector('#price-alert');
 
@@ -343,21 +388,25 @@
           priceAlert.style.display = 'inline';
           priceAlert.innerText = `Max should be greater than or equal to Min`;
         }
-      } else {        
+      } else {
         const queries = {
           productCategory: categoryName,
           minPrice: minPrice,
           maxPrice: maxPrice,
-          productRating: productRating ?? 0
+          productRating,
+          ...(featured.checked && {
+            featured: featured.value
+          }),
+          ...(inStock.checked && {
+            inStock: inStock.value
+          }),
+          ...(outOfStock.checked && {
+            outOfStock: outOfStock.value
+          }),
+          ...(sort && {
+            sort: sort.value
+          })
         };
-
-        if (featured.checked) {
-          queries.featured = featured;
-        }
-
-        if (sort) {
-          queries.sort = sort.value;
-        }
 
         // convert object to query string
         const queryString = new URLSearchParams(queries).toString();

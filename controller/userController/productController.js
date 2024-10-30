@@ -13,6 +13,8 @@ const product = async (req, res) => {
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
     const featured = req.query.featured && true;
+    const inStock = req.query.inStock;
+    const outOfStock = req.query.outOfStock;
     const productRating = parseInt(req.query.productRating);
 
     // pagination parameters
@@ -46,16 +48,12 @@ const product = async (req, res) => {
       productName: { $regex: search, $options: "i" },
       productCategory: productCategoryQuery,
       isActive: true,
-      productDiscountedPrice: { $gte: minPrice, $lte: maxPrice }
+      productDiscountedPrice: { $gte: minPrice, $lte: maxPrice },
+      ...((ratedProductIds.length > 0 || productRating) && { _id: { $in: ratedProductIds } }),
+      ...(featured && { isFeatured: featured }),
+      ...(inStock && { productQuantity: { $gte: parseInt(inStock) } }),
+      ...(outOfStock && { productQuantity: parseInt(outOfStock) })
     };
-
-    if (ratedProductIds.length > 0 || productRating) {
-      productQuery._id = { $in: ratedProductIds };
-    }
-
-    if (featured) {
-      productQuery.isFeatured = featured;
-    }
 
     const productReviews = await reviewSchema.find();
 
@@ -127,6 +125,8 @@ const product = async (req, res) => {
       minPrice,
       maxPrice,
       featured,
+      inStock,
+      outOfStock,
       productRating,
       sort: req.query.sort,
       pageNumber: Math.ceil(productsCount / productsPerPage),
