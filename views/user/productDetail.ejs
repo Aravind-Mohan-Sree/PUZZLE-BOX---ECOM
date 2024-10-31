@@ -109,7 +109,7 @@
           <h2 class="text-dark">
             <%= product.productName %>
           </h2>
-          <i id="add-to-wishlist" data-product-id="<%= product._id %>" class="fa-duotone fa-solid fa-heart-circle-plus fs-3 mt-1" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+          <i id="<%= inWishlist.length !== 0 ? 'remove-from-wishlist' : 'add-to-wishlist' %>" data-product-id="<%= product._id %>" class="fa-duotone fa-solid <%= inWishlist.length !== 0 ? 'fa-heart-circle-xmark' : 'fa-heart-circle-plus' %> fs-3 mt-1" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <div class="col text-warning mt-3 mb-4">
             <% let flag2 = 1 %>
             <% productReviews.forEach(ele => { %>
@@ -583,33 +583,40 @@
       const productId = this.getAttribute('data-product-id');
 
       fetch(`/add-to-wishlist?productId=${productId}`, {
-          method: 'POST'
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
         }).then(response => response.json())
         .then(data => {
-          Swal.fire({
-            title: 'Success!',
-            text: data.success,
-            confirmButtonText: 'OK',
-            allowOutsideClick: false,
-            customClass: {
-              container: 'swal-css'
-            }
-          }).then(res => {
-            if (res.isConfirmed) {
-              window.location.reload();
-            }
-          })
+          if (data.success) {
+            Swal.fire({
+              title: 'Success!',
+              text: data.success,
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            }).then(res => {
+              if (res.isConfirmed) {
+                window.location.reload();
+              }
+            })            
+          }
 
-          // fetching content for updating navbar
-          fetch('/update-navbar', {
-              method: 'POST'
-            }).then(response => response.json())
-            .then(data => {
-              const user = JSON.parse('<%- JSON.stringify(user) %>');
-              const cartCount = document.getElementById('cart-count');
-
-              user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
-            })
+          if (data.error) {
+            Swal.fire({
+              title: 'Error!',
+              text: data.error,
+              icon: 'error',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            });
+          }
         }).catch(err => {
           window.location.href = '/login';
 
@@ -639,23 +646,23 @@
               window.location.reload();
             }
           })
-
-          // fetching content for updating navbar
-          fetch('/update-navbar', {
-              method: 'POST'
-            }).then(response => response.json())
-            .then(data => {
-              const user = JSON.parse('<%- JSON.stringify(user) %>');
-              const cartCount = document.getElementById('cart-count');
-
-              user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
-            })
         }).catch(err => {
           window.location.href = '/login';
 
           console.log(err);
         })
     });
+
+    // fetching content for updating navbar
+    fetch('/update-navbar', {
+        method: 'POST'
+      }).then(response => response.json())
+      .then(data => {
+        const user = JSON.parse('<%- JSON.stringify(user) %>');
+        const cartCount = document.getElementById('cart-count');
+
+        user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+      })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

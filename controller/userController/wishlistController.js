@@ -6,10 +6,71 @@ const reviewSchema = require('../../model/reviewSchema');
 /* ------------------------ will render the wishlist ------------------------ */
 const getWishlist = async (req, res) => {
   try {
-    const wishlist = await wishlistSchema.findOne({ userID: req.session.user })
-      .populate('product.productID');
+    /* ---------------------- getting current user wishlist using aggregation --------------------- */
+    const wishlist = await wishlistSchema.aggregate([
+      {
+        $match: { userID: req.session.user }
+      },
+      {
+        $unwind: "$products"
+      },
+      {
+        $sort: { "products.createdAt": -1 }
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productID",
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: "$productDetails"
+      },
+      {
+        $lookup: {
+          from: "categories",
+          localField: "productDetails.productCategory",
+          foreignField: "_id",
+          as: "productDetails.productCategoryDetails"
+        }
+      },
+      {
+        $unwind: {
+          path: "$productDetails.productCategoryDetails",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userID: { $first: "$userID" },
+          products: {
+            $push: {
+              productID: "$products.productID",
+              productDetails: "$productDetails"
+            }
+          },
+          createdAt: { $first: "$createdAt" },
+          updatedAt: { $first: "$updatedAt" }
+        }
+      },
+      {
+        $sort: { createdAt: -1 }
+      },
+      {
+        $project: {
+          _id: 0,
+          userID: 1,
+          products: 1,
+          createdAt: 1,
+          updatedAt: 1
+        }
+      }
+    ]);
 
-    const reviews = await reviewSchema.find();
+    const productReviews = await reviewSchema.find().populate('reviews.userID');
 
     /* --------------------- will get the active categories --------------------- */
     const activeCategories = await productSchema.find({
@@ -25,7 +86,7 @@ const getWishlist = async (req, res) => {
       alert: req.flash('alert'),
       user: req.session.user,
       wishlist,
-      reviews,
+      productReviews,
       activeCategoryNames,
       content: ''
     });
@@ -41,24 +102,21 @@ const addToWishlist = async (req, res) => {
     const productID = req.query.productId;
 
     /* ---------------------- getting current user wishlist --------------------- */
-    const wishlist = await wishlistSchema.findOne({ userID: req.session.user })
-      .populate('product.productID');
+    const wishlist = await wishlistSchema.findOne({ userID: req.session.user });
 
     /* ---------------------- checking if user has wishlist --------------------- */
     if (wishlist) {
       /* --------------- checking if item already exists in wishlist -------------- */
-      wishlist.products.forEach(product => {
-        if (product.productID._id === productID) {
-          req.flash('alert', { message: 'Item already exist in wishlist', color: 'bg-danger' });
-
-          return res.status(404).json({ error: true });
+      for (const product of wishlist.products) {
+        if (product.productID._id.toString() === productID.toString()) {
+          return res.status(404).json({ error: 'Item already exist in wishlist' });
         }
-      });
+      };
 
       /* -------------------- if item not exist then add to wishlist ------------------- */
-      wishlist.products = [{
+      wishlist.products.push({
         productID
-      }];
+      });
 
       wishlist.save();
     } else {

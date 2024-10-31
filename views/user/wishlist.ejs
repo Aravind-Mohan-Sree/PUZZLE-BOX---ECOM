@@ -5,6 +5,10 @@
     padding-top: 6.25rem;
     padding-bottom: 2.875rem;
   }
+
+  small {
+    font-size: .75rem;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -17,70 +21,70 @@
   <!-- ----------------------- wishlist section ----------------------- -->
   <section>
     <div class="container pt-4 px-4 px-sm-2">
-      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">WISHLIST - <%= wishlist ? wishlist : '0' %> item(s) </h2>
+      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">WISHLIST - <%= wishlist.length > 0 ? wishlist[0].products.length : '0' %> item(s) </h2>
       <div class="row mt-4">
-        <% if (wishlist) { %>
-        <% activeProducts.forEach(product=> { %>
+        <% if (wishlist.length > 0) { %>
+        <% wishlist[0].products.forEach(product=> { %>
         <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
           <div class="card shadow-l hover-shadow badge-light">
             <div class="bg-image hover-zoom ripple" data-mdb-ripple-color="light">
-              <img src="<%= product.productImage[0] %>" class="w-100" />
-              <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>">
+              <img src="<%= product.productDetails.productImage[0] %>" class="w-100" />
+              <a href="/product-details?productId=<%= product.productDetails._id %>&productCategory=<%= product.productDetails.productCategoryDetails.categoryName %>">
                 <div class="mask">
-                  <% if (product.isFeatured) { %>
+                  <% if (product.productDetails.isFeatured) { %>
                   <div class="d-flex justify-content-end align-items-start h-50">
                     <span class="badge badge-dark p-2 mt-1 me-1">
                       <i class="fa-duotone fa-solid fa-sparkles fa-rotate-by fa-xl me-2" style="--fa-primary-color: #fff700; --fa-secondary-color: #fffcad; --fa-secondary-opacity: 1;"></i>Featured
                     </span>
                   </div>
                   <% } %>
-                  <div class="d-flex justify-content-start align-items-end h-50 <%= product.isFeatured ? '' : 'h-100' %>">
+                  <div class="d-flex justify-content-start align-items-end h-50 <%= product.productDetails.isFeatured ? '' : 'h-100' %>">
                     <h5>
-                      <span class="badge ms-2 p-1 <% if (product.productDifficultyRate > 6) { %>
+                      <span class="badge ms-2 p-1 <% if (product.productDetails.productDifficultyRate > 6) { %>
                               badge-danger
-                            <% } else if (product.productDifficultyRate > 3) { %>
+                            <% } else if (product.productDetails.productDifficultyRate > 3) { %>
                               badge-primary
                             <% } else { %>
                               badge-success
                             <% } %>">
-                        <% if (product.productDifficultyRate> 6) { %>
+                        <% if (product.productDetails.productDifficultyRate> 6) { %>
                         Hard
-                        <% } else if (product.productDifficultyRate> 3) { %>
+                        <% } else if (product.productDetails.productDifficultyRate> 3) { %>
                         Medium
                         <% } else { %>
                         Easy
                         <% } %>
-                      </span><span class="badge badge-light ms-2 p-1"><%= product.productDiscount !== 0 ? '-' + product.productDiscount + '%' : '' %></span>
+                      </span><span class="badge badge-light ms-2 p-1"><%= product.productDetails.productDiscount !== 0 ? '-' + product.productDetails.productDiscount + '%' : '' %></span>
                     </h5>
                   </div>
                 </div>
               </a>
             </div>
             <div class=" card-body">
-              <a href="/product-details?productId=<%= product._id %>&productCategory=<%= product.productCategory.categoryName %>" class="text-reset">
+              <a href="/product-details?productId=<%= product.productDetails._id %>&productCategory=<%= product.productDetails.productCategoryDetails.categoryName %>" class="text-reset">
                 <h5 class="card-title mb-0 text-dark text-truncate">
-                  <%= product.productName %>
+                  <%= product.productDetails.productName %>
                 </h5>
-                <small class="d-inline"><%= product.productCategory.categoryName %></small>
+                <small class="d-inline"><%= product.productDetails.productCategoryDetails.categoryName %></small>
               </a>
               <div class="row">
                 <div class="col me-auto">
                   <h6 class="mb-4 mt-3">
-                    <s class="text-danger"><%= product.productDiscount !== 0 ? '₹ ' + product.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDiscountedPrice.toLocaleString() %></strong>
+                    <s class="text-danger"><%= product.productDetails.productDiscount !== 0 ? '₹ ' + product.productDetails.productPrice.toLocaleString() : '' %></s><strong class="<%= product.productDetails.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= product.productDetails.productDiscountedPrice.toLocaleString() %></strong>
                   </h6>
                 </div>
                 <div class="col-auto">
-                  <h6 class="mb-4 mt-3 badge <% if (product.productQuantity > 10) { %>
+                  <h6 class="mb-4 mt-3 badge <% if (product.productDetails.productQuantity > 10) { %>
                         badge-success
-                      <% } else if (product.productQuantity > 0) { %>
+                      <% } else if (product.productDetails.productQuantity > 0) { %>
                         badge-warning
                       <% } else { %>
                         badge-danger
                       <% } %>">
-                    <% if (product.productQuantity> 10) { %>
+                    <% if (product.productDetails.productQuantity> 10) { %>
                     In stock
-                    <% } else if (product.productQuantity> 0) { %>
-                    Only <%= product.productQuantity %> left
+                    <% } else if (product.productDetails.productQuantity> 0) { %>
+                    Only <%= product.productDetails.productQuantity %> left
                     <% } else { %>
                     Out of stock
                     <% } %>
@@ -91,7 +95,7 @@
                 <div class="col text-center">
                   <% let flag = 1 %>
                   <% productReviews.forEach(ele => { %>
-                  <% if (product._id.toString() === ele.productID._id.toString()) { %>
+                  <% if (product.productDetails._id.toString() === ele.productID._id.toString()) { %>
                   <% let rating = ele.averageRating.toFixed() %>
                   <ul class="rating d-flex justify-content-center">
                     <li>

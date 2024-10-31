@@ -1,6 +1,8 @@
+const mongoose = require('mongoose');
 const productSchema = require('../../model/productSchema');
 const categorySchema = require('../../model/categorySchema');
 const cartSchema = require('../../model/cartSchema');
+const wishlistSchema = require('../../model/wishlistSchema');
 const orderSchema = require('../../model/orderSchema');
 const reviewSchema = require('../../model/reviewSchema');
 
@@ -151,6 +153,30 @@ const productDetail = async (req, res) => {
 
     const productReviews = await reviewSchema.find().populate('reviews.userID');
 
+    /* ------------ using aggregation to find the product in wishlist, if any ----------- */
+    const inWishlist = await wishlistSchema.aggregate([
+      {
+        $match: { userID: req.session.user }
+      },
+      {
+        $unwind: "$products"
+      },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.productID",
+          foreignField: "_id",
+          as: "productDetails"
+        }
+      },
+      {
+        $unwind: "$productDetails"
+      },
+      {
+        $match: { "productDetails._id": new mongoose.Types.ObjectId(String(req.query.productId)) }
+      }     
+    ]);
+
     if (product) {
       const similarProducts = await productSchema.find({
         _id: { $nin: [req.query.productId] },
@@ -178,6 +204,7 @@ const productDetail = async (req, res) => {
         user: req.session.user,
         product,
         productReviews,
+        inWishlist,
         similarProducts,
         activeCategoryNames,
         content: '',
