@@ -109,7 +109,7 @@ const addToWishlist = async (req, res) => {
       /* --------------- checking if item already exists in wishlist -------------- */
       for (const product of wishlist.products) {
         if (product.productID._id.toString() === productID.toString()) {
-          return res.status(404).json({ error: 'Item already exist in wishlist' });
+          return res.status(404).json({ error: 'Product already exist in wishlist' });
         }
       };
 
@@ -140,8 +140,53 @@ const addToWishlist = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* ------------------------ will remove item from wishlist ------------------------ */
+const removeFromWishlist = async (req, res) => {
+  try {
+    const productID = req.query.productId;
+
+    /* ---------------------- update current user wishlist --------------------- */
+    const wishlist = await wishlistSchema.findOneAndUpdate(
+      {
+        userID: req.session.user,
+        "products.productID": productID
+      },
+      {
+        $pull: { products: { productID } }
+      },
+      {
+        new: true,
+        returnOriginal: true
+      }
+    ).populate('products.productID');
+
+    /* ------------------ check if product was actually pulled ------------------ */
+    if (wishlist) {
+      const productWasRemoved = wishlist.products.some(product =>
+        product.productID._id.toString() === productID.toString()
+      );
+
+      if (productWasRemoved) {
+        /* ----------- if no products left after pulling, delete wishlist ----------- */
+        if (wishlist.products.length <= 1) {
+          await wishlistSchema.deleteOne({ userID: req.session.user });
+        }
+
+        return res.status(200).json({ success: 'Product removed from wishlist' });
+      }
+    }
+
+    return res.status(400).json({ error: 'Product not found in wishlist' });
+  } catch (err) {
+    console.log('Error while removing item from wishlist', err);
+
+    res.status(500).json({ err });
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   getWishlist,
   addToWishlist,
-  // removeFromWishlist
+  removeFromWishlist
 };

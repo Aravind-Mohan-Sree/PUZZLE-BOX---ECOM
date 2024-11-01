@@ -72,7 +72,7 @@ user.put('/decrement-product/:productID', checkUserSession, cartController.decre
 // will handle user wishlist route
 user.get('/wishlist', checkUserSession, wishlistController.getWishlist);
 user.post('/add-to-wishlist', checkUserSession, wishlistController.addToWishlist);
-// user.delete('/remove-from-wishlist', checkUserSession, wishlistController.removeFromWishlist);
+user.delete('/remove-from-wishlist', checkUserSession, wishlistController.removeFromWishlist);
 
 // will handle user checkout route
 user.get('/checkout', checkUserSession, checkoutController.checkout);

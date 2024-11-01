@@ -21,11 +21,11 @@
   <!-- ----------------------- wishlist section ----------------------- -->
   <section>
     <div class="container pt-4 px-4 px-sm-2">
-      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark">WISHLIST - <%= wishlist.length > 0 ? wishlist[0].products.length : '0' %> item(s) </h2>
+      <h2 class="border-bottom border-3 border-dark d-inline-block text-dark" id="main-title">WISHLIST - <%= wishlist.length > 0 ? wishlist[0].products.length : '0' %> item(s) </h2>
       <div class="row mt-4">
         <% if (wishlist.length > 0) { %>
-        <% wishlist[0].products.forEach(product=> { %>
-        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
+        <% wishlist[0].products.forEach((product,index)=> { %>
+        <div class="col-xl-3 col-lg-4 col-md-6 mb-4 product-tile">
           <div class="card shadow-l hover-shadow badge-light">
             <div class="bg-image hover-zoom ripple" data-mdb-ripple-color="light">
               <img src="<%= product.productDetails.productImage[0] %>" class="w-100" />
@@ -61,12 +61,21 @@
               </a>
             </div>
             <div class=" card-body">
-              <a href="/product-details?productId=<%= product.productDetails._id %>&productCategory=<%= product.productDetails.productCategoryDetails.categoryName %>" class="text-reset">
-                <h5 class="card-title mb-0 text-dark text-truncate">
-                  <%= product.productDetails.productName %>
-                </h5>
-                <small class="d-inline"><%= product.productDetails.productCategoryDetails.categoryName %></small>
-              </a>
+              <div class="row">
+                <div class="col-10">
+                  <a href="/product-details?productId=<%= product.productDetails._id %>&productCategory=<%= product.productDetails.productCategoryDetails.categoryName %>" class="text-reset">
+                    <h5 class="card-title mb-0 text-dark text-truncate">
+                      <%= product.productDetails.productName %>
+                    </h5>
+                    <small class="d-inline"><%= product.productDetails.productCategoryDetails.categoryName %></small>
+                  </a>
+                </div>
+                <div class="col-auto">
+                  <button class="border-0 bg-transparent delete-item" data-product-id="<%= product.productDetails._id %>">
+                    <i class="fa-duotone fa-solid fa-trash-can fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+                  </button>
+                </div>
+              </div>
               <div class="row">
                 <div class="col me-auto">
                   <h6 class="mb-4 mt-3">
@@ -148,7 +157,7 @@
         </div>
         <% }); %>
         <% } else { %>
-        <h3 class="mt-4 h4 mb-4">You have no items yet...</h3>
+        <h3 class="mt-4 h4 mb-4" id="warning-title">You have no items yet...</h3>
         <% } %>
       </div>
 
@@ -164,4 +173,64 @@
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    // will remove item from wishlist using fetch
+    document.querySelectorAll('.delete-item').forEach((ele, index, array) => {
+      ele.addEventListener('click', function() {
+        const productId = ele.getAttribute('data-product-id');
+
+        fetch(`/remove-from-wishlist?productId=${productId}`, {
+            method: 'DELETE',
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              const productTile = ele.closest('.product-tile');
+
+              productTile.remove();
+
+              if (array.length === 1) {
+                document.querySelector('#main-title').innerHTML = 'WISHLIST - 0 items(s)';
+                document.querySelector('#warning-title').innerHTML = 'You have no items yet...';
+              }
+            }
+
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: data.error,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            // fetching content for updating navbar
+            fetch('/update-navbar', {
+                method: 'POST'
+              }).then(response => response.json())
+              .then(data => {
+                const user = JSON.parse('<%- JSON.stringify(user) %>');
+                const cartCount = document.getElementById('cart-count');
+                const wishlistCount = document.getElementById('wishlist-count');
+
+                user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+                user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
+              })
+          }).catch(err => {
+            window.location.href = '/login';
+
+            console.log(err);
+          })
+      })
+    })
+
+  });
+</script>
 <!-- ----------------------------------------------------------------------- -->

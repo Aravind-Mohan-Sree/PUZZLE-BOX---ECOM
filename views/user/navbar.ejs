@@ -97,7 +97,7 @@
       <li class="nav-item me-3 me-lg-0">
         <a class="nav-link" href="/wishlist">
           <i class="fa-duotone fa-solid fa-heart fa-xl" style="--fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
-          <span class="badge rounded-pill badge-notification bg-white text-black"><%= user ? '0' : '' %></span>
+          <span class="badge rounded-pill badge-notification bg-white text-black" id="wishlist-count"></span>
         </a>
       </li>
 
@@ -233,8 +233,10 @@
       .then(data => {
         const user = JSON.parse('<%- JSON.stringify(user) %>');
         const cartCount = document.getElementById('cart-count');
+        const wishlistCount = document.getElementById('wishlist-count');
 
         user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+        user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
       })
   });
 </script>

@@ -69,7 +69,8 @@
     font-size: .75rem;
   }
 
-  #add-to-wishlist {
+  #add-to-wishlist,
+  #remove-from-wishlist {
     cursor: pointer;
   }
 </style>
@@ -111,6 +112,7 @@
           </h2>
           <i id="<%= inWishlist.length !== 0 ? 'remove-from-wishlist' : 'add-to-wishlist' %>" data-product-id="<%= product._id %>" class="fa-duotone fa-solid <%= inWishlist.length !== 0 ? 'fa-heart-circle-xmark' : 'fa-heart-circle-plus' %> fs-3 mt-1" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
           <div class="col text-warning mt-3 mb-4">
+
             <% let flag2 = 1 %>
             <% productReviews.forEach(ele => { %>
             <% if (product._id.toString() === ele.productID.toString()) { %>
@@ -578,50 +580,98 @@
       evt.currentTarget.className += " active";
     }
 
-    // using fetch for adding product to wishlist
-    document.getElementById('add-to-wishlist').addEventListener('click', function() {
-      const productId = this.getAttribute('data-product-id');
+    // using fetch for adding and removing product from wishlist
+    document.querySelector('body').addEventListener('click', function(event) {
+      const target = event.target;
 
-      fetch(`/add-to-wishlist?productId=${productId}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        }).then(response => response.json())
-        .then(data => {
-          if (data.success) {
-            Swal.fire({
-              title: 'Success!',
-              text: data.success,
-              confirmButtonText: 'OK',
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
-              }
-            }).then(res => {
-              if (res.isConfirmed) {
-                window.location.reload();
-              }
-            })            
-          }
+      if (target.id === 'add-to-wishlist') {
+        const productId = target.getAttribute('data-product-id');
 
-          if (data.error) {
-            Swal.fire({
-              title: 'Error!',
-              text: data.error,
-              icon: 'error',
-              confirmButtonText: 'OK',
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
-              }
-            });
-          }
-        }).catch(err => {
-          window.location.href = '/login';
+        fetch(`/add-to-wishlist?productId=${productId}`, {
+            method: 'POST',
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              target.setAttribute('id', 'remove-from-wishlist');
+              target.classList.add('fa-heart-circle-xmark');
+            }
 
-          console.log(err);
-        })
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: data.error,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            // fetching content for updating navbar
+            fetch('/update-navbar', {
+                method: 'POST'
+              }).then(response => response.json())
+              .then(data => {
+                const user = JSON.parse('<%- JSON.stringify(user) %>');
+                const cartCount = document.getElementById('cart-count');
+                const wishlistCount = document.getElementById('wishlist-count');
+
+                user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+                user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
+              })
+          }).catch(err => {
+            window.location.href = '/login';
+
+            console.log(err);
+          })
+      }
+
+      if (target.id === 'remove-from-wishlist') {
+        const productId = target.getAttribute('data-product-id');
+
+        fetch(`/remove-from-wishlist?productId=${productId}`, {
+            method: 'DELETE',
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              target.setAttribute('id', 'add-to-wishlist');
+              target.classList.remove('fa-heart-circle-xmark');
+              target.classList.add('fa-heart-circle-plus');
+            }
+
+            if (data.error) {
+              Swal.fire({
+                title: 'Error!',
+                text: data.error,
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            // fetching content for updating navbar
+            fetch('/update-navbar', {
+                method: 'POST'
+              }).then(response => response.json())
+              .then(data => {
+                const user = JSON.parse('<%- JSON.stringify(user) %>');
+                const cartCount = document.getElementById('cart-count');
+                const wishlistCount = document.getElementById('wishlist-count');
+
+                user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+                user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
+              })
+          }).catch(err => {
+            window.location.href = '/login';
+
+            console.log(err);
+          })
+      }
     });
 
     // using fetch for adding product to cart
@@ -652,17 +702,6 @@
           console.log(err);
         })
     });
-
-    // fetching content for updating navbar
-    fetch('/update-navbar', {
-        method: 'POST'
-      }).then(response => response.json())
-      .then(data => {
-        const user = JSON.parse('<%- JSON.stringify(user) %>');
-        const cartCount = document.getElementById('cart-count');
-
-        user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
-      })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

@@ -1,4 +1,5 @@
 const cartSchema = require('../../model/cartSchema');
+const wishlistSchema = require('../../model/wishlistSchema');
 
 /* --------------------------- for updating navbar -------------------------- */
 const updateNavbarPost = async (req, res) => {
@@ -7,7 +8,11 @@ const updateNavbarPost = async (req, res) => {
       .findOne({ userID: req.session.user })
       .populate("items.productID");
 
-    res.json({ cart });
+    const wishlist = await wishlistSchema
+      .findOne({ userID: req.session.user })
+      .populate("products.productID");
+
+    res.json({ cart, wishlist });
   } catch (err) {
     console.log('Error on update navbar post', err);
   }
