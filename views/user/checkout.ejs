@@ -302,6 +302,7 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <!-- ----------------------------- javaScript ------------------------------ -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // Modal Initialization
@@ -748,13 +749,13 @@
               },
             }).then(response => response.json())
             .then(data => {
-              if (data.success) {
+              if (data.order) {
                 const options = {
                   "key": "rzp_test_3MjpZb7TBnz8Ul",
-                  "amount": data.amount,
+                  "amount": data.order.amount,
                   "currency": "INR",
                   "name": "PUZZLE BOX",
-                  "order_id": data.orderID,
+                  "order_id": data.order.id,
                   "handler": function(response) {
                     const URL = '/place-order';
 

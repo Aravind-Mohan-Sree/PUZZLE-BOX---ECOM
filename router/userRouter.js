@@ -76,7 +76,7 @@ user.delete('/remove-from-wishlist', checkUserSession, wishlistController.remove
 
 // will handle user checkout route
 user.get('/checkout', checkUserSession, checkoutController.checkout);
-user.get('/payment-renderer', checkUserSession, checkoutController.paymentRenderer);
+user.post('/payment-renderer', checkUserSession, checkoutController.paymentRenderer);
 user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
 // user.get('/pending-order',checkUserSession,checkoutController.pendingOrderPage)

@@ -117,7 +117,7 @@ const orderPlacement = async (req, res) => {
       const razorpay_payment_id = req.body.razorpay_payment_id;
       const razorpay_order_id = req.body.razorpay_order_id;
       const razorpay_signature = req.body.razorpay_signature;
-      
+
       paymentId = razorpay_payment_id;
     }
 
@@ -198,40 +198,17 @@ const paymentRenderer = async (req, res) => {
   try {
     const cart = await cartSchema.aggregate([
       {
-        $match: { userID: req.session.user }
+        $match: { userID: req.session.user } // Match the cart by user ID
       },
       {
-        $unwind: "$items"
-      },
-      {
-        $lookup: {
-          from: "products",
-          localField: "items.productID",
-          foreignField: "_id",
-          as: "productDetails"
-        }
-      },
-      {
-        $unwind: "$productDetails"
-      },
-      {
-        $group: {
-          _id: "$_id",
-          userID: { $first: "$userID" },
-          items: {
-            $push: {
-              productID: "$items.productID",
-              quantity: "$items.quantity",
-              productDetails: "$productDetails"
-            }
-          },
-          createdAt: { $first: "$createdAt" },
-          updatedAt: { $first: "$updatedAt" }
+        $project: {
+          payableAmount: 1,
+          _id: 0
         }
       }
     ]);
-
-    // const payableAmount = c
+    
+    const payableAmount = cart[0].payableAmount;
 
     const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
 
@@ -249,9 +226,7 @@ const paymentRenderer = async (req, res) => {
         }
 
         return res.status(201).json({
-          success: true,
-          orderID: order.id,
-          amount
+          order
         });
       })
   } catch (err) {
