@@ -179,7 +179,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", function() {
     // will remove item from wishlist using fetch
-    document.querySelectorAll('.delete-item').forEach((ele, index, array) => {
+    document.querySelectorAll('.delete-item').forEach(ele => {
       ele.addEventListener('click', function() {
         const productId = ele.getAttribute('data-product-id');
 
@@ -188,14 +188,7 @@
           }).then(response => response.json())
           .then(data => {
             if (data.success) {
-              const productTile = ele.closest('.product-tile');
-
-              productTile.remove();
-
-              if (array.length === 1) {
-                document.querySelector('#main-title').innerHTML = 'WISHLIST - 0 items(s)';
-                document.querySelector('#warning-title').innerHTML = 'You have no items yet...';
-              }
+              ele.closest('.product-tile').remove();              
             }
 
             if (data.error) {
@@ -219,9 +212,20 @@
                 const user = JSON.parse('<%- JSON.stringify(user) %>');
                 const cartCount = document.getElementById('cart-count');
                 const wishlistCount = document.getElementById('wishlist-count');
+                const mainTitle = document.getElementById('main-title');
 
                 user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
                 user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
+                mainTitle.innerText = data.wishlist ? `WISHLIST - ${data.wishlist.products.length} item(s)` : `WISHLIST - 0 item(s)`;
+
+                if (!data.wishlist) {
+                  const h3 = document.createElement('h3');
+
+                  h3.classList.add('mt-4', 'h4', 'mb-4');
+                  h3.textContent = 'You have no items yet...';
+
+                  document.querySelector('.container').appendChild(h3);
+                }
               })
           }).catch(err => {
             window.location.href = '/login';

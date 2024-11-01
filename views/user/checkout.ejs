@@ -28,7 +28,9 @@
     border-color: rgb(255, 255, 255);
   }
 
-  #flexRadioDefault1, #flexRadioDefault2, #flexRadioDefault3 {
+  #flexRadioDefault1,
+  #flexRadioDefault2,
+  #flexRadioDefault3 {
     z-index: 0;
   }
 </style>
@@ -209,7 +211,7 @@
                   <span><strong id="payable-amount"><%= payableAmount < 500 ? '₹ ' + (payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
-              <button id="order-btn" type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-success mb-2">
+              <button id="order-btn" type="button" data-username="<%= user.name %>" data-email="<%= user.email %>" data-phone="<%= user.phone %>" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-success mb-2">
                 place order
               </button>
               <a href="/cart">
@@ -658,7 +660,7 @@
     }
 
     // check if user has selected an address or payment method
-    const paymentMethod = document.querySelectorAll('input[name="paymentMethod"]');        
+    const paymentMethod = document.querySelectorAll('input[name="paymentMethod"]');
     let paymentMode;
 
     paymentMethod.forEach(ele => {
@@ -671,9 +673,9 @@
       }
     });
 
-    // proceed with order placement if user has selected a valid address or payment method
+    // proceed with order placement if user has selected a valid address and payment method
     document.getElementById('order-btn').addEventListener('click', function() {
-      addressIndex = index || document.getElementById('address').value;
+      const addressIndex = index || document.getElementById('address').value;
       const selectedAddress = addresses[addressIndex];
 
       if (!selectedAddress || !paymentMode) {
@@ -701,8 +703,10 @@
           })
         }
       } else {
+        // using fetch to place order through cash on delivery
         if (parseInt(paymentMode) === 0) {
           const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+
           fetch(url, {
               method: 'POST',
               headers: {
@@ -730,6 +734,83 @@
                   }
                 })
               }
+            })
+        }
+
+        // will go through payment renderer for Razorpay payment method
+        if (parseInt(paymentMode) === 1) {
+          const url = '/payment-renderer';
+
+          fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                const options = {
+                  "key": "rzp_test_3MjpZb7TBnz8Ul",
+                  "amount": data.amount,
+                  "currency": "INR",
+                  "name": "PUZZLE BOX",
+                  "order_id": data.orderID,
+                  "handler": function(response) {
+                    const URL = '/place-order';
+
+                    fetch(URL, {
+                        method: "POST",
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                          addressIndex,
+                          paymentMode,
+                          razorpay_payment_id: response.razorpay_payment_id,
+                          razorpay_order_id: response.razorpay_order_id,
+                          razorpay_signature: response.razorpay_signature
+                        })
+                      }).then(response => response.json())
+                      .then((data) => {
+                        if (data.success) {
+                          window.location.href = '/order-confirmation';
+                        }
+                      }).catch((err) => {
+                        console.error('Error on razor pay payment callback', err);
+                      })
+                  },
+                  "prefill": {
+                    "name": this.getAttribute('data-username'),
+                    "email": this.getAttribute('data-email'),
+                    "contact": this.getAttribute('data-phone')
+                  },
+                  "notes": {
+                    "address": "Razorpay Corporate Office"
+                  },
+                  "theme": {
+                    "color": "#3399cc"
+                  }
+                };
+
+                const rzp1 = new Razorpay(options);
+
+                rzp1.on('payment.failed', function(response) {
+                  window.location.href = `/pending-order`;
+                });
+
+                rzp1.open();
+              }
+            }).catch(err => {
+              Swal.fire({
+                title: 'Error!',
+                text: 'Error while loading payment method',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              })
             })
         }
       }

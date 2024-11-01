@@ -73,11 +73,25 @@ const schema = new mongoose.Schema({
     area: String
   },
 
+  couponDiscount: {
+    type: Number,
+    default: 0
+  },
+
+  couponID: {
+    type: String,
+  },
+
   paymentMethod: {
     type: String,
     required: true,
     enum: ['Cash on delivery', 'Razorpay', 'Wallet']
   },
+
+  paymentId: {
+    type: String,
+    required: false
+  }
 }, { timestamps: true })
 
 module.exports = mongoose.model("Order", schema);
