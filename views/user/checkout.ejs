@@ -211,7 +211,7 @@
                   <span><strong id="payable-amount"><%= payableAmount < 500 ? '₹ ' + (payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
-              <button id="order-btn" type="button" data-username="<%= user.name %>" data-email="<%= user.email %>" data-phone="<%= user.phone %>" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-success mb-2">
+              <button id="order-btn" type="button" data-username="<%= userAddress.name %>" data-email="<%= userAddress.email %>" data-phone="<%= userAddress.phone %>" data-mdb-button-init data-mdb-ripple-init class="btn btn-block btn-success mb-2">
                 place order
               </button>
               <a href="/cart">
@@ -765,7 +765,7 @@
                           'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                          addressIndex,
+                          addressIndex, 
                           paymentMode,
                           razorpay_payment_id: response.razorpay_payment_id,
                           razorpay_order_id: response.razorpay_order_id,

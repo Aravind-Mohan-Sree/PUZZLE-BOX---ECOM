@@ -198,7 +198,7 @@ const paymentRenderer = async (req, res) => {
   try {
     const cart = await cartSchema.aggregate([
       {
-        $match: { userID: req.session.user } // Match the cart by user ID
+        $match: { userID: req.session.user }
       },
       {
         $project: {

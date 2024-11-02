@@ -43,6 +43,20 @@ admin.get('/view-order', checkAdminSession, orderController.viewOrder);
 admin.post('/edit-order-status', checkAdminSession, orderController.editOrderStatus);
 admin.post('/reject-return', checkAdminSession, orderController.rejectReturnOrder);
 
+// will handle admin coupon route
+admin.get('/coupons',checkAdminSession, couponController.getCoupon);
+admin.post('/add-coupon',checkAdminSession, couponController.addCoupon);
+admin.post('/edit-coupon',checkAdminSession, couponController.editCoupon);
+admin.put('/block-coupon',checkAdminSession, couponController.blockCoupon);
+admin.put('/unblock-coupon',checkAdminSession, couponController.unBlockCoupon);
+admin.delete('/delete-coupon',checkAdminSession, couponController.deleteCoupon);
+
+// will handle admin offer route
+admin.get('/offers',checkAdminSession,offerController.getOffer)
+admin.post('/add-offer',checkAdminSession,offerController.addOffer)
+admin.post('/edit-offer',checkAdminSession,offerController.editOffer)
+admin.delete('/delete-offer',checkAdminSession,offerController.deleteOffer)
+
 // will handle admin logout route
 admin.post('/logout', adminController.logout);
 
