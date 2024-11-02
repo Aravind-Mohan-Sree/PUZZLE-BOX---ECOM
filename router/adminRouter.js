@@ -5,6 +5,8 @@ const categoryController = require('../controller/adminController/categoryContro
 const productController = require('../controller/adminController/productController');
 const customerController = require('../controller/adminController/customerController');
 const orderController = require('../controller/adminController/orderController');
+const couponController = require('../controller/adminController/couponController');
+const offerController = require('../controller/adminController/offerController');
 const checkAdminSession = require('../middleware/adminSession');
 const upload = require('../middleware/multer');
 
