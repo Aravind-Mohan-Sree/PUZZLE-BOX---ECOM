@@ -36,14 +36,29 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    caret-color: rgb(255, 255, 255);
-    -webkit-text-fill-color: #ffffff !important;
+    caret-color: rgb(0, 0, 0);
+    -webkit-text-fill-color: #424242 !important;
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px transparent !important;
   }
 
   #coupons {
     background-color: rgba(51, 45, 45, .05);
+  }
+
+  input[name="expiryDate"] {
+    pointer-events: none;
+  }
+
+  .datepicker-toggle-button {
+    right: 3%;
+    top: 55%;
+    transform: translate(0%, 0%);
+  }
+
+  small {
+    display: none;
+    font-size: .75rem;
   }
 </style>
 
@@ -59,7 +74,7 @@
 <hr>
 
 <!-- add coupon button -->
-<div class="text-center mb-3">
+<div class="text-center mb-3" id="add-coupon">
   <button class="btn btn-dark" id="add-coupon-btn"><i class="fa-duotone fa-solid fa-ticket fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add coupon</button>
 </div>
 
@@ -131,17 +146,40 @@
 </div>
 
 <!-- -------------------------- add coupon modal --------------------------- -->
-<div class="modal fade" id="add-coupon-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+<div class="modal p-0" id="add-coupon-modal" data-mdb-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-mdb-ripple-init data-mdb-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="exampleModalLabel">Add Coupon</h5>
       </div>
-      <div class="modal-body">...</div>
+      <div class="modal-body">
+        <div class="position-relative">
+          <label class="form-label" for="form12">Coupon Name <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control mb-3" name="couponName" placeholder="type..." />
+          <small class="coupon-name-alert position-absolute top-100 text-danger"></small>
+        </div>
+
+        <div class="position-relative">
+          <label class="form-label" for="form12">Discount Amount <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control mb-3" name="discountAmount" placeholder="type..." />
+          <small class="discount-amount-alert position-absolute top-100 text-danger"></small>
+        </div>
+
+        <div class="position-relative">
+          <label class="form-label" for="form12">Minimum Purchase <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control mb-3" name="minimumAmount" placeholder="type..." />
+          <small class="minimum-amount-alert position-absolute top-100 text-danger"></small>
+        </div>
+
+        <div class="position-relative datepicker">
+          <label class="form-label" for="form12">Expiry Date <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control mb-2" name="expiryDate" placeholder="dd-mm-yyyy" />
+          <small class="expiry-date-alert position-absolute top-100 text-danger"></small>
+        </div>
+      </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" data-mdb-ripple-init>Save changes</button>
+        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" id="save-coupon-btn" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
       </div>
     </div>
   </div>
@@ -153,112 +191,204 @@
 
 <!-- javaScript -->
 <script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
+  document.addEventListener('DOMContentLoaded', function() {
+    // after redirection, remove the query parameter from the URL
+    window.history.replaceState(null, null, window.location.pathname);
 
-  // dynamically adds padding to h2 tag
-  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+    // dynamically adds padding to h2 tag
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
-  // dynamically adds padding to table container
-  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
-  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+    // dynamically adds padding to table container
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+    document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-  // add coupon modal initialization
-  const modalElement = document.getElementById('add-coupon-modal');
-  let modalInstance = mdb.Modal.getInstance(modalElement);
+    // add coupon modal initialization
+    const modalElement = document.getElementById('add-coupon-modal');
+    let modalInstance = mdb.Modal.getInstance(modalElement);
 
-  // If no instance exists, create a new one
-  if (!modalInstance) {
-    modalInstance = new mdb.Modal(modalElement);
-  }
+    // datepicker initialization
+    const today = new Date();
+    const datepicker = document.querySelector('.datepicker')
+    let datepickerInstance = mdb.Datepicker.getInstance(datepicker);
 
-  // Open modal on button click
-  document.getElementById('add-coupon-btn').addEventListener('click', function() {
-    modalInstance.show();
-  });
+    // if no instance exists, create a new one
+    if (!modalInstance) {
+      modalInstance = new mdb.Modal(modalElement);
+    }
 
-  // using fetch to add category
-  document.getElementById('add-category').addEventListener('click', function() {
-    Swal.fire({
-      title: "New Category",
-      input: "text",
-      inputLabel: "Enter the category name below",
-      inputPlaceholder: "type...",
-      showCancelButton: true,
-      allowOutsideClick: false,
-      customClass: {
-        container: 'swal-css'
-      },
-      inputValidator: (value) => {
-        if (!value) {
-          return "Please enter something";
-        }
+    // if no instance exists, create a new one
+    if (!datepickerInstance) {
+      datepickerInstance = new mdb.Datepicker(datepicker);
+    }
+
+    modalElement.addEventListener('hide.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'block';
+      document.querySelector('#add-coupon').style.display = 'block';
+    })
+
+    modalElement.addEventListener('show.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'none';
+      document.querySelector('#add-coupon').style.display = 'none';
+    })
+
+    // open modal on button click
+    document.getElementById('add-coupon-btn').addEventListener('click', function() {
+      modalInstance.show();
+    });
+
+    datepicker.addEventListener('open.mdb.datepicker', function(e) {
+      modalInstance.hide();
+
+      document.querySelector('#content').style.display = 'none';
+      document.querySelector('#add-coupon').style.display = 'none';
+    })
+
+    datepicker.addEventListener('close.mdb.datepicker', function(e) {
+      modalInstance.show();
+    })
+
+    // saves the coupon using fetch after successful validation
+    document.querySelector('#save-coupon-btn').addEventListener('click', function() {
+      const couponName = document.querySelector('input[name="couponName"]').value;
+      const discountAmount = document.querySelector('input[name="discountAmount"]').value;
+      const minimumAmount = document.querySelector('input[name="minimumAmount"]').value;
+      const expiryDate = document.querySelector('input[name="expiryDate"]').value;
+      const couponNameAlert = document.querySelector('.coupon-name-alert')
+      const discountAmountAlert = document.querySelector('.discount-amount-alert')
+      const minimumAmountAlert = document.querySelector('.minimum-amount-alert')
+      const expiryDateAlert = document.querySelector('.expiry-date-alert')
+
+      couponNameAlert.style.display = 'none';
+      discountAmountAlert.style.display = 'none';
+      minimumAmountAlert.style.display = 'none';
+      expiryDateAlert.style.display = 'none';
+
+      // will parse the date from input
+      function parseDate(dateString) {
+        const [day, month, year] = dateString.split('/').map(Number);
+        
+        return new Date(year, month - 1, day);
       }
-    }).then(result => {
-      if (result.value) {
-        const categoryName = result.value;
 
-        fetch('/admin/categories', {
+      // for checking whether the date is in the past or not
+      function isPastDate(dateString) {
+        const date = parseDate(dateString);
+        const today = new Date();
+
+        today.setHours(0, 0, 0, 0);
+
+        return date < today;
+      }
+
+      let isValidForm = true;
+
+      if (couponName === '' || /^\s|\s{2,}|\s$/.test(couponName) || couponName.replace(/\s+/g, '').length < 8) {
+        if (couponName === '') {
+          couponNameAlert.style.display = 'inline';
+          couponNameAlert.innerText = 'Coupon name is required';
+        } else if (/^\s|\s{2,}|\s$/.test(couponName)) {
+          couponNameAlert.style.display = 'inline';
+          couponNameAlert.innerText = `Name can't contain unwanted spaces`;
+        } else {
+          couponNameAlert.style.display = 'inline';
+          couponNameAlert.innerText = `Name minimum length is 8`;
+        }
+
+        isValidForm = false;
+      }
+
+      if (discountAmount === '' || /[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount) || /\s/.test(discountAmount)) {
+        if (discountAmount === '') {
+          discountAmountAlert.style.display = 'inline';
+          discountAmountAlert.innerText = `Discount amount is required`;
+        } else if (/[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount)) {
+          discountAmountAlert.style.display = 'inline';
+          discountAmountAlert.innerText = `Amount is not valid`;
+        } else {
+          discountAmountAlert.style.display = 'inline';
+          discountAmountAlert.innerText = `Amount can't contain spaces`;
+        }
+
+        isValidForm = false;
+      }
+
+      if (minimumAmount === '' || /[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount) || /\s/.test(minimumAmount)) {
+        if (minimumAmount === '') {
+          minimumAmountAlert.style.display = 'inline';
+          minimumAmountAlert.innerText = `Minimum purchase is required`;
+        } else if (/[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount)) {
+          minimumAmountAlert.style.display = 'inline';
+          minimumAmountAlert.innerText = `Amount is not valid`;
+        } else {
+          minimumAmountAlert.style.display = 'inline';
+          minimumAmountAlert.innerText = `Amount can't contain spaces`;
+        }
+
+        isValidForm = false;
+      }
+
+      if (+discountAmount >= +minimumAmount && discountAmount !== '' && minimumAmount !== '') {
+        discountAmountAlert.style.display = 'inline';
+        discountAmountAlert.innerText = `Amount must be less than minimum purchase`;
+
+        minimumAmountAlert.style.display = 'inline';
+        minimumAmountAlert.innerText = `Amount must be greater than discount amount`;
+
+        isValidForm = false;
+      }
+
+      if (parseDate(expiryDate).toString() === 'Invalid Date') {
+        expiryDateAlert.style.display = 'inline';
+        expiryDateAlert.innerText = 'Expiry date is required';
+
+        isValidForm = false;
+      } else if (isPastDate(expiryDate)) {
+        expiryDateAlert.style.display = 'inline';
+        expiryDateAlert.innerText = 'Expiry date is invalid';
+
+        isValidForm = false;
+      }
+
+      if (isValidForm) {
+        fetch('/admin/add-coupon', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              categoryName
+              couponName,
+              discountAmount,
+              minimumAmount,
+              expiryDate: parseDate(expiryDate)
             })
           }).then(response => response.json())
           .then(data => {
-            if (data.error) {
-              Swal.fire({
-                title: 'Error!',
-                text: 'Something went wrong. Try again',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            } else if (data.exist) {
-              Swal.fire({
-                title: 'Error!',
-                text: 'Category already exist',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            } else {
-              window.location.reload();
-            }
-          }).catch(err => {
-            console.log(err);
+
           })
       }
-    }).catch(err => {
-      console.log(err);
-    })
-  });
+    });
 
-  // using fetch to active/inactive category        
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
-
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const statusButton = event.target.closest('.status-button');
-        const row = event.target.closest('tr');
-
-        if (statusButton) {
-          // Find the element within the same row
-          const categoryId = statusButton.getAttribute('data-db-categoryId');
-          const dateElement = row.querySelector('.updated-date');
-          const timeElement = row.querySelector('.updated-time');
-          const statusElement = row.querySelector('.status');
-          const iconElement = row.querySelector('.status-icon');
+    // using fetch to add category
+    document.getElementById('add-category').addEventListener('click', function() {
+      Swal.fire({
+        title: "New Category",
+        input: "text",
+        inputLabel: "Enter the category name below",
+        inputPlaceholder: "type...",
+        showCancelButton: true,
+        allowOutsideClick: false,
+        customClass: {
+          container: 'swal-css'
+        },
+        inputValidator: (value) => {
+          if (!value) {
+            return "Please enter something";
+          }
+        }
+      }).then(result => {
+        if (result.value) {
+          const categoryName = result.value;
 
           fetch('/admin/categories', {
               method: 'POST',
@@ -266,8 +396,7 @@
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                status: true,
-                categoryId
+                categoryName
               })
             }).then(response => response.json())
             .then(data => {
@@ -282,202 +411,30 @@
                     container: 'swal-css'
                   }
                 });
-              } else if (data.isActive) {
-                dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                statusElement.innerText = 'Active';
-                statusElement.classList.remove('badge-danger');
-                statusElement.classList.add('badge-success');
-
-                iconElement.classList.remove('fa-circle-xmark');
-                iconElement.classList.add('fa-circle-check');
+              } else if (data.exist) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: 'Category already exist',
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                });
               } else {
-                dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                statusElement.innerText = 'Inactive';
-                statusElement.classList.add('badge-danger');
-
-                iconElement.classList.add('fa-circle-xmark');
+                window.location.reload();
               }
             }).catch(err => {
               console.log(err);
             })
         }
-      });
-    }
-  });
+      }).catch(err => {
+        console.log(err);
+      })
+    });
 
-  // using fetch to edit category       
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
-
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const editButton = event.target.closest('.edit-button');
-        const row = event.target.closest('tr');
-
-        if (editButton) {
-          // Find the element within the same row
-          const categoryId = editButton.getAttribute('data-db-categoryId');
-          const dateElement = row.querySelector('.updated-date');
-          const timeElement = row.querySelector('.updated-time');
-          const nameElement = row.querySelector('.name');
-
-          Swal.fire({
-            title: "Edit Category",
-            input: "text",
-            inputLabel: "Enter the category name below",
-            inputPlaceholder: nameElement.innerText,
-            showCancelButton: true,
-            allowOutsideClick: false,
-            customClass: {
-              container: 'swal-css'
-            },
-            inputValidator: (value) => {
-              if (!value) {
-                return "Please enter something";
-              }
-            }
-          }).then(result => {
-            if (result.value) {
-              const newCategoryName = result.value;
-
-              fetch('/admin/categories', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    categoryId,
-                    newCategoryName
-                  })
-                }).then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Something went wrong. Try again',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else if (data.exist) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Category already exist',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else {
-                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                    nameElement.innerText = newCategoryName;
-
-                    Swal.fire({
-                      title: 'Success!',
-                      text: 'Category updated successfully',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  }
-                }).catch(err => {
-                  console.log(err);
-                })
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-        }
-      });
-    }
-  });
-
-  // using fetch to delete category
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
-
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const deleteButton = event.target.closest('.delete-button');
-
-        if (deleteButton) {
-          const categoryId = deleteButton.getAttribute('data-db-categoryId');
-
-          Swal.fire({
-            title: "Are you sure?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            allowOutsideClick: false,
-            customClass: {
-              container: 'swal-css'
-            }
-          }).then((result) => {
-            if (result.isConfirmed) {
-              fetch('/admin/categories', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    delete: true,
-                    categoryId
-                  })
-                })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Something went wrong. Try again',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else {
-                    window.location.reload();
-                  }
-                })
-                .catch(err => {
-                  console.error('Fetch error:', err);
-                  Swal.fire({
-                    title: 'Error!',
-                    text: 'Something went wrong. Try again',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    allowOutsideClick: false,
-                    customClass: {
-                      container: 'swal-css'
-                    }
-                  });
-                });
-            }
-          }).catch(err => {
-            console.error('Swal error:', err);
-          });
-        }
-      });
-    }
-  });
-
-  // for searching categories
-  document.addEventListener('DOMContentLoaded', function() {
+    // for searching categories
     const searchButton = document.getElementById('search-button');
 
     searchButton.addEventListener('click', function() {
