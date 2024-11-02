@@ -267,8 +267,8 @@
       // will parse the date from input
       function parseDate(dateString) {
         const [day, month, year] = dateString.split('/').map(Number);
-        
-        return new Date(year, month - 1, day);
+
+        return new Date(Date.UTC(year, month - 1, day));
       }
 
       // for checking whether the date is in the past or not
@@ -360,11 +360,28 @@
               couponName,
               discountAmount,
               minimumAmount,
-              expiryDate: parseDate(expiryDate)
+              expiryDate
             })
           }).then(response => response.json())
           .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
 
+            if (data.error) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: data.error,
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+          }).catch(err => {
+            console.log(err);
           })
       }
     });

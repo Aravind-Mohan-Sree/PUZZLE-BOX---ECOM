@@ -19,27 +19,29 @@ const getCoupon = (req, res) => {
 /* ---------------------------------- will add new coupon ---------------------------------- */
 const addCoupon = async (req, res) => {
   try {
+    const { couponName, discountAmount, minimumAmount, expiryDate } = req.body;
+
     /* --------------------- will parse the date from input --------------------- */
     function parseDate(dateString) {
       const [day, month, year] = dateString.split('/').map(Number);
 
-      return new Date(year, month - 1, day);
+      return new Date(Date.UTC(year, month - 1, day));
     }
 
     /* ---------- generate a voucher code with specific options ---------- */
     const couponCode = voucherCodes.generate({
       length: 8,
       count: 1,
-      charset: voucherCodes.charset("alphanumeric"),
+      charset: voucherCodes.charset("alphanumeric").toUpperCase(),
       prefix: "PUZZLE-",
       postfix: "-BOX",
       pattern: "####-####",
     });
 
     /* ----------- check if a coupon with the same name already exists ---------- */
-    const existingCoupon = await Coupon.aggregate([
+    const existingCoupon = await couponSchema.aggregate([
       {
-        $match: { couponName: couponName }
+        $match: { couponName: { $regex: new RegExp(`^${couponName}$`, 'i') } }
       }
     ]);
 
@@ -50,7 +52,7 @@ const addCoupon = async (req, res) => {
     /* ------- if no coupon with the same name exists, add the new coupon ------- */
     await couponSchema.create({
       couponName,
-      couponCode,
+      couponCode: couponCode[0],
       discount: discountAmount,
       expiryDate: parseDate(expiryDate),
       minAmount: minimumAmount,
