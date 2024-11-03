@@ -1,6 +1,7 @@
 const categorySchema = require('../../model/categorySchema');
 const productSchema = require('../../model/productSchema');
 const cartSchema = require('../../model/cartSchema');
+const couponSchema = require('../../model/couponSchema');
 
 /* --------------------- will render the user cart page --------------------- */
 const cart = async (req, res) => {
@@ -14,6 +15,10 @@ const cart = async (req, res) => {
           path: 'productCategory'
         }
       });
+
+    const coupons = await couponSchema.aggregate([
+      { $match: { isActive: true, expiryDate: { $gte: new Date() } } }
+    ]);
 
     var totalPrice = 0;
     var totalPriceWithoutDiscount = 0;
@@ -66,7 +71,8 @@ const cart = async (req, res) => {
       user: req.session.user,
       activeCategoryNames,
       content: '',
-      cart
+      cart,
+      coupons
     });
   } catch (err) {
     console.log('Error while rendering cart page', err);
