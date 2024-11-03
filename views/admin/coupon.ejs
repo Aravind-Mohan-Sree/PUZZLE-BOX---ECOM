@@ -90,51 +90,67 @@
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Minimum Purchase</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Added Date</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Expiry Date</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
         </tr>
       </thead>
       <tbody class="datatable-body">
-        <% categories.forEach(category=> { %>
+        <% coupons.forEach(coupon=> { %>
         <tr>
           <td class="" data-mdb-field="field_0" false="">
             <p class="fw-bold mb-1 name">
-              <%= category.categoryName %>
+              <%= coupon.couponName %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-bold mb-1 name">
+              <%= coupon.couponCode %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-bold mb-1 name">
+              ₹ <%= coupon.discount.toLocaleString() %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-bold mb-1 name">
+              ₹ <%= coupon.minAmount.toLocaleString() %>
             </p>
           </td>
           <td class="" data-mdb-field="field_1" false="">
             <p class="fw-normal mb-1">
-              <%= new Date(category.createdAt).toDateString() %>
+              <%= new Date(coupon.createdAt).toDateString() %>
             </p>
             <p class="fw-normal mb-0">
-              <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
+              <%= new Date(coupon.createdAt).toTimeString().slice(0, 8) %>
             </p>
           </td>
           <td class="" data-mdb-field="field_2" false="">
-            <p class="fw-normal mb-1 updated-date">
-              <%= new Date(category.updatedAt).toDateString() %>
+            <p class="fw-normal mb-1">
+              <%= new Date(coupon.expiryDate).toDateString() %>
             </p>
-            <p class="fw-normal mb-0 updated-time">
-              <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+            <p class="fw-normal mb-0">
+              <%= new Date(coupon.expiryDate).toTimeString().slice(0, 8) %>
             </p>
           </td>
           <td class="" data-mdb-field="field_3" false="">
-            <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-              <%= category.isActive ? 'Active' : 'Inactive' %>
+            <span class="badge status <%= coupon.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
+              <%= coupon.isActive ? 'Active' : 'Inactive' %>
             </span>
           </td>
           <td class="" data-mdb-field="field_4" false="">
             <!-- active/inactive button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-              <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-coupon-id="<%= coupon._id %>">
+              <i class="fa-duotone fa-solid <%= coupon.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
             </button>
 
             <!-- edit button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-coupon-id="<%= coupon._id %>">
               <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
             </button>
 
             <!-- delete button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-coupon-id="<%= coupon._id %>">
               <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
             </button>
           </td>

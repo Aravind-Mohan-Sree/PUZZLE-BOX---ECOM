@@ -2,13 +2,16 @@ const couponSchema = require('../../model/couponSchema');
 const voucherCodes = require('voucher-code-generator');
 
 /* ---------------------------------- will render the coupon page ---------------------------------- */
-const getCoupon = (req, res) => {
+const getCoupon = async (req, res) => {
   try {
+    const coupons = await couponSchema.aggregate([
+      { $match: {} }
+    ]);
 
     res.render('admin/coupon', {
       title: 'Coupons',
       alert: req.flash('alert'),
-      categories: []
+      coupons
     });
   } catch (err) {
     console.log('Error while rendering the coupon page', err);
@@ -21,32 +24,46 @@ const addCoupon = async (req, res) => {
   try {
     const { couponName, discountAmount, minimumAmount, expiryDate } = req.body;
 
-    /* --------------------- will parse the date from input --------------------- */
-    function parseDate(dateString) {
-      const [day, month, year] = dateString.split('/').map(Number);
-
-      return new Date(Date.UTC(year, month - 1, day));
-    }
-
-    /* ---------- generate a voucher code with specific options ---------- */
-    const couponCode = voucherCodes.generate({
-      length: 8,
-      count: 1,
-      charset: voucherCodes.charset("alphanumeric").toUpperCase(),
-      prefix: "PUZZLE-",
-      postfix: "-BOX",
-      pattern: "####-####",
-    });
-
     /* ----------- check if a coupon with the same name already exists ---------- */
-    const existingCoupon = await couponSchema.aggregate([
+    const existingCouponName = await couponSchema.aggregate([
       {
         $match: { couponName: { $regex: new RegExp(`^${couponName}$`, 'i') } }
       }
     ]);
 
-    if (existingCoupon.length > 0) {
+    if (existingCouponName.length > 0) {
       return res.status(400).json({ error: "Coupon already exists!" });
+    }
+
+    /* --------------------- will parse the date --------------------- */
+    function parseDate(dateString) {
+      const [day, month, year] = dateString.split('/').map(Number);
+
+      return new Date(year, month - 1, day);
+    }
+
+    let uniqueCouponCode = false;
+    let couponCode;
+
+    /* ------ will loop continuously until a unique code is being generated ----- */
+    while (!uniqueCouponCode) {
+      /* ---------- generate a voucher code with specific options ---------- */
+      couponCode = voucherCodes.generate({
+        length: 8,
+        count: 1,
+        charset: voucherCodes.charset("alphabetic").toUpperCase(),
+        pattern: "####-####",
+      });
+
+      const existingCouponCode = await couponSchema.aggregate([
+        {
+          $match: { couponCode }
+        }
+      ]);
+
+      if (existingCouponCode.length === 0) {
+        uniqueCouponCode = true;
+      }
     }
 
     /* ------- if no coupon with the same name exists, add the new coupon ------- */
@@ -55,7 +72,7 @@ const addCoupon = async (req, res) => {
       couponCode: couponCode[0],
       discount: discountAmount,
       expiryDate: parseDate(expiryDate),
-      minAmount: minimumAmount,
+      minAmount: minimumAmount
     });
 
     req.flash('alert', { message: 'Coupon created successfully!', color: 'bg-success' });
