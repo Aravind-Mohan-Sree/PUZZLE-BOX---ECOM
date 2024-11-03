@@ -276,11 +276,13 @@
       modalInstance.show();
     });
 
-    // when edit button is clicked, modal will be inserted with values from closest table row element
-    const editButton = document.querySelectorAll('.edit-button');
+    let couponId;
 
-    editButton.forEach(ele => {
-      ele.addEventListener('click', function() {
+    // when edit button is clicked, modal will be inserted with values from closest table row element
+    document.querySelector('body').addEventListener('click', function(event) {
+      const editButton = event.target.closest('.edit-button');
+
+      if (editButton) {
         function convertDateFormat(dateString) {
           const date = new Date(dateString);
           const day = String(date.getDate()).padStart(2, '0');
@@ -290,13 +292,14 @@
           return `${day}/${month}/${year}`;
         }
 
-        const expiryDate = ele.closest('tr').querySelector('#expiry-date').innerText;
+        couponId = editButton.getAttribute('data-coupon-id');
+        const expiryDate = editButton.closest('tr').querySelector('#expiry-date').innerText;
 
         modalElement.querySelector('.modal-title').innerHTML = 'Edit Coupon';
         modalElement.querySelector('input[name="couponName"]').setAttribute('disabled', '');
-        modalElement.querySelector('input[name="couponName"]').value = ele.closest('tr').querySelector('#coupon-name').innerText;
-        modalElement.querySelector('input[name="discountAmount"]').value = ele.closest('tr').querySelector('#discount').innerText.slice(2).replace(/[^0-9.-]/g, '');
-        modalElement.querySelector('input[name="minimumAmount"]').value = ele.closest('tr').querySelector('#min-amount').innerText.slice(2).replace(/[^0-9.-]/g, '');
+        modalElement.querySelector('input[name="couponName"]').value = editButton.closest('tr').querySelector('#coupon-name').innerText;
+        modalElement.querySelector('input[name="discountAmount"]').value = editButton.closest('tr').querySelector('#discount').innerText.slice(2).replace(/[^0-9.-]/g, '');
+        modalElement.querySelector('input[name="minimumAmount"]').value = editButton.closest('tr').querySelector('#min-amount').innerText.slice(2).replace(/[^0-9.-]/g, '');
         modalElement.querySelector('input[name="expiryDate"]').value = convertDateFormat(expiryDate);
         modalElement.querySelector('#upsert-coupon-btn').classList.add('btn-info');
         modalElement.querySelector('#upsert-coupon-btn').innerHTML = 'update';
@@ -304,7 +307,7 @@
         modalInstance.show();
 
         isAddCoupon = false;
-      })
+      }
     })
 
     datepicker.addEventListener('open.mdb.datepicker', function(e) {
@@ -359,10 +362,10 @@
           couponNameAlert.innerText = 'Coupon name is required';
         } else if (/^\s|\s{2,}|\s$/.test(couponName)) {
           couponNameAlert.style.display = 'inline';
-          couponNameAlert.innerText = `Name can't contain unwanted spaces`;
+          couponNameAlert.innerText = `Coupon name can't contain unwanted spaces`;
         } else {
           couponNameAlert.style.display = 'inline';
-          couponNameAlert.innerText = `Name minimum length is 8`;
+          couponNameAlert.innerText = `Coupon name minimum length is 8`;
         }
 
         isValidForm = false;
@@ -374,7 +377,7 @@
           discountAmountAlert.innerText = `Discount amount is required`;
         } else if (/[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount)) {
           discountAmountAlert.style.display = 'inline';
-          discountAmountAlert.innerText = `Amount is not valid`;
+          discountAmountAlert.innerText = `Invalid amount`;
         } else {
           discountAmountAlert.style.display = 'inline';
           discountAmountAlert.innerText = `Amount can't contain spaces`;
@@ -389,7 +392,7 @@
           minimumAmountAlert.innerText = `Minimum purchase is required`;
         } else if (/[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount)) {
           minimumAmountAlert.style.display = 'inline';
-          minimumAmountAlert.innerText = `Amount is not valid`;
+          minimumAmountAlert.innerText = `Invalid amount`;
         } else {
           minimumAmountAlert.style.display = 'inline';
           minimumAmountAlert.innerText = `Amount can't contain spaces`;
@@ -415,7 +418,7 @@
         isValidForm = false;
       } else if (isPastDate(expiryDate)) {
         expiryDateAlert.style.display = 'inline';
-        expiryDateAlert.innerText = 'Expiry date is invalid';
+        expiryDateAlert.innerText = 'Invalid expiry date';
 
         isValidForm = false;
       }
@@ -423,145 +426,169 @@
       if (isValidForm) {
         if (isAddCoupon) {
           fetch('/admin/add-coupon', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              couponName,
-              discountAmount,
-              minimumAmount,
-              expiryDate
-            })
-          }).then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              window.location.reload();
-            }
-
-            if (data.error) {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: data.error,
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-        } else {
-          fetch('/admin/edit-coupon', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              discountAmount,
-              minimumAmount,
-              expiryDate
-            })
-          }).then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              window.location.reload();
-            }
-
-            if (data.error) {
-              Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: data.error,
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-        }      
-      }
-    });
-
-    // using fetch to add category
-    document.getElementById('add-category').addEventListener('click', function() {
-      Swal.fire({
-        title: "New Category",
-        input: "text",
-        inputLabel: "Enter the category name below",
-        inputPlaceholder: "type...",
-        showCancelButton: true,
-        allowOutsideClick: false,
-        customClass: {
-          container: 'swal-css'
-        },
-        inputValidator: (value) => {
-          if (!value) {
-            return "Please enter something";
-          }
-        }
-      }).then(result => {
-        if (result.value) {
-          const categoryName = result.value;
-
-          fetch('/admin/categories', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify({
-                categoryName
+                couponName,
+                discountAmount,
+                minimumAmount,
+                expiryDate
               })
             }).then(response => response.json())
             .then(data => {
+              if (data.success) {
+                window.location.reload();
+              }
+
               if (data.error) {
                 Swal.fire({
-                  title: 'Error!',
-                  text: 'Something went wrong. Try again',
                   icon: 'error',
+                  title: 'Error!',
+                  text: data.error,
                   confirmButtonText: 'OK',
                   allowOutsideClick: false,
                   customClass: {
                     container: 'swal-css'
                   }
                 });
-              } else if (data.exist) {
-                Swal.fire({
-                  title: 'Error!',
-                  text: 'Category already exist',
-                  icon: 'error',
-                  confirmButtonText: 'OK',
-                  allowOutsideClick: false,
-                  customClass: {
-                    container: 'swal-css'
-                  }
-                });
-              } else {
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+        } else {
+          fetch('/admin/edit-coupon', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                couponId,
+                discountAmount,
+                minimumAmount,
+                expiryDate
+              })
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
                 window.location.reload();
+              }
+
+              if (data.error) {
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error!',
+                  text: data.error,
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                });
               }
             }).catch(err => {
               console.log(err);
             })
         }
-      }).catch(err => {
-        console.log(err);
-      })
+      }
     });
 
-    // for searching categories
+    document.querySelector('body').addEventListener('click', function(event) {
+      const statusButton = event.target.closest('.status-button');
+      const deleteButton = event.target.closest('.delete-button');
+
+      // using fetch for changing status of coupon
+      if (statusButton) {
+        const couponId = statusButton.getAttribute('data-coupon-id');
+
+        fetch('/admin/toggle-coupon-status', {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              couponId
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
+
+            if (data.error) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: data.error,
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+      }
+
+      // using fetch for deleting coupon
+      if (deleteButton) {
+        const couponId = deleteButton.getAttribute('data-coupon-id');
+
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch('/admin/delete-coupon', {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  couponId
+                })
+              }).then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  window.location.reload();
+                }
+
+                if (data.error) {
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: data.error,
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    customClass: {
+                      container: 'swal-css'
+                    }
+                  });
+                }
+              }).catch(err => {
+                console.log(err);
+              })
+          }
+        })
+      }
+    })
+
+    // for searching coupons
     const searchButton = document.getElementById('search-button');
 
     searchButton.addEventListener('click', function() {
       const searchTerm = document.getElementById('search-input').value;
 
-      window.location.href = `/admin/categories?searchTerm=${searchTerm}`;
+      window.location.href = `/admin/coupons?searchTerm=${searchTerm}`;
     });
   });
 </script>

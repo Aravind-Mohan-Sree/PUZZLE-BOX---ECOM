@@ -3,9 +3,11 @@ const voucherCodes = require('voucher-code-generator');
 
 /* ---------------------------------- will render the coupon page ---------------------------------- */
 const getCoupon = async (req, res) => {
+  const { searchTerm } = req.query;
+
   try {
     const coupons = await couponSchema.aggregate([
-      { $match: {} },
+      { $match: { couponName: { $regex: new RegExp(searchTerm, 'i') } } },
       { $sort: { createdAt: -1 } }
     ]);
 
@@ -84,42 +86,66 @@ const addCoupon = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------------------- will ---------------------------------- */
-const editCoupon = (req, res) => {
+/* ---------------------------------- will update the coupon ---------------------------------- */
+const editCoupon = async (req, res) => {
   try {
+    /* --------------------- will parse the date --------------------- */
+    function parseDate(dateString) {
+      const [day, month, year] = dateString.split('/').map(Number);
 
+      return new Date(year, month - 1, day);
+    }
+
+    const { couponId, discountAmount, minimumAmount, expiryDate } = req.body;
+
+    const coupon = await couponSchema.findById(couponId);
+
+    coupon.discount = discountAmount;
+    coupon.minAmount = minimumAmount;
+    coupon.expiryDate = parseDate(expiryDate);
+
+    coupon.save();
+
+    req.flash('alert', { message: 'Coupon updated successfully!', color: 'bg-success' });
+    res.status(201).json({ success: true });
   } catch (err) {
-    console.log();
+    console.log('Error while updating coupon', err);
   }
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------------------- will ---------------------------------- */
-const blockCoupon = (req, res) => {
+/* ---------------------------------- will change coupon status ---------------------------------- */
+const toggleCouponStatus = async (req, res) => {
   try {
+    const { couponId } = req.body;
 
+    const coupon = await couponSchema.findById(couponId);
+
+    coupon.isActive = coupon.isActive ? false : true;
+
+    const message = coupon.isActive ? 'Coupon unblocked successfully!' : 'Coupon blocked successfully!';
+
+    coupon.save();
+
+    req.flash('alert', { message, color: 'bg-success' });
+    res.status(201).json({ success: true });
   } catch (err) {
-    console.log();
+    console.log('Error while changing coupon status', err);
   }
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------------------- will ---------------------------------- */
-const unBlockCoupon = (req, res) => {
+/* ---------------------------------- will delete the coupon ---------------------------------- */
+const deleteCoupon = async (req, res) => {
   try {
+    const { couponId } = req.body;
 
+    await couponSchema.findByIdAndDelete(couponId);
+
+    req.flash('alert', { message: 'Coupon deleted successfully!', color: 'bg-success' });
+    res.status(201).json({ success: true });
   } catch (err) {
-    console.log();
-  }
-};
-/* -------------------------------------------------------------------------- */
-
-/* ---------------------------------- will ---------------------------------- */
-const deleteCoupon = (req, res) => {
-  try {
-
-  } catch (err) {
-    console.log();
+    console.log('Error while deleting the coupon', err);
   }
 };
 /* -------------------------------------------------------------------------- */
@@ -128,7 +154,6 @@ module.exports = {
   getCoupon,
   addCoupon,
   editCoupon,
-  blockCoupon,
-  unBlockCoupon,
+  toggleCouponStatus,
   deleteCoupon
 };

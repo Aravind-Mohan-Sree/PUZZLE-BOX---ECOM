@@ -49,8 +49,7 @@ admin.post('/reject-return', checkAdminSession, orderController.rejectReturnOrde
 admin.get('/coupons',checkAdminSession, couponController.getCoupon);
 admin.post('/add-coupon',checkAdminSession, couponController.addCoupon);
 admin.post('/edit-coupon',checkAdminSession, couponController.editCoupon);
-admin.put('/block-coupon',checkAdminSession, couponController.blockCoupon);
-admin.put('/unblock-coupon',checkAdminSession, couponController.unBlockCoupon);
+admin.put('/toggle-coupon-status',checkAdminSession, couponController.toggleCouponStatus);
 admin.delete('/delete-coupon',checkAdminSession, couponController.deleteCoupon);
 
 // will handle admin offer route
