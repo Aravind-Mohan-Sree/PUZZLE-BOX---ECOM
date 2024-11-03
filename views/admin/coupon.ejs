@@ -98,7 +98,7 @@
         <% coupons.forEach(coupon=> { %>
         <tr>
           <td class="" data-mdb-field="field_0" false="">
-            <p class="fw-bold mb-1 name">
+            <p class="fw-bold mb-1 name" id="coupon-name">
               <%= coupon.couponName %>
             </p>
           </td>
@@ -108,12 +108,12 @@
             </p>
           </td>
           <td class="" data-mdb-field="field_0" false="">
-            <p class="fw-bold mb-1 name">
+            <p class="fw-bold mb-1 name" id="discount">
               ₹ <%= coupon.discount.toLocaleString() %>
             </p>
           </td>
           <td class="" data-mdb-field="field_0" false="">
-            <p class="fw-bold mb-1 name">
+            <p class="fw-bold mb-1 name" id="min-amount">
               ₹ <%= coupon.minAmount.toLocaleString() %>
             </p>
           </td>
@@ -126,7 +126,7 @@
             </p>
           </td>
           <td class="" data-mdb-field="field_2" false="">
-            <p class="fw-normal mb-1">
+            <p class="fw-normal mb-1" id="expiry-date">
               <%= new Date(coupon.expiryDate).toDateString() %>
             </p>
             <p class="fw-normal mb-0">
@@ -161,8 +161,8 @@
   </div>
 </div>
 
-<!-- -------------------------- add coupon modal --------------------------- -->
-<div class="modal p-0" id="add-coupon-modal" data-mdb-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- -------------------------- modal for adding and editing coupon --------------------------- -->
+<div class="modal p-0" id="coupon-modal" data-mdb-backdrop="static" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -194,7 +194,7 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" id="close-modal-btn" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
         <button type="button" id="save-coupon-btn" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
       </div>
     </div>
@@ -219,8 +219,8 @@
     const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
     document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-    // add coupon modal initialization
-    const modalElement = document.getElementById('add-coupon-modal');
+    // coupon modal initialization
+    const modalElement = document.getElementById('coupon-modal');
     let modalInstance = mdb.Modal.getInstance(modalElement);
 
     // datepicker initialization
@@ -240,7 +240,7 @@
 
     modalElement.addEventListener('hide.mdb.modal', function() {
       document.querySelector('#content').style.display = 'block';
-      document.querySelector('#add-coupon').style.display = 'block';
+      document.querySelector('#add-coupon').style.display = 'block';      
     })
 
     modalElement.addEventListener('show.mdb.modal', function() {
@@ -248,10 +248,43 @@
       document.querySelector('#add-coupon').style.display = 'none';
     })
 
-    // open modal on button click
-    document.getElementById('add-coupon-btn').addEventListener('click', function() {
+    // clear all inputs inside modal when closed
+    document.querySelector('#close-modal-btn').addEventListener('click', function () {
+      modalElement.querySelector('input[name="couponName"]').value = '';
+      modalElement.querySelector('input[name="discountAmount"]').value = '';
+      modalElement.querySelector('input[name="minimumAmount"]').value = '';
+      modalElement.querySelector('input[name="expiryDate"]').value = '';
+    })
+
+    // opens modal when add coupon button clicked
+    document.querySelector('#add-coupon-btn').addEventListener('click', function() {
       modalInstance.show();
     });
+
+    // when edit button is clicked, modal will be inserted with values from closest table row element
+    const editButton = document.querySelectorAll('.edit-button');
+
+    editButton.forEach(ele => {
+      ele.addEventListener('click', function() {
+        function convertDateFormat(dateString) {
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+
+          return `${day}/${month}/${year}`;
+        }
+
+        const expiryDate = ele.closest('tr').querySelector('#expiry-date').innerText;
+
+        modalElement.querySelector('input[name="couponName"]').value = ele.closest('tr').querySelector('#coupon-name').innerText;
+        modalElement.querySelector('input[name="discountAmount"]').value = ele.closest('tr').querySelector('#discount').innerText.slice(2).replace(/[^0-9.-]/g, '');
+        modalElement.querySelector('input[name="minimumAmount"]').value = ele.closest('tr').querySelector('#min-amount').innerText.slice(2).replace(/[^0-9.-]/g, '');
+        modalElement.querySelector('input[name="expiryDate"]').value = convertDateFormat(expiryDate);
+
+        modalInstance.show();
+      })
+    })
 
     datepicker.addEventListener('open.mdb.datepicker', function(e) {
       modalInstance.hide();
