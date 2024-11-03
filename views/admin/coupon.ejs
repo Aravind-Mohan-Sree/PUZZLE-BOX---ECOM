@@ -195,7 +195,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" id="close-modal-btn" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-        <button type="button" id="save-coupon-btn" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
+        <button type="button" id="upsert-coupon-btn" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
       </div>
     </div>
   </div>
@@ -240,7 +240,7 @@
 
     modalElement.addEventListener('hide.mdb.modal', function() {
       document.querySelector('#content').style.display = 'block';
-      document.querySelector('#add-coupon').style.display = 'block';      
+      document.querySelector('#add-coupon').style.display = 'block';
     })
 
     modalElement.addEventListener('show.mdb.modal', function() {
@@ -248,12 +248,27 @@
       document.querySelector('#add-coupon').style.display = 'none';
     })
 
+    // boolean to know whether its a add or edit coupon modal while submitting coupon
+    let isAddCoupon = true;
+
     // clear all inputs inside modal when closed
-    document.querySelector('#close-modal-btn').addEventListener('click', function () {
-      modalElement.querySelector('input[name="couponName"]').value = '';
-      modalElement.querySelector('input[name="discountAmount"]').value = '';
-      modalElement.querySelector('input[name="minimumAmount"]').value = '';
-      modalElement.querySelector('input[name="expiryDate"]').value = '';
+    document.querySelector('#close-modal-btn').addEventListener('click', function() {
+      modalElement.querySelector('.modal-title').innerHTML = 'Add Coupon';
+
+      modalElement.querySelector('input[name="couponName"]').removeAttribute('disabled');
+      modalElement.querySelectorAll('input').forEach(ele => {
+        ele.value = '';
+      })
+
+      modalElement.querySelectorAll('small').forEach(ele => {
+        ele.style.display = 'none';
+        ele.value = '';
+      })
+
+      modalElement.querySelector('#upsert-coupon-btn').classList.remove('btn-info');
+      modalElement.querySelector('#upsert-coupon-btn').innerHTML = 'save';
+
+      isAddCoupon = true;
     })
 
     // opens modal when add coupon button clicked
@@ -277,12 +292,18 @@
 
         const expiryDate = ele.closest('tr').querySelector('#expiry-date').innerText;
 
+        modalElement.querySelector('.modal-title').innerHTML = 'Edit Coupon';
+        modalElement.querySelector('input[name="couponName"]').setAttribute('disabled', '');
         modalElement.querySelector('input[name="couponName"]').value = ele.closest('tr').querySelector('#coupon-name').innerText;
         modalElement.querySelector('input[name="discountAmount"]').value = ele.closest('tr').querySelector('#discount').innerText.slice(2).replace(/[^0-9.-]/g, '');
         modalElement.querySelector('input[name="minimumAmount"]').value = ele.closest('tr').querySelector('#min-amount').innerText.slice(2).replace(/[^0-9.-]/g, '');
         modalElement.querySelector('input[name="expiryDate"]').value = convertDateFormat(expiryDate);
+        modalElement.querySelector('#upsert-coupon-btn').classList.add('btn-info');
+        modalElement.querySelector('#upsert-coupon-btn').innerHTML = 'update';
 
         modalInstance.show();
+
+        isAddCoupon = false;
       })
     })
 
@@ -297,8 +318,8 @@
       modalInstance.show();
     })
 
-    // saves the coupon using fetch after successful validation
-    document.querySelector('#save-coupon-btn').addEventListener('click', function() {
+    // saves or updates the coupon using fetch after successful validation
+    document.querySelector('#upsert-coupon-btn').addEventListener('click', function() {
       const couponName = document.querySelector('input[name="couponName"]').value;
       const discountAmount = document.querySelector('input[name="discountAmount"]').value;
       const minimumAmount = document.querySelector('input[name="minimumAmount"]').value;
@@ -400,7 +421,8 @@
       }
 
       if (isValidForm) {
-        fetch('/admin/add-coupon', {
+        if (isAddCoupon) {
+          fetch('/admin/add-coupon', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -432,6 +454,39 @@
           }).catch(err => {
             console.log(err);
           })
+        } else {
+          fetch('/admin/edit-coupon', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              discountAmount,
+              minimumAmount,
+              expiryDate
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
+
+            if (data.error) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                text: data.error,
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+          }).catch(err => {
+            console.log(err);
+          })
+        }      
       }
     });
 

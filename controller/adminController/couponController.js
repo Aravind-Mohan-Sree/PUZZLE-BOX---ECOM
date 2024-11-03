@@ -5,7 +5,8 @@ const voucherCodes = require('voucher-code-generator');
 const getCoupon = async (req, res) => {
   try {
     const coupons = await couponSchema.aggregate([
-      { $match: {} }
+      { $match: {} },
+      { $sort: { createdAt: -1 } }
     ]);
 
     res.render('admin/coupon', {
