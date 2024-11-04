@@ -43,6 +43,11 @@ const cart = async (req, res) => {
           ele.productID.productPrice * ele.productCount;
       });
 
+      // if there is a coupon discount applied to cart then deduct that too from total price
+      if (cart.couponDiscount > 0) {
+        totalPrice -= cart.couponDiscount; 
+      }      
+
       /* - updating the fields in collection if those varies from the total price - */
       if (
         cart.payableAmount != totalPrice ||
@@ -365,10 +370,81 @@ const removeCartItem = async (req, res) => {
 }
 /* -------------------------------------------------------------------------- */
 
+/* -------------------- will apply coupon discount to cart ------------------- */
+const applyCoupon = async (req, res) => {
+  try {
+    const { couponID } = req.params;
+
+    const coupon = await couponSchema.findById(couponID);
+    const cart = await cartSchema.findOne({ userID: req.session.user });
+
+    if (cart.payableAmount < coupon.minAmount) {
+      return res.status(400).json({ error: 'Payable amount do not meet minimum purchase' });
+    }
+
+    let totalProductQuantity = 0;    
+
+    cart.items.forEach((ele) => {
+      totalProductQuantity += ele.productCount;
+    });
+
+    cart.payableAmount -= coupon.discount;
+    cart.couponDiscount = coupon.discount;
+    cart.couponID = coupon._id;
+
+    await cart.save();        
+
+    const discount = cart.totalPrice - cart.payableAmount;
+    const payableAmount = cart.payableAmount;
+
+    return res.status(200).json({ success: 'Coupon applied successfully', discount, payableAmount, totalProductQuantity });
+  } catch (err) {
+    console.log('Error while applying coupon to cart', err);
+
+    return res.status(500).json({ error: err.message });
+  }
+}
+/* -------------------------------------------------------------------------- */
+
+/* -------------------- will remove coupon discount from cart ------------------- */
+const removeCoupon = async (req, res) => {
+  try {
+    const productID = req.params.productID;
+
+    const cart = await cartSchema
+      .findOne({ userID: req.session.user })
+      .populate('items.productID');
+
+    /* -------------- filtering out products except the removed one ------------- */
+    const newCart = cart.items.filter(item => {
+      return item.productID.id !== productID;
+    })
+
+    cart.items = newCart;
+
+    await cart.save();
+
+    if (newCart.length === 0) {
+      await cartSchema.deleteOne({ userID: req.session.user });
+    }
+
+    return res.status(200).json({
+      delete: true
+    });
+  } catch (err) {
+    console.log('Error while removing coupon from cart', err);
+
+    return res.status(500).json({ error: err.message });
+  }
+}
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   cart,
   addToCartPost,
   removeCartItem,
   increaseProductQuantity,
   decreaseProductQuantity,
+  applyCoupon,
+  removeCoupon
 };

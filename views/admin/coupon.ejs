@@ -371,11 +371,11 @@
         isValidForm = false;
       }
 
-      if (discountAmount === '' || /[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount) || /\s/.test(discountAmount)) {
+      if (discountAmount === '' || discountAmount === '0' || /[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount) || /\s/.test(discountAmount)) {
         if (discountAmount === '') {
           discountAmountAlert.style.display = 'inline';
           discountAmountAlert.innerText = `Discount amount is required`;
-        } else if (/[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount)) {
+        } else if (/[a-zA-Z]/.test(discountAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(discountAmount) || discountAmount === '0') {
           discountAmountAlert.style.display = 'inline';
           discountAmountAlert.innerText = `Invalid amount`;
         } else {
@@ -386,11 +386,11 @@
         isValidForm = false;
       }
 
-      if (minimumAmount === '' || /[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount) || /\s/.test(minimumAmount)) {
+      if (minimumAmount === '' || minimumAmount === '0' || /[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount) || /\s/.test(minimumAmount)) {
         if (minimumAmount === '') {
           minimumAmountAlert.style.display = 'inline';
           minimumAmountAlert.innerText = `Minimum purchase is required`;
-        } else if (/[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount)) {
+        } else if (/[a-zA-Z]/.test(minimumAmount) || /[^\w\s.]|(\..*\.)|(\.$)/.test(minimumAmount) || minimumAmount === '0') {
           minimumAmountAlert.style.display = 'inline';
           minimumAmountAlert.innerText = `Invalid amount`;
         } else {

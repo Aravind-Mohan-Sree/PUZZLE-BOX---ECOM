@@ -28,7 +28,7 @@
     border-color: rgb(255, 255, 255);
   }
 
-  #coupon-detail {
+  #coupon-bg {
     background-image: url('/image/ticket.svg');
     background-repeat: no-repeat;
     background-position: center;
@@ -151,7 +151,7 @@
                     <option value="" disabled selected hidden>Select</option>
                     <option value="">None</option>
                     <% coupons.forEach((coupon,index)=> { %>
-                    <option value="<%= coupon.couponName %>" data-index="<%= index %>">
+                    <option value="<%= coupon._id %>" data-index="<%= index %>">
                       <%= coupon.couponName %>
                     </option>
                     <% }) %>
@@ -159,21 +159,22 @@
                 </li>
               </ul>
 
-              <ul class="list-group list-group-flush mt-2">
+              <ul class="list-group list-group-flush mt-2 d-none" id="coupon-detail">
                 <hr>
 
-                <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-detail">
+                <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-bg">
                   <div class="text-center">
-                    <h5 class="text-white text-shadow ls-widest"><strong>festive300</strong></h5>
-                    <strong class="d-block text-dark">FLAT <span class="text-danger">₹ 500</span> OFF</strong>
-                    <strong class="text-dark mb-0 fw-bold">Minimum purchase: ₹ 1500</strong>
-                    <p class="text-dark mb-0 fw-bold">Expires Sat Jan 03 2024</p>
+                    <h5 class="text-white text-shadow ls-widest"><strong id="coupon-name"></strong></h5>
+                    <p class="fw-bold text-dark mb-0 fw-bold">Coupon Code: <span id="coupon-code"></span></p>
+                    <p class="fw-bold text-dark mb-0">Flat ₹ <span id="coupon-discount"></span> Off</p>
+                    <p class="fw-bold text-dark mb-0">Minimum Purchase: ₹ <span id="min-purchase"></span></p>
+                    <p class="fw-bold text-dark mb-0">Expires <span id="coupon-expiry" p></span></p>
                   </div>
                 </li>
 
                 <hr>
 
-                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block" id="apply-coupon">
                   apply coupon
                 </button>
               </ul>
@@ -382,15 +383,62 @@
         })
     }
 
-    // coupon
+    // when a coupon is selected, it will be inserted with values and shown up
     document.querySelector('select[name="coupon"]').addEventListener('change', function(event) {
-      const coupons = '<%- JSON.stringify(coupons) %>'
+      const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
       const selectedOption = event.target.options[event.target.selectedIndex];
       const index = selectedOption.getAttribute('data-index');
 
-      if (index) {
+      const couponDetail = document.querySelector('#coupon-detail');
+      const couponName = document.querySelector('#coupon-name');
+      const couponCode = document.querySelector('#coupon-code');
+      const couponDiscount = document.querySelector('#coupon-discount');
+      const minAmount = document.querySelector('#min-purchase');
+      const couponExpiry = document.querySelector('#coupon-expiry');
 
+      if (index) {
+        couponDetail.classList.remove('d-none');
+        couponName.innerHTML = coupons[index].couponName;
+        couponCode.innerHTML = coupons[index].couponCode;
+        couponDiscount.innerHTML = coupons[index].discount.toLocaleString();
+        minAmount.innerHTML = coupons[index].minAmount.toLocaleString();
+        couponExpiry.innerHTML = new Date(coupons[index].expiryDate).toDateString();
+      } else {
+        couponDetail.classList.add('d-none');
       }
+    })
+
+    // using fetch to apply coupon discount to cart
+    document.querySelector('#apply-coupon').addEventListener('click', function() {
+      const couponID = document.querySelector('select[name="coupon"]').value;
+
+      fetch(`/apply-coupon/${couponID}`, {
+          method: 'POST'
+        }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            console.log(data.discount);
+            discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
+            deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
+            data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
+            payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+          }
+
+          if (data.error) {
+            Swal.fire({
+              title: 'Error!',
+              text: data.error,
+              icon: 'error',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            })
+          }
+        }).catch(err => {
+          console.log(err);
+        })
     })
 
     // assigning the date to DOM element
