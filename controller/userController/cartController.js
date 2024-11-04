@@ -22,6 +22,7 @@ const cart = async (req, res) => {
 
     var totalPrice = 0;
     var totalPriceWithoutDiscount = 0;
+    let currentCoupon;
 
     if (cart) {
       /* ------------------- find the total price of cart items ------------------- */
@@ -43,10 +44,12 @@ const cart = async (req, res) => {
           ele.productID.productPrice * ele.productCount;
       });
 
-      // if there is a coupon discount applied to cart then deduct that too from total price
-      if (cart.couponDiscount > 0) {
-        totalPrice -= cart.couponDiscount; 
-      }      
+      // if there is a coupon applied to cart then deduct that too from total price      
+      if (cart.couponID) {
+        totalPrice -= cart.couponDiscount;
+
+        currentCoupon = await couponSchema.findById(cart.couponID);
+      }
 
       /* - updating the fields in collection if those varies from the total price - */
       if (
@@ -77,7 +80,8 @@ const cart = async (req, res) => {
       activeCategoryNames,
       content: '',
       cart,
-      coupons
+      coupons,
+      currentCoupon
     });
   } catch (err) {
     console.log('Error while rendering cart page', err);
@@ -196,6 +200,10 @@ const increaseProductQuantity = async (req, res) => {
       }
     });
 
+    if (cart.couponID) {
+      totalPrice -= cart.couponDiscount;
+    }
+
     /* --------------- update the total payable amount of the cart -------------- */
     cart.payableAmount = Math.round(totalPrice);
     cart.totalPrice = Math.round(totalPriceWithoutDiscount);
@@ -282,6 +290,7 @@ const decreaseProductQuantity = async (req, res) => {
     let totalPriceWithoutDiscount = 0;
     let totalProductQuantity = 0;
     let productCount = 0;
+    let couponRemoved = false;
 
     /* Handle the case when product count becomes 0 or less */
     if (currentProduct.productCount <= 0) {
@@ -312,6 +321,22 @@ const decreaseProductQuantity = async (req, res) => {
       }
     });
 
+    /* ---------------- if payable amount is greater than minimum purchase then update totalPrice otherwise delete the coupon from cart --------------- */
+    if (cart.couponID) {
+      const coupon = await couponSchema.findById(cart.couponID);
+
+      if (totalPrice >= coupon.minAmount) {
+        totalPrice -= coupon.discount;
+      } else {
+        cart.couponDiscount = 0;
+        cart.couponID = undefined;        
+
+        couponRemoved = true;
+
+        req.flash('alert', { message: 'Coupon removed!', color: 'bg-danger' });
+      }
+    }
+
     /* --------------- update the total payable amount of the cart -------------- */
     cart.payableAmount = Math.round(totalPrice);
     cart.totalPrice = Math.round(totalPriceWithoutDiscount);
@@ -327,7 +352,8 @@ const decreaseProductQuantity = async (req, res) => {
       payableAmount: totalPrice,
       totalAmount: totalPriceWithoutDiscount,
       discount,
-      totalProductQuantity
+      totalProductQuantity,
+      couponRemoved
     });
   } catch (err) {
     console.log('Error while decreasing the product quantity', err);
@@ -378,26 +404,32 @@ const applyCoupon = async (req, res) => {
     const coupon = await couponSchema.findById(couponID);
     const cart = await cartSchema.findOne({ userID: req.session.user });
 
+    /* ----------------- if same coupon exist respond with error ---------------- */
+    if (cart.couponID && cart.couponID === couponID) {
+      return res.status(400).json({ error: 'Coupon already applied' });
+    }
+
+    /* -------- checking if payable amount is less than minimum purchase -------- */
     if (cart.payableAmount < coupon.minAmount) {
       return res.status(400).json({ error: 'Payable amount do not meet minimum purchase' });
     }
 
-    let totalProductQuantity = 0;    
+    let totalProductQuantity = 0;
 
     cart.items.forEach((ele) => {
       totalProductQuantity += ele.productCount;
     });
 
-    cart.payableAmount -= coupon.discount;
+    const payableWithoutCoupon = cart.payableAmount + cart.couponDiscount;
+
+    cart.payableAmount = payableWithoutCoupon - coupon.discount;
     cart.couponDiscount = coupon.discount;
     cart.couponID = coupon._id;
 
-    await cart.save();        
+    await cart.save();
 
-    const discount = cart.totalPrice - cart.payableAmount;
-    const payableAmount = cart.payableAmount;
-
-    return res.status(200).json({ success: 'Coupon applied successfully', discount, payableAmount, totalProductQuantity });
+    req.flash('alert', { message: 'Coupon applied successfully!', color: 'bg-success' });
+    return res.status(200).json({ success: true });
   } catch (err) {
     console.log('Error while applying coupon to cart', err);
 

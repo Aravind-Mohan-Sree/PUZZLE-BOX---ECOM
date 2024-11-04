@@ -33,10 +33,6 @@
     background-repeat: no-repeat;
     background-position: center;
   }
-
-  .text-shadow {
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 1);
-  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -151,7 +147,7 @@
                     <option value="" disabled selected hidden>Select</option>
                     <option value="">None</option>
                     <% coupons.forEach((coupon,index)=> { %>
-                    <option value="<%= coupon._id %>" data-index="<%= index %>">
+                    <option value="<%= coupon._id %>" data-index="<%= index %>" <%= currentCoupon ? (currentCoupon._id.toString() === coupon._id.toString() ? 'selected' : '') : '' %>>
                       <%= coupon.couponName %>
                     </option>
                     <% }) %>
@@ -159,23 +155,23 @@
                 </li>
               </ul>
 
-              <ul class="list-group list-group-flush mt-2 d-none" id="coupon-detail">
+              <ul class="list-group list-group-flush mt-2 <%= currentCoupon ? 'd-block' : 'd-none' %>" id="coupon-detail">
                 <hr>
 
                 <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-bg">
-                  <div class="text-center">
-                    <h5 class="text-white text-shadow ls-widest"><strong id="coupon-name"></strong></h5>
-                    <p class="fw-bold text-dark mb-0 fw-bold">Coupon Code: <span id="coupon-code"></span></p>
-                    <p class="fw-bold text-dark mb-0">Flat ₹ <span id="coupon-discount"></span> Off</p>
-                    <p class="fw-bold text-dark mb-0">Minimum Purchase: ₹ <span id="min-purchase"></span></p>
-                    <p class="fw-bold text-dark mb-0">Expires <span id="coupon-expiry" p></span></p>
+                  <div class="text-center text-white">
+                    <h5 class="text-success ls-widest"><strong id="coupon-name"><%= currentCoupon ? currentCoupon.couponName : '' %></strong></h5>
+                    <p class="fw-bold mb-0 fw-bold">Coupon Code: <span class="text-info" id="coupon-code"><%= currentCoupon ? currentCoupon.couponCode : '' %></span></p>
+                    <p class="fw-bold mb-0">Flat <span class="text-warning" id="coupon-discount">₹ <%= currentCoupon ? (currentCoupon.discount).toLocaleString() : '' %></span> Off</p>
+                    <p class="fw-bold mb-0">Minimum Purchase: <span class="text-warning" id="min-purchase">₹ <%= currentCoupon ? (currentCoupon.minAmount).toLocaleString() : '' %></span></p>
+                    <p class="text-danger fw-bold mb-0">Expires <span id="coupon-expiry"><%= currentCoupon ? (currentCoupon.expiryDate).toDateString() : '' %></span></p>
                   </div>
                 </li>
 
                 <hr>
 
                 <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block" id="apply-coupon">
-                  apply coupon
+                  <%= currentCoupon ? 'coupon applied' : 'apply coupon' %>
                 </button>
               </ul>
             </div>
@@ -316,6 +312,10 @@
             })
           }).then(response => response.json())
           .then((data) => {
+            if (data.couponRemoved) {
+              window.location.reload();
+            }
+
             if ((data.productCount) >= 0) {
               quantityCount[index].value = data.productCount;
               perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
@@ -400,8 +400,8 @@
         couponDetail.classList.remove('d-none');
         couponName.innerHTML = coupons[index].couponName;
         couponCode.innerHTML = coupons[index].couponCode;
-        couponDiscount.innerHTML = coupons[index].discount.toLocaleString();
-        minAmount.innerHTML = coupons[index].minAmount.toLocaleString();
+        couponDiscount.innerHTML = '₹ ' + coupons[index].discount.toLocaleString();
+        minAmount.innerHTML = '₹ ' + coupons[index].minAmount.toLocaleString();
         couponExpiry.innerHTML = new Date(coupons[index].expiryDate).toDateString();
       } else {
         couponDetail.classList.add('d-none');
@@ -417,11 +417,7 @@
         }).then(response => response.json())
         .then(data => {
           if (data.success) {
-            console.log(data.discount);
-            discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
-            deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
-            data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
-            payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+            window.location.reload();
           }
 
           if (data.error) {
