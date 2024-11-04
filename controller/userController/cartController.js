@@ -45,7 +45,7 @@ const cart = async (req, res) => {
       });
 
       // if there is a coupon applied to cart then deduct that too from total price      
-      if (cart.couponID) {
+      if (cart.couponID) {      
         totalPrice -= cart.couponDiscount;
 
         currentCoupon = await couponSchema.findById(cart.couponID);
