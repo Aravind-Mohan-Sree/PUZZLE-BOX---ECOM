@@ -387,7 +387,7 @@
     document.querySelector('select[name="coupon"]').addEventListener('change', function(event) {
       const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
       const selectedOption = event.target.options[event.target.selectedIndex];
-      const index = selectedOption.getAttribute('data-index');
+      const currentIndex = selectedOption.getAttribute('data-index');
 
       const couponDetail = document.querySelector('#coupon-detail');
       const couponName = document.querySelector('#coupon-name');
@@ -395,16 +395,47 @@
       const couponDiscount = document.querySelector('#coupon-discount');
       const minAmount = document.querySelector('#min-purchase');
       const couponExpiry = document.querySelector('#coupon-expiry');
+      const applyCoupon = document.querySelector('#apply-coupon');
 
-      if (index) {
+      if (currentIndex) {
         couponDetail.classList.remove('d-none');
-        couponName.innerHTML = coupons[index].couponName;
-        couponCode.innerHTML = coupons[index].couponCode;
-        couponDiscount.innerHTML = '₹ ' + coupons[index].discount.toLocaleString();
-        minAmount.innerHTML = '₹ ' + coupons[index].minAmount.toLocaleString();
-        couponExpiry.innerHTML = new Date(coupons[index].expiryDate).toDateString();
+        couponName.innerHTML = coupons[currentIndex].couponName;
+        couponCode.innerHTML = coupons[currentIndex].couponCode;
+        couponDiscount.innerHTML = '₹ ' + coupons[currentIndex].discount.toLocaleString();
+        minAmount.innerHTML = '₹ ' + coupons[currentIndex].minAmount.toLocaleString();
+        couponExpiry.innerHTML = new Date(coupons[currentIndex].expiryDate).toDateString();
+        applyCoupon.innerHTML = 'apply coupon';
       } else {
         couponDetail.classList.add('d-none');
+
+        const currentCoupon = '<%- JSON.stringify(currentCoupon) %>';
+        
+        // if user deselect an applied coupon, then will send a fetch request to remove that coupon from cart
+        if (currentCoupon) {
+          fetch(`/remove-coupon`, {
+              method: 'DELETE'
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                window.location.reload();
+              }
+
+              if (data.error) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.error,
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                })
+              }
+            }).catch(err => {
+              console.log(err);
+            })
+        }
       }
     })
 
@@ -421,6 +452,10 @@
           }
 
           if (data.error) {
+            const applyCoupon = document.querySelector('#apply-coupon');
+
+            applyCoupon.innerHTML = 'coupon applied';
+
             Swal.fire({
               title: 'Error!',
               text: data.error,

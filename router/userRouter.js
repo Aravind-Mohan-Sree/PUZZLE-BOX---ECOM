@@ -69,7 +69,7 @@ user.delete('/remove-cart-item/:productID', checkUserSession, cartController.rem
 user.put('/increment-product/:productID', checkUserSession, cartController.increaseProductQuantity);
 user.put('/decrement-product/:productID', checkUserSession, cartController.decreaseProductQuantity);
 user.post('/apply-coupon/:couponID', checkUserSession, cartController.applyCoupon);
-user.delete('/remove-coupon/:couponID', checkUserSession, cartController.removeCoupon);
+user.delete('/remove-coupon', checkUserSession, cartController.removeCoupon);
 
 // will handle user wishlist route
 user.get('/wishlist', checkUserSession, wishlistController.getWishlist);

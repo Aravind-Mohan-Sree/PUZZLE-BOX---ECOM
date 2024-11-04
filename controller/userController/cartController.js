@@ -329,7 +329,7 @@ const decreaseProductQuantity = async (req, res) => {
         totalPrice -= coupon.discount;
       } else {
         cart.couponDiscount = 0;
-        cart.couponID = undefined;        
+        cart.couponID = undefined;
 
         couponRemoved = true;
 
@@ -409,18 +409,12 @@ const applyCoupon = async (req, res) => {
       return res.status(400).json({ error: 'Coupon already applied' });
     }
 
+    const payableWithoutCoupon = cart.payableAmount + cart.couponDiscount;
+
     /* -------- checking if payable amount is less than minimum purchase -------- */
-    if (cart.payableAmount < coupon.minAmount) {
+    if (payableWithoutCoupon < coupon.minAmount) {
       return res.status(400).json({ error: 'Payable amount do not meet minimum purchase' });
     }
-
-    let totalProductQuantity = 0;
-
-    cart.items.forEach((ele) => {
-      totalProductQuantity += ele.productCount;
-    });
-
-    const payableWithoutCoupon = cart.payableAmount + cart.couponDiscount;
 
     cart.payableAmount = payableWithoutCoupon - coupon.discount;
     cart.couponDiscount = coupon.discount;
@@ -441,28 +435,16 @@ const applyCoupon = async (req, res) => {
 /* -------------------- will remove coupon discount from cart ------------------- */
 const removeCoupon = async (req, res) => {
   try {
-    const productID = req.params.productID;
+    const cart = await cartSchema.findOne({ userID: req.session.user });
 
-    const cart = await cartSchema
-      .findOne({ userID: req.session.user })
-      .populate('items.productID');
-
-    /* -------------- filtering out products except the removed one ------------- */
-    const newCart = cart.items.filter(item => {
-      return item.productID.id !== productID;
-    })
-
-    cart.items = newCart;
+    cart.payableAmount += cart.couponDiscount;
+    cart.couponDiscount = 0;
+    cart.couponID = undefined;
 
     await cart.save();
 
-    if (newCart.length === 0) {
-      await cartSchema.deleteOne({ userID: req.session.user });
-    }
-
-    return res.status(200).json({
-      delete: true
-    });
+    req.flash('alert', { message: 'Coupon removed successfully!', color: 'bg-success' });
+    return res.status(200).json({ success: true });
   } catch (err) {
     console.log('Error while removing coupon from cart', err);
 
