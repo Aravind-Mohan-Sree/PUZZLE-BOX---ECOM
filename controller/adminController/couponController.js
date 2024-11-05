@@ -1,3 +1,4 @@
+const { utc } = require('moment');
 const couponSchema = require('../../model/couponSchema');
 const voucherCodes = require('voucher-code-generator');
 
@@ -42,7 +43,7 @@ const addCoupon = async (req, res) => {
     function parseDate(dateString) {
       const [day, month, year] = dateString.split('/').map(Number);
 
-      return new Date(year, month - 1, day);
+      return new Date(year, month - 1, day, 23, 59, 59, 999);
     }
 
     let uniqueCouponCode = false;
@@ -93,7 +94,7 @@ const editCoupon = async (req, res) => {
     function parseDate(dateString) {
       const [day, month, year] = dateString.split('/').map(Number);
 
-      return new Date(year, month - 1, day);
+      return new Date(year, month - 1, day, 23, 59, 59, 999);
     }
 
     const { couponId, discountAmount, minimumAmount, expiryDate } = req.body;

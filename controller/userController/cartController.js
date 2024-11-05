@@ -17,7 +17,8 @@ const cart = async (req, res) => {
       });
 
     const coupons = await couponSchema.aggregate([
-      { $match: { isActive: true, expiryDate: { $gte: new Date() } } }
+      { $match: { isActive: true, expiryDate: { $gt: new Date() } } },
+      { $sort: { createdAt: -1 } }
     ]);
 
     var totalPrice = 0;
@@ -44,8 +45,14 @@ const cart = async (req, res) => {
       });
 
       // if there is a coupon applied to cart then deduct that too from total price      
-      if (cart.coupon) {      
-        totalPrice -= cart.coupon.discount;
+      if (cart.coupon) {
+        if (new Date() < new Date(cart.coupon.expiryDate)) {
+          totalPrice -= cart.coupon.discount;
+        } else {
+          cart.coupon = undefined;
+
+          req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
+        }
       }
 
       /* - updating the fields in collection if those varies from the total price - */
@@ -402,6 +409,12 @@ const applyCoupon = async (req, res) => {
       return res.status(400).json({ error: 'Coupon already applied' });
     }
 
+    let isExpired = new Date() < new Date(coupon.expiryDate) ? false : true;
+
+    if (isExpired || !coupon.isActive) {
+      return res.status(400).json({ error: 'Coupon not available' });
+    }
+
     const payableWithoutCoupon = cart.coupon ? cart.payableAmount + cart.coupon.discount : cart.payableAmount;
 
     /* -------- checking if payable amount is less than minimum purchase -------- */
@@ -417,7 +430,7 @@ const applyCoupon = async (req, res) => {
       discount: coupon.discount,
       minPurchase: coupon.minPurchase,
       expiryDate: coupon.expiryDate
-    };    
+    };
 
     await cart.save();
 

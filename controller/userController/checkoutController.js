@@ -48,6 +48,14 @@ const checkout = async (req, res) => {
         }
       });
 
+    if (cart.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
+      cart.coupon = undefined;
+
+      req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
+
+      return res.redirect('/cart');
+    }
+
     let totalProductQuantity = 0;
 
     /* ---- checking whether any of the product is available or not ---- */
@@ -207,7 +215,7 @@ const paymentRenderer = async (req, res) => {
         }
       }
     ]);
-    
+
     const payableAmount = cart[0].payableAmount;
 
     const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });

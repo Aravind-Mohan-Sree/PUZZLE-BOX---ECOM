@@ -160,7 +160,7 @@
 
                 <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-bg">
                   <div class="text-center text-white">
-                    <h5 class="text-success ls-widest"><strong id="coupon-name"><%= cart.coupon ? cart.coupon.name : '' %></strong></h5>
+                    <h5 class="text-white fw-bolder ls-widest" id="coupon-name"><%= cart.coupon ? cart.coupon.name : '' %></h5>
                     <p class="fw-bold mb-0 fw-bold">Coupon Code: <span class="text-info" id="coupon-code"><%= cart.coupon ? cart.coupon.code : '' %></span></p>
                     <p class="fw-bold mb-0">Flat <span class="text-warning" id="coupon-discount">₹ <%= cart.coupon ? (cart.coupon.discount)?.toLocaleString() : '' %></span> Off</p>
                     <p class="fw-bold mb-0">Minimum Purchase: <span class="text-warning" id="min-purchase">₹ <%= cart.coupon ? (cart.coupon.minPurchase)?.toLocaleString() : '' %></span></p>
