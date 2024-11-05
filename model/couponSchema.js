@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const schema = new mongoose.Schema({
-    couponName: {
+    name: {
         type: String,
     },
 
-    couponCode: {
+    code: {
         type: String,
     },
 
@@ -13,12 +13,12 @@ const schema = new mongoose.Schema({
         type: Number,
     },
 
-    expiryDate: {
-        type: Date,
+    minPurchase: {
+        type: Number,
     },
 
-    minAmount: {
-        type: Number,
+    expiryDate: {
+        type: Date,
     },
 
     isActive:{

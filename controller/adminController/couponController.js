@@ -7,7 +7,7 @@ const getCoupon = async (req, res) => {
 
   try {
     const coupons = await couponSchema.aggregate([
-      { $match: { couponName: { $regex: new RegExp(searchTerm, 'i') } } },
+      { $match: { name: { $regex: new RegExp(searchTerm, 'i') } } },
       { $sort: { createdAt: -1 } }
     ]);
 
@@ -30,7 +30,7 @@ const addCoupon = async (req, res) => {
     /* ----------- check if a coupon with the same name already exists ---------- */
     const existingCouponName = await couponSchema.aggregate([
       {
-        $match: { couponName: { $regex: new RegExp(`^${couponName}$`, 'i') } }
+        $match: { name: { $regex: new RegExp(`^${couponName}$`, 'i') } }
       }
     ]);
 
@@ -60,7 +60,7 @@ const addCoupon = async (req, res) => {
 
       const existingCouponCode = await couponSchema.aggregate([
         {
-          $match: { couponCode }
+          $match: { code: couponCode }
         }
       ]);
 
@@ -71,11 +71,11 @@ const addCoupon = async (req, res) => {
 
     /* ------- if no coupon with the same name exists, add the new coupon ------- */
     await couponSchema.create({
-      couponName,
-      couponCode: couponCode[0],
+      name: couponName,
+      code: couponCode[0],
       discount: discountAmount,
-      expiryDate: parseDate(expiryDate),
-      minAmount: minimumAmount
+      minPurchase: minimumAmount,
+      expiryDate: parseDate(expiryDate)
     });
 
     req.flash('alert', { message: 'Coupon created successfully!', color: 'bg-success' });
@@ -101,7 +101,7 @@ const editCoupon = async (req, res) => {
     const coupon = await couponSchema.findById(couponId);
 
     coupon.discount = discountAmount;
-    coupon.minAmount = minimumAmount;
+    coupon.minPurchase = minimumAmount;
     coupon.expiryDate = parseDate(expiryDate);
 
     coupon.save();

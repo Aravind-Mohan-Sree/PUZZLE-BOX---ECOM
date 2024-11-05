@@ -147,31 +147,31 @@
                     <option value="" disabled selected hidden>Select</option>
                     <option value="">None</option>
                     <% coupons.forEach((coupon,index)=> { %>
-                    <option value="<%= coupon._id %>" data-index="<%= index %>" <%= currentCoupon ? (currentCoupon._id.toString() === coupon._id.toString() ? 'selected' : '') : '' %>>
-                      <%= coupon.couponName %>
+                    <option value="<%= coupon._id %>" data-index="<%= index %>" <%= cart.coupon ? (cart.coupon.code === coupon.code ? 'selected' : '') : '' %>>
+                      <%= coupon.name %>
                     </option>
                     <% }) %>
                   </select>
                 </li>
               </ul>
 
-              <ul class="list-group list-group-flush mt-2 <%= currentCoupon ? 'd-block' : 'd-none' %>" id="coupon-detail">
+              <ul class="list-group list-group-flush mt-2 <%= cart.coupon ? 'd-block' : 'd-none' %>" id="coupon-detail">
                 <hr>
 
                 <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-bg">
                   <div class="text-center text-white">
-                    <h5 class="text-success ls-widest"><strong id="coupon-name"><%= currentCoupon ? currentCoupon.couponName : '' %></strong></h5>
-                    <p class="fw-bold mb-0 fw-bold">Coupon Code: <span class="text-info" id="coupon-code"><%= currentCoupon ? currentCoupon.couponCode : '' %></span></p>
-                    <p class="fw-bold mb-0">Flat <span class="text-warning" id="coupon-discount">₹ <%= currentCoupon ? (currentCoupon.discount).toLocaleString() : '' %></span> Off</p>
-                    <p class="fw-bold mb-0">Minimum Purchase: <span class="text-warning" id="min-purchase">₹ <%= currentCoupon ? (currentCoupon.minAmount).toLocaleString() : '' %></span></p>
-                    <p class="text-danger fw-bold mb-0">Expires <span id="coupon-expiry"><%= currentCoupon ? (currentCoupon.expiryDate).toDateString() : '' %></span></p>
+                    <h5 class="text-success ls-widest"><strong id="coupon-name"><%= cart.coupon ? cart.coupon.name : '' %></strong></h5>
+                    <p class="fw-bold mb-0 fw-bold">Coupon Code: <span class="text-info" id="coupon-code"><%= cart.coupon ? cart.coupon.code : '' %></span></p>
+                    <p class="fw-bold mb-0">Flat <span class="text-warning" id="coupon-discount">₹ <%= cart.coupon ? (cart.coupon.discount)?.toLocaleString() : '' %></span> Off</p>
+                    <p class="fw-bold mb-0">Minimum Purchase: <span class="text-warning" id="min-purchase">₹ <%= cart.coupon ? (cart.coupon.minPurchase)?.toLocaleString() : '' %></span></p>
+                    <p class="text-danger fw-bold mb-0">Expires <span id="coupon-expiry"><%= cart.coupon ? (cart.coupon.expiryDate)?.toDateString() : '' %></span></p>
                   </div>
                 </li>
 
                 <hr>
 
                 <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block" id="apply-coupon">
-                  <%= currentCoupon ? 'coupon applied' : 'apply coupon' %>
+                  <%= cart.coupon ? 'coupon applied' : 'apply coupon' %>
                 </button>
               </ul>
             </div>
@@ -399,19 +399,19 @@
 
       if (currentIndex) {
         couponDetail.classList.remove('d-none');
-        couponName.innerHTML = coupons[currentIndex].couponName;
-        couponCode.innerHTML = coupons[currentIndex].couponCode;
+        couponName.innerHTML = coupons[currentIndex].name;
+        couponCode.innerHTML = coupons[currentIndex].code;
         couponDiscount.innerHTML = '₹ ' + coupons[currentIndex].discount.toLocaleString();
-        minAmount.innerHTML = '₹ ' + coupons[currentIndex].minAmount.toLocaleString();
+        minAmount.innerHTML = '₹ ' + coupons[currentIndex].minPurchase.toLocaleString();
         couponExpiry.innerHTML = new Date(coupons[currentIndex].expiryDate).toDateString();
         applyCoupon.innerHTML = 'apply coupon';
       } else {
         couponDetail.classList.add('d-none');
 
-        const currentCoupon = '<%- JSON.stringify(currentCoupon) %>';
+        const coupon = '<%- JSON.stringify(cart?.coupon) %>';
         
         // if user deselect an applied coupon, then will send a fetch request to remove that coupon from cart
-        if (currentCoupon) {
+        if (coupon) {
           fetch(`/remove-coupon`, {
               method: 'DELETE'
             }).then(response => response.json())
@@ -454,7 +454,7 @@
           if (data.error) {
             const applyCoupon = document.querySelector('#apply-coupon');
 
-            applyCoupon.innerHTML = 'coupon applied';
+            applyCoupon.innerHTML = data.error === 'Coupon already applied' ? 'coupon applied' : 'apply coupon';
 
             Swal.fire({
               title: 'Error!',

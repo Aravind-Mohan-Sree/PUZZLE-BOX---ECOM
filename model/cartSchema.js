@@ -33,13 +33,15 @@ const cartSchema = new mongoose.Schema({
     default: 0
   },
 
-  couponDiscount: {
-    type: Number,
-    default: 0
-  },
-
-  couponID: {
-    type: String
+  coupon: {
+    type: {
+      name: { type: String },
+      code: { type: String },
+      discount: { type: Number },
+      minPurchase: { type: Number },
+      expiryDate: { type: Date }
+    },
+    _id: false
   }
 });
 
