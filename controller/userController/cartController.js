@@ -46,12 +46,16 @@ const cart = async (req, res) => {
 
       // if there is a coupon applied to cart then deduct that too from total price      
       if (cart.coupon) {
-        if (new Date() < new Date(cart.coupon.expiryDate)) {
+        if (new Date() < new Date(cart.coupon.expiryDate) && totalPrice >= cart.coupon.minPurchase) {
           totalPrice -= cart.coupon.discount;
-        } else {
-          cart.coupon = undefined;
+        } else {          
+          if (totalPrice < cart.coupon.minPurchase) {
+            req.flash('alert', { message: 'Coupon removed!', color: 'bg-danger' });
+          } else {
+            req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
+          }
 
-          req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
+          cart.coupon = undefined;
         }
       }
 
@@ -370,7 +374,7 @@ const removeCartItem = async (req, res) => {
 
     const cart = await cartSchema
       .findOne({ userID: req.session.user })
-      .populate('items.productID');
+      .populate('items.productID');     
 
     /* -------------- filtering out products except the removed one ------------- */
     const newCart = cart.items.filter(item => {
@@ -379,11 +383,27 @@ const removeCartItem = async (req, res) => {
 
     cart.items = newCart;
 
+    let totalPrice = 0;
+
+    cart.items.forEach((ele) => {
+      // finding payable amount
+      totalPrice += ele.productID.productDiscountedPrice * ele.productCount;
+    });   
+
+    /* ---------------- if payable amount is greater than minimum purchase then update totalPrice otherwise delete the coupon from cart --------------- */
+    if (cart.coupon) {
+      if (totalPrice < cart.coupon.minPurchase) {
+        cart.coupon = undefined;
+
+        req.flash('alert', { message: 'Coupon removed!', color: 'bg-danger' });
+      }
+    }
+
     await cart.save();
 
     if (newCart.length === 0) {
       await cartSchema.deleteOne({ userID: req.session.user });
-    }
+    }    
 
     return res.status(200).json({
       delete: true

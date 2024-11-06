@@ -85,6 +85,10 @@ const product = async (req, res) => {
       activeProducts.sort((a, b) => a.productDiscountedPrice - b.productDiscountedPrice);
     } else if (req.query.sort === 'highToLow') {
       activeProducts.sort((a, b) => b.productDiscountedPrice - a.productDiscountedPrice);
+    } else if (req.query.sort === 'discountLowToHigh') {
+      activeProducts.sort((a, b) => a.productDiscount - b.productDiscount);
+    } else if (req.query.sort === 'discountHighToLow') {
+      activeProducts.sort((a, b) => b.productDiscount - a.productDiscount);
     } else if (req.query.sort === 'aToZ') {
       activeProducts.sort((a, b) => a.productName.localeCompare(b.productName));
     } else if (req.query.sort === 'zToA') {
@@ -174,7 +178,7 @@ const productDetail = async (req, res) => {
       },
       {
         $match: { "productDetails._id": new mongoose.Types.ObjectId(String(req.query.productId)) }
-      }     
+      }
     ]);
 
     if (product) {

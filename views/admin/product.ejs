@@ -238,6 +238,20 @@
             }
           }).then((result) => {
             if (result.isConfirmed) {
+              Swal.fire({
+                title: 'Please wait...',
+                text: 'Product is deleting.',
+                icon: 'info',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                customClass: {
+                  container: 'swal-css'
+                },
+                didOpen: () => {
+                  Swal.showLoading();
+                }
+              });
+
               fetch('/admin/products', {
                   method: 'POST',
                   headers: {
@@ -250,6 +264,8 @@
                 })
                 .then(response => response.json())
                 .then(data => {
+                  Swal.close();
+
                   if (data.error) {
                     Swal.fire({
                       title: 'Error!',

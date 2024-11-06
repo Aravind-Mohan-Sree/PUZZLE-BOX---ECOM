@@ -175,8 +175,8 @@
         <label class="w-100 text-dark mb-2" for="">Featured<span class="text-danger">*</span></label>
         <select class="select" id="featured-select" data-mdb-select-init class="form-control" name="productFeatured">
           <option value="" disabled selected hidden>select an option</option>
-          <option value="true">Yes</option>          
-          <option value="false">No</option>          
+          <option value="true">Yes</option>
+          <option value="false">No</option>
         </select>
         <small id="featured-alert" class="position-absolute text-danger"></small>
       </div>
@@ -335,7 +335,7 @@
         behavior: 'smooth',
         block: 'center'
       });
-    }else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
+    } else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
       if (price === '') {
         priceAlert.style.display = 'inline';
         priceAlert.innerText = `Price is required`;
@@ -447,6 +447,20 @@
         block: 'center'
       });
     } else {
+      Swal.fire({
+        title: 'Please wait...',
+        text: 'Product is adding.',
+        icon: 'info',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        customClass: {
+          container: 'swal-css'
+        },
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       this.submit();
     }
   });
@@ -463,9 +477,8 @@
       // Check if the number of files exceeds the limit
       if (files.length > 3 || imageContainer.children.length + files.length > 3) {
         Swal.fire({
-          title: 'Error!',
           text: 'Only 3 images allowed',
-          icon: 'error',
+          icon: 'warning',
           confirmButtonText: 'OK',
           allowOutsideClick: false,
           customClass: {
