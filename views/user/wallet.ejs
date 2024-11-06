@@ -1,0 +1,200 @@
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  .wallet-container {
+    flex-grow: 1;
+    padding-top: 6.25rem;
+    padding-bottom: 2.875rem;
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
+<%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------------- wallet container -------------------------- -->
+<div class="wallet-container">
+  <!-- ----------------------- wallet section ----------------------- -->
+  <section class="h-100 gradient-custom">
+    <div class="container px-4 px-sm-2 pt-md-3">
+      <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">CART - <%= cart ? cart.items.length : '0' %> item(s)</h5>
+            </div>
+            <div class="card-body pt-0 pb-0">
+              <% let totalProductQuantity = 0 %>
+              <% if (cart) { %>
+              <% cart.items.forEach((item, index, array) => { %>
+              <% totalProductQuantity += item.productCount %>
+
+              <!-- Single item -->
+              <div class="row mb-4 mt-4">
+                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                  <!-- Image -->
+                  <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                    <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>">
+                      <img src="<%= item.productID.productImage[0] %>" class="w-100" alt="Blue Jeans Jacket" />
+                    </a>
+                  </div>
+                  <!-- Image -->
+                </div>
+
+                <div class="col-lg-5 mb-4 mb-lg-0">
+                  <!-- Data -->
+                  <a href="/product-details?productId=<%= item.productID._id %>&productCategory=<%= item.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
+                    <p class="h5"><%= item.productID.productName %></p>
+                  </a>
+                  <p>Category: <%= item.productID.productCategory.categoryName %></p>
+                  <p>Dimensions: <%= item.productID.productDimension.split('-')[0] + ' x ' + item.productID.productDimension.split('-')[1] + ' x ' + item.productID.productDimension.split('-')[2] + ' cm' %></p>
+                  <button class="border-0 bg-transparent" onclick="removeProduct('<%= item.productID.id %>')">
+                    <i class="fa-duotone fa-solid fa-trash-can fa-xl" style="--fa-primary-color: #000000; --fa-secondary-color: #ff0000; --fa-secondary-opacity: 1;"></i>
+                  </button>
+                  <!-- Data -->
+                </div>
+
+                <div class="col-lg-4 mb-0 mb-lg-0">
+                  <!-- Quantity -->
+                  <div class="d-flex mb-4" style="max-width: 300px">
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-secondary px-3 me-2 minus-btn shadow-0" onclick="decreaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount <= 0 ? 'disabled' : '' %>>
+                      <i class="fas fa-minus"></i>
+                    </button>
+
+                    <div data-mdb-input-init class="form-outline">
+                      <input name="quantity" value="<%= item.productCount %>" type="number" class="form-control bg-white quantity-count" disabled />
+                      <label class="form-label" for="form1">Quantity</label>
+                    </div>
+
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-success px-3 ms-2 plus-btn shadow-0" onclick="increaseQuantity('<%= item.productID.id %>','<%= index %>')" <%= item.productCount >= 5 ? 'disabled' : '' %>>
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <!-- Quantity -->
+
+                  <!-- Price -->
+                  <p class="mb-0 mt-3">
+                    <s class="text-danger per-product-amount <%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? 'me-2' : '' %>"><%= item.productID.productDiscountedPrice * item.productCount !== item.productPrice * item.productCount ? '₹ ' + (item.productPrice * item.productCount).toLocaleString() : '' %></s><strong class="per-product-discount text-dark">₹ <%= (item.productID.productDiscountedPrice * item.productCount).toLocaleString() %></strong>
+                  </p>
+                  <p class="badge badge-danger out-of-stock"><%= item.productCount === 0 ? 'Out of stock' : '' %></p>
+                  <!-- Price -->
+                </div>
+                <% if (index !== array.length - 1) { %>
+                <div class="mt-4 p-0 card-header"></div>
+                <% } %>
+              </div>
+              <!-- Single item -->
+              <% }) %>
+              <% } else { %>
+              <h3 class="mt-4 h4 mb-4">You have no items yet...</h3>
+              <% } %>
+            </div>
+          </div>
+          <% if (cart) { %>
+          <div class="card mb-4">
+            <div class="card-body">
+              <p><strong>Expected Delivery</strong></p>
+              <p class="mb-0">In 7 days, <span id="date"></span></p>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body">
+              <p><strong>Payment Options</strong></p>
+              <a href="https://razorpay.com/" target="_blank" class="me-4"> <img referrerpolicy="origin" src="https://badges.razorpay.com/badge-dark.png " style="height: 45px; width: 113px;" alt="Razorpay | Payment Gateway | Neobank"></a>
+              <a href="#" target="_blank"> <img referrerpolicy="origin" src="/image/cash-on-delivery.png" style="width: 45px;" alt="Razorpay | Payment Gateway | Neobank"></a>
+            </div>
+          </div>
+          <% } %>
+        </div>
+        <% if (cart) { %>
+        <div class="col-md-8 col-lg-4">
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Select Coupon</h5>
+            </div>
+            <div class="card-body">
+              <ul class="navbar-nav">
+                <li class="nav-item">
+                  <select data-mdb-select-init class="form-control select" name="coupon">
+                    <option value="" disabled selected hidden>Select</option>
+                    <option value="">None</option>
+                    <% coupons.forEach((coupon,index)=> { %>
+                    <option value="<%= coupon._id %>" data-index="<%= index %>" <%= cart.coupon ? (cart.coupon.code === coupon.code ? 'selected' : '') : '' %>>
+                      <%= coupon.name %>
+                    </option>
+                    <% }) %>
+                  </select>
+                </li>
+              </ul>
+
+              <ul class="list-group list-group-flush mt-2 <%= cart.coupon ? 'd-block' : 'd-none' %>" id="coupon-detail">
+                <hr>
+
+                <li class="list-group-item d-flex justify-content-center align-items-center border-0 px-0" id="coupon-bg">
+                  <div class="text-center text-white">
+                    <h5 class="text-white fw-bolder ls-widest" id="coupon-name"><%= cart.coupon ? cart.coupon.name : '' %></h5>
+                    <p class="fw-bold mb-0 fw-bold">Coupon Code: <span class="text-info" id="coupon-code"><%= cart.coupon ? cart.coupon.code : '' %></span></p>
+                    <p class="fw-bold mb-0">Flat <span class="text-warning" id="coupon-discount">₹ <%= cart.coupon ? (cart.coupon.discount)?.toLocaleString() : '' %></span> Off</p>
+                    <p class="fw-bold mb-0">Minimum Purchase: <span class="text-warning" id="min-purchase">₹ <%= cart.coupon ? (cart.coupon.minPurchase)?.toLocaleString() : '' %></span></p>
+                    <p class="text-danger fw-bold mb-0">Expires <span id="coupon-expiry"><%= cart.coupon ? (cart.coupon.expiryDate)?.toDateString() : '' %></span></p>
+                  </div>
+                </li>
+
+                <hr>
+
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-success btn-block" id="apply-coupon">
+                  <%= cart.coupon ? 'coupon applied' : 'apply coupon' %>
+                </button>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card mb-4">
+            <div class="card-header py-3">
+              <h5 class="mb-0">Summary</h5>
+            </div>
+            <div class="card-body">
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Total Amount
+                  <span id="total-amount"><%= '₹ ' + cart.totalPrice.toLocaleString() %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                  Discount
+                  <span id="discount" class="text-danger"><%= '- ₹ ' + (cart.totalPrice - cart.payableAmount).toLocaleString() %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                  Delivery Charge
+                  <span id="delivery-charge" class="<%= cart.payableAmount < 500 ? '' : 'text-danger' %>"><%= cart.payableAmount < 500 ? '+ ₹ ' + (40 * totalProductQuantity) : 'Free' %></span>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                  <div>
+                    <strong>Payable Amount</strong>
+                  </div>
+                  <span><strong id="payable-amount"><%= cart.payableAmount < 500 ? '₹ ' + (cart.payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + cart.payableAmount.toLocaleString() %></strong></span>
+                </li>
+              </ul>
+
+              <a href="/checkout">
+                <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-lg btn-block">
+                  Go to checkout
+                </button>
+              </a>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+
+  <!-- --------------------------- testimonials included --------------------------- -->
+  <%- include('testimonial') %>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
