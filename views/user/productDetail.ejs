@@ -64,6 +64,12 @@
     border-color: rgb(255, 255, 255);
   }
 
+  .swal2-success-circular-line-left,
+  .swal2-success-fix,
+  .swal2-success-circular-line-right {
+    background-color: transparent !important
+  }
+
   small {
     display: none;
     font-size: .75rem;
@@ -594,6 +600,16 @@
             if (data.success) {
               target.setAttribute('id', 'remove-from-wishlist');
               target.classList.add('fa-heart-circle-xmark');
+
+              Swal.fire({
+                icon: 'success',
+                text: 'Product added to wishlist',
+                showConfirmButton: false,
+                customClass: {
+                  container: 'swal-css'
+                },
+                timer: 1500,
+              })
             }
 
             if (data.error) {
@@ -639,6 +655,16 @@
               target.setAttribute('id', 'add-to-wishlist');
               target.classList.remove('fa-heart-circle-xmark');
               target.classList.add('fa-heart-circle-plus');
+
+              Swal.fire({
+                icon: 'success',
+                text: 'Product removed from wishlist',
+                showConfirmButton: false,
+                customClass: {
+                  container: 'swal-css'
+                },
+                timer: 1500,
+              })
             }
 
             if (data.error) {
@@ -684,17 +710,15 @@
         }).then(response => response.json())
         .then(data => {
           Swal.fire({
-            title: 'Success!',
+            icon: 'success',
             text: data.success,
-            confirmButtonText: 'OK',
-            allowOutsideClick: false,
+            showConfirmButton: false,
             customClass: {
               container: 'swal-css'
-            }
+            },
+            timer: 1500
           }).then(res => {
-            if (res.isConfirmed) {
-              window.location.reload();
-            }
+            window.location.reload();
           })
         }).catch(err => {
           window.location.href = '/login';

@@ -682,9 +682,8 @@
       if (!selectedAddress || !paymentMode) {
         if (!selectedAddress) {
           Swal.fire({
-            title: 'Error!',
-            text: 'Please select an address',
-            icon: 'error',
+            text: 'Please add an address',
+            icon: 'warning',
             confirmButtonText: 'OK',
             allowOutsideClick: false,
             customClass: {
@@ -693,9 +692,8 @@
           })
         } else {
           Swal.fire({
-            title: 'Error!',
             text: 'Please select a payment method',
-            icon: 'error',
+            icon: 'warning',
             confirmButtonText: 'OK',
             allowOutsideClick: false,
             customClass: {
@@ -749,6 +747,10 @@
               },
             }).then(response => response.json())
             .then(data => {
+              if (data.failed) {
+                window.location.href = '/cart';
+              }
+
               if (data.order) {
                 const options = {
                   "key": "rzp_test_3MjpZb7TBnz8Ul",

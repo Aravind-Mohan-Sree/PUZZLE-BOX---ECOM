@@ -28,6 +28,12 @@
     border-color: rgb(255, 255, 255);
   }
 
+  .swal2-success-circular-line-left,
+  .swal2-success-fix,
+  .swal2-success-circular-line-right {
+    background-color: transparent !important
+  }
+
   #coupon-bg {
     background-image: url('/image/ticket.svg');
     background-repeat: no-repeat;
@@ -347,40 +353,52 @@
 
     // function for removing product from the cart
     window.removeProduct = function(productID) {
-      // using fetch for sending product id to backend
-      fetch(`/remove-cart-item/${productID}`, {
-          method: 'DELETE'
-        }).then(response => response.json())
-        .then(data => {
-          if (data.delete) {
-            Swal.fire({
-              title: 'Deleted!',
-              text: 'Product removed successfully',
-              confirmButtonText: 'OK',
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
+      Swal.fire({
+        title: "Are you sure?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes",
+        allowOutsideClick: false,
+        customClass: {
+          container: 'swal-css'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // using fetch for sending product id to backend
+          fetch(`/remove-cart-item/${productID}`, {
+              method: 'DELETE'
+            }).then(response => response.json())
+            .then(data => {
+              if (data.delete) {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'Product removed from cart',
+                    showConfirmButton: false,
+                    customClass: {
+                      container: 'swal-css'
+                    },
+                    timer: 1500
+                  })
+                  .then(res => {
+                    window.location.reload();
+                  })
               }
-            }).then(res => {
-              if (res.isConfirmed) {
-                window.location.reload();
-              }
-            })
-          }
 
-          if (data.error) {
-            Swal.fire({
-              title: 'Error!',
-              text: data.error,
-              icon: 'error',
-              confirmButtonText: 'OK',
-              allowOutsideClick: false,
-              customClass: {
-                container: 'swal-css'
+              if (data.error) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.error,
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                })
               }
             })
-          }
-        })
+        }
+      })
     }
 
     // when a coupon is selected, it will be inserted with values and shown up
@@ -409,7 +427,7 @@
         couponDetail.classList.add('d-none');
 
         const coupon = '<%- JSON.stringify(cart?.coupon) %>';
-        
+
         // if user deselect an applied coupon, then will send a fetch request to remove that coupon from cart
         if (coupon) {
           fetch(`/remove-coupon`, {
@@ -457,9 +475,8 @@
             applyCoupon.innerHTML = data.error === 'Coupon already applied' ? 'coupon applied' : 'apply coupon';
 
             Swal.fire({
-              title: 'Error!',
               text: data.error,
-              icon: 'error',
+              icon: 'warning',
               confirmButtonText: 'OK',
               allowOutsideClick: false,
               customClass: {

@@ -48,7 +48,7 @@ const checkout = async (req, res) => {
         }
       });
 
-    if (cart.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
+    if (cart?.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
       cart.coupon = undefined;
 
       req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
@@ -136,7 +136,7 @@ const orderPlacement = async (req, res) => {
 
     for (const ele of cart.items) {
       /* ------ if any of the products quantity is zero then redirect to cart ----- */
-      if (ele.productID.productQuantity === 0) {
+      if (ele.productID.productQuantity === 0 || ele.productID.productQuantity < ele.productCount) {
         req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
 
         return res.status(404).json({ failed: true });
@@ -204,19 +204,24 @@ const orderPlacement = async (req, res) => {
 /* -------------- payment renderer for Razorpay payment method -------------- */
 const paymentRenderer = async (req, res) => {
   try {
-    const cart = await cartSchema.aggregate([
-      {
-        $match: { userID: req.session.user }
-      },
-      {
-        $project: {
-          payableAmount: 1,
-          _id: 0
+    const cart = await cartSchema
+      .findOne({ userID: req.session.user })
+      .populate({
+        path: 'items.productID',
+        populate: {
+          path: 'productCategory'
         }
-      }
-    ]);
+      });
 
-    const payableAmount = cart[0].payableAmount;
+    for (const product of cart.items) {
+      if (product.productID.productQuantity === 0 || product.productID.productQuantity < product.productCount) {
+        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+
+        return res.status(400).json({ failed: true });
+      }
+    }
+
+    const payableAmount = cart.payableAmount;
 
     const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
 

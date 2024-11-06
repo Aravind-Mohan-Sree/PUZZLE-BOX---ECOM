@@ -9,6 +9,34 @@
   small {
     font-size: .75rem;
   }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
+
+  .swal2-success-circular-line-left,
+  .swal2-success-fix,
+  .swal2-success-circular-line-right {
+    background-color: transparent !important
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -183,58 +211,80 @@
       ele.addEventListener('click', function() {
         const productId = ele.getAttribute('data-product-id');
 
-        fetch(`/remove-from-wishlist?productId=${productId}`, {
-            method: 'DELETE',
-          }).then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              ele.closest('.product-tile').remove();              
-            }
-
-            if (data.error) {
-              Swal.fire({
-                title: 'Error!',
-                text: data.error,
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            }
-
-            // fetching content for updating navbar
-            fetch('/update-navbar', {
-                method: 'POST'
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch(`/remove-from-wishlist?productId=${productId}`, {
+                method: 'DELETE',
               }).then(response => response.json())
               .then(data => {
-                const user = JSON.parse('<%- JSON.stringify(user) %>');
-                const cartCount = document.getElementById('cart-count');
-                const wishlistCount = document.getElementById('wishlist-count');
-                const mainTitle = document.getElementById('main-title');
+                if (data.success) {
+                  ele.closest('.product-tile').remove();
 
-                user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
-                user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
-                mainTitle.innerText = data.wishlist ? `WISHLIST - ${data.wishlist.products.length} item(s)` : `WISHLIST - 0 item(s)`;
-
-                if (!data.wishlist) {
-                  const h3 = document.createElement('h3');
-
-                  h3.classList.add('mt-4', 'h4', 'mb-4');
-                  h3.textContent = 'You have no items yet...';
-
-                  document.querySelector('.container').appendChild(h3);
+                  Swal.fire({
+                    icon: 'success',
+                    text: 'Product removed from wishlist',
+                    showConfirmButton: false,
+                    customClass: {
+                      container: 'swal-css'
+                    },
+                    timer: 1500,
+                  })
                 }
-              })
-          }).catch(err => {
-            window.location.href = '/login';
 
-            console.log(err);
-          })
+                if (data.error) {
+                  Swal.fire({
+                    title: 'Error!',
+                    text: data.error,
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    allowOutsideClick: false,
+                    customClass: {
+                      container: 'swal-css'
+                    }
+                  });
+                }
+
+                // fetching content for updating navbar
+                fetch('/update-navbar', {
+                    method: 'POST'
+                  }).then(response => response.json())
+                  .then(data => {
+                    const user = JSON.parse('<%- JSON.stringify(user) %>');
+                    const cartCount = document.getElementById('cart-count');
+                    const wishlistCount = document.getElementById('wishlist-count');
+                    const mainTitle = document.getElementById('main-title');
+
+                    user ? (data.cart ? cartCount.innerText = data.cart.items.length : cartCount.innerText = '0') : '';
+                    user ? (data.wishlist ? wishlistCount.innerText = data.wishlist.products.length : wishlistCount.innerText = '0') : '';
+                    mainTitle.innerText = data.wishlist ? `WISHLIST - ${data.wishlist.products.length} item(s)` : `WISHLIST - 0 item(s)`;
+
+                    if (!data.wishlist) {
+                      const h3 = document.createElement('h3');
+
+                      h3.classList.add('mt-4', 'h4', 'mb-4');
+                      h3.textContent = 'You have no items yet...';
+
+                      document.querySelector('.container').appendChild(h3);
+                    }
+                  })
+              }).catch(err => {
+                window.location.href = '/login';
+
+                console.log(err);
+              })
+          }
+        })
       })
     })
-
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->

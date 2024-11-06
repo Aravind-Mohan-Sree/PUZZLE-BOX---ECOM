@@ -236,7 +236,7 @@ const increaseProductQuantity = async (req, res) => {
         .json({
           title: 'Out of stock',
           error: `Only ${currentProduct[0].productID.productQuantity} left`,
-          icon: 'info',
+          icon: 'warning',
           productCount: currentProduct[0].productCount,
           productTotal,
           productDiscount,
