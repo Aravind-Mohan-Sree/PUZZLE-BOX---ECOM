@@ -1,33 +1,41 @@
-const userSchema = require('../../model/userSchema');
-const categorySchema = require('../../model/categorySchema');
-const productSchema = require('../../model/productSchema');
-const cartSchema = require('../../model/cartSchema');
-const orderSchema = require('../../model/orderSchema');
-const Razorpay = require('razorpay');
+const userSchema = require("../../model/userSchema");
+const categorySchema = require("../../model/categorySchema");
+const productSchema = require("../../model/productSchema");
+const cartSchema = require("../../model/cartSchema");
+const orderSchema = require("../../model/orderSchema");
+const walletSchema = require("../../model/walletSchema");
+const Razorpay = require("razorpay");
 
 /* ------------------- will render the order confirm page ------------------- */
 const orderConfirmation = async (req, res) => {
   try {
     /* ---------- querying active categories for including in the navbar --------- */
-    const activeCategories = await productSchema.find({
-      isActive: true,
-      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-    })
-      .populate('productCategory');
+    const activeCategories = await productSchema
+      .find({
+        isActive: true,
+        productCategory: {
+          $in: await categorySchema.find({ isActive: true }).select("_id"),
+        },
+      })
+      .populate("productCategory");
 
-    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+    const activeCategoryNames = Array.from(
+      new Set(
+        activeCategories.map((product) => product.productCategory.categoryName)
+      )
+    ).sort((a, b) => a.localeCompare(b));
 
-    res.render('user/orderConfirmation', {
-      title: 'Order Confirmation',
-      alert: req.flash('alert'),
+    res.render("user/orderConfirmation", {
+      title: "Order Confirmation",
+      alert: req.flash("alert"),
       user: req.session.user,
       activeCategoryNames,
-      content: ''
+      content: "",
     });
   } catch (err) {
-    console.log('Error while rendering order confirmation page', err);
+    console.log("Error while rendering order confirmation page", err);
   }
-}
+};
 /* -------------------------------------------------------------------------- */
 
 /* ---------------------- will render the checkout page --------------------- */
@@ -42,18 +50,20 @@ const checkout = async (req, res) => {
     const cart = await cartSchema
       .findOne({ userID: req.session.user })
       .populate({
-        path: 'items.productID',
+        path: "items.productID",
         populate: {
-          path: 'productCategory'
-        }
+          path: "productCategory",
+        },
       });
+
+    const wallet = await walletSchema.findOne({ userID: req.session.user });
 
     if (cart?.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
       cart.coupon = undefined;
 
-      req.flash('alert', { message: 'Coupon expired!', color: 'bg-danger' });
+      req.flash("alert", { message: "Coupon expired!", color: "bg-danger" });
 
-      return res.redirect('/cart');
+      return res.redirect("/cart");
     }
 
     let totalProductQuantity = 0;
@@ -65,23 +75,34 @@ const checkout = async (req, res) => {
       for (const product of cart.items) {
         totalProductQuantity += product.productCount;
         product.productPrice = product.productID.productPrice;
-        cart.totalPrice += product.productID.productPrice * product.productCount;
+        cart.totalPrice +=
+          product.productID.productPrice * product.productCount;
 
-        if (product.productID.productQuantity === 0 || product.productID.productQuantity < product.productCount || product.productCount === 0) {
-          req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+        if (
+          product.productID.productQuantity === 0 ||
+          product.productID.productQuantity < product.productCount ||
+          product.productCount === 0
+        ) {
+          req.flash("alert", {
+            message: "One or more products is not available. Try again!",
+            color: "bg-danger",
+          });
 
-          return res.redirect('/cart');
+          return res.redirect("/cart");
         }
       }
     } else {
-      req.flash('alert', { message: 'Your cart is empty. Try again!', color: 'bg-danger' });
+      req.flash("alert", {
+        message: "Your cart is empty. Try again!",
+        color: "bg-danger",
+      });
 
-      return res.redirect('/home');
+      return res.redirect("/home");
     }
 
     /* ----------------- will add delivery charge if applicable ----------------- */
     if (cart.payableAmount < 500) {
-      cart.payableAmount += (40 * totalProductQuantity);
+      cart.payableAmount += 40 * totalProductQuantity;
     }
 
     await cart.save();
@@ -89,29 +110,37 @@ const checkout = async (req, res) => {
     cart.items.sort((a, b) => b.createdAt - a.createdAt);
 
     /* ---------- querying active categories for including in the navbar --------- */
-    const activeCategories = await productSchema.find({
-      isActive: true,
-      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-    })
-      .populate('productCategory');
+    const activeCategories = await productSchema
+      .find({
+        isActive: true,
+        productCategory: {
+          $in: await categorySchema.find({ isActive: true }).select("_id"),
+        },
+      })
+      .populate("productCategory");
 
-    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+    const activeCategoryNames = Array.from(
+      new Set(
+        activeCategories.map((product) => product.productCategory.categoryName)
+      )
+    ).sort((a, b) => a.localeCompare(b));
 
-    res.render('user/checkout', {
-      title: 'Checkout',
-      alert: req.flash('alert'),
+    res.render("user/checkout", {
+      title: "Checkout",
+      alert: req.flash("alert"),
       cart,
+      wallet,
       products: cart.items,
       userAddress,
       addresses,
       user: req.session.user,
       activeCategoryNames,
-      content: ''
+      content: "",
     });
   } catch (err) {
-    console.log('Error while rendering the checkout page', err);
+    console.log("Error while rendering the checkout page", err);
   }
-}
+};
 /* -------------------------------------------------------------------------- */
 
 /* --------- will be used to place order based on the payment method -------- */
@@ -119,7 +148,19 @@ const orderPlacement = async (req, res) => {
   try {
     const addressIndex = req.query.addressIndex;
     const paymentMode = parseInt(req.query.paymentMode);
-    let paymentId = '';
+    let paymentId = "";
+
+    const cart = await cartSchema
+      .findOne({ userID: req.session.user })
+      .populate("items.productID");
+
+    const wallet = await walletSchema
+      .findOne({ userID: req.session.user })
+      .populate("transactions.orderID");
+
+    const paymentMethod = ["Cash on delivery", "Razorpay", 'Wallet'];
+    const products = [];
+    let totalQuantity = 0;
 
     if (paymentMode === 1) {
       const razorpay_payment_id = req.body.razorpay_payment_id;
@@ -129,15 +170,20 @@ const orderPlacement = async (req, res) => {
       paymentId = razorpay_payment_id;
     }
 
-    const cart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID');
-    const paymentMethod = ['Cash on delivery'];
-    const products = [];
-    let totalQuantity = 0;
+    if (paymentMode === 2 && (!wallet || wallet?.balance < cart.payableAmount)) {
+      return res.status(404).json({ insufficientFunds: true });
+    }
 
     for (const ele of cart.items) {
       /* ------ if any of the products quantity is zero then redirect to cart ----- */
-      if (ele.productID.productQuantity === 0 || ele.productID.productQuantity < ele.productCount) {
-        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+      if (
+        ele.productID.productQuantity === 0 ||
+        ele.productID.productQuantity < ele.productCount
+      ) {
+        req.flash("alert", {
+          message: "One or more products is not available. Try again!",
+          color: "bg-danger",
+        });
 
         return res.status(404).json({ failed: true });
       }
@@ -149,11 +195,11 @@ const orderPlacement = async (req, res) => {
         price: ele.productID.productPrice,
         discount: ele.productID.productDiscount,
         productImage: ele.productID.productImage[0],
-        status: "Confirmed"
+        status: "Confirmed",
       });
 
       totalQuantity += ele.productCount;
-    };
+    }
 
     const userDetails = await userSchema.findById(req.session.user);
 
@@ -170,12 +216,27 @@ const orderPlacement = async (req, res) => {
         state: userDetails.address[addressIndex].state,
         city: userDetails.address[addressIndex].city,
         house: userDetails.address[addressIndex].house,
-        area: userDetails.address[addressIndex].area
+        area: userDetails.address[addressIndex].area,
       },
       paymentMethod: paymentMethod[paymentMode],
     });
 
     await newOrder.save();
+
+    if (paymentMode === 2) {
+      if (wallet && wallet.balance >= cart.payableAmount) {
+        wallet.balance -= cart.payableAmount;
+        wallet.transactions.push({
+          orderID: newOrder._id,
+          reason: "Order Payment",
+          date: new Date(),
+          amount: order.totalPrice,
+          type: "Debit",
+        });
+
+        await wallet.save();
+      }
+    }
 
     /* ------- updating actual product quantity by deducting product count ------ */
     for (const ele of cart.items) {
@@ -194,9 +255,11 @@ const orderPlacement = async (req, res) => {
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    console.log('Error while placing order', err);
+    console.log("Error while placing order", err);
 
-    return res.status(500).json({ error: `Error while placing order: ${err.message}` });
+    return res
+      .status(500)
+      .json({ error: `Error while placing order: ${err.message}` });
   }
 };
 /* -------------------------------------------------------------------------- */
@@ -207,15 +270,21 @@ const paymentRenderer = async (req, res) => {
     const cart = await cartSchema
       .findOne({ userID: req.session.user })
       .populate({
-        path: 'items.productID',
+        path: "items.productID",
         populate: {
-          path: 'productCategory'
-        }
+          path: "productCategory",
+        },
       });
 
     for (const product of cart.items) {
-      if (product.productID.productQuantity === 0 || product.productID.productQuantity < product.productCount) {
-        req.flash('alert', { message: 'One or more products is not available. Try again!', color: 'bg-danger' });
+      if (
+        product.productID.productQuantity === 0 ||
+        product.productID.productQuantity < product.productCount
+      ) {
+        req.flash("alert", {
+          message: "One or more products is not available. Try again!",
+          color: "bg-danger",
+        });
 
         return res.status(400).json({ failed: true });
       }
@@ -223,31 +292,38 @@ const paymentRenderer = async (req, res) => {
 
     const payableAmount = cart.payableAmount;
 
-    const instance = new Razorpay({ key_id: process.env.RAZORPAY_KEY_ID, key_secret: process.env.RAZORPAY_KEY_SECRET });
+    const instance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
 
     /* ------------------------ creates an order instance ----------------------- */
-    instance.orders.create({
-      amount: payableAmount * 100,
-      currency: "INR",
-      receipt: "receipt#1",
-    },
+    instance.orders.create(
+      {
+        amount: payableAmount * 100,
+        currency: "INR",
+        receipt: "receipt#1",
+      },
       (err, order) => {
         if (err) {
-          console.error('Failed to create order', err);
+          console.error("Failed to create order", err);
 
-          return res.status(500).json({ error: `Failed to create order: ${err.message}` });
+          return res
+            .status(500)
+            .json({ error: `Failed to create order: ${err.message}` });
         }
 
         return res.status(201).json({
-          order
+          order,
         });
-      })
+      }
+    );
   } catch (err) {
-    console.error('Error while rendering payment', err);
+    console.error("Error while rendering payment", err);
 
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: "Internal server error" });
   }
-}
+};
 /* -------------------------------------------------------------------------- */
 
 /* ---------------- controller which handles failed payments ---------------- */
@@ -256,7 +332,9 @@ const failedPayment = async (req, res) => {
     const products = [];
     let totalQuantity = 0;
 
-    const cart = await cartSchema.findOne({ userID: req.session.user }).populate('items.productID');
+    const cart = await cartSchema
+      .findOne({ userID: req.session.user })
+      .populate("items.productID");
 
     cart.items.forEach((ele) => {
       products.push({
@@ -266,22 +344,23 @@ const failedPayment = async (req, res) => {
         quantity: ele.productCount,
         price: ele.productID.productPrice,
         discount: ele.productID.productDiscount,
-        productImage: ele.productID.productImage[0]
-      })
+        productImage: ele.productID.productImage[0],
+      });
 
       totalQuantity += ele.productCount;
-    })
+    });
 
     /* -------------------------- creating a new order -------------------------- */
     const newOrder = new orderSchema({
       userID: req.session.user,
       products,
       totalQuantity,
-      totalPrice: cart.payableAmount < 550 ? cart.payableAmount - 50 : cart.payableAmount,
-      paymentMethod: 'Razorpay',
-      orderStatus: 'Pending',
-      couponDiscount: cart.couponDiscount
-    })
+      totalPrice:
+        cart.payableAmount < 550 ? cart.payableAmount - 50 : cart.payableAmount,
+      paymentMethod: "Razorpay",
+      orderStatus: "Pending",
+      couponDiscount: cart.couponDiscount,
+    });
 
     /* ---------------------------- saving the new order ---------------------------- */
     await newOrder.save();
@@ -289,13 +368,16 @@ const failedPayment = async (req, res) => {
     /* --------------- deleting user cart after saving the order --------------- */
     await cartSchema.deleteOne({ userID: req.session.user });
 
-    req.flash('alert', { message: 'Payment could not be processed. Try again!', color: 'bg-danger' });
+    req.flash("alert", {
+      message: "Payment could not be processed. Try again!",
+      color: "bg-danger",
+    });
 
-    res.redirect('/orders');
+    res.redirect("/orders");
   } catch (err) {
-    console.log('Error while handling failed payment', err);
+    console.log("Error while handling failed payment", err);
   }
-}
+};
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------ will proceed with payment ----------------------- */
@@ -315,11 +397,11 @@ const proceedPayment = async (req, res) => {
       items.push({
         productID: product.productID,
         productCount: product.quantity,
-        productPrice: product.price
-      })
-      totalPrice += product.price * product.quantity
-      totalQuantity += product.quantity
-    })
+        productPrice: product.price,
+      });
+      totalPrice += product.price * product.quantity;
+      totalQuantity += product.quantity;
+    });
 
     if (cart) {
       /* ------------------------- deleting the user cart ------------------------- */
@@ -331,8 +413,8 @@ const proceedPayment = async (req, res) => {
         items: items,
         payableAmount: order.totalPrice,
         totalPrice: totalPrice,
-        couponDiscount: 0
-      })
+        couponDiscount: 0,
+      });
 
       /* --------------------------- saving the new cart -------------------------- */
       await newCart.save();
@@ -340,26 +422,26 @@ const proceedPayment = async (req, res) => {
       /* --------------------------- deleting the order --------------------------- */
       await orderSchema.findByIdAndDelete(orderID);
 
-      return res.status(200).json({ success: true, url: '/proceed-checkout' });
+      return res.status(200).json({ success: true, url: "/proceed-checkout" });
     } else {
       const newCart = new cartSchema({
         userID: req.session.user,
         items: items,
         payableAmount: order.totalPrice,
         totalPrice: totalPrice,
-        couponDiscount: 0
-      })
+        couponDiscount: 0,
+      });
 
       await newCart.save();
 
       await orderSchema.findByIdAndDelete(orderID);
 
-      return res.status(200).json({ success: true, url: '/proceed-checkout' });
+      return res.status(200).json({ success: true, url: "/proceed-checkout" });
     }
   } catch (err) {
-    console.log('Error while proceeding with failed payment', err);
+    console.log("Error while proceeding with failed payment", err);
   }
-}
+};
 
 module.exports = {
   orderConfirmation,
@@ -367,5 +449,5 @@ module.exports = {
   orderPlacement,
   paymentRenderer,
   failedPayment,
-  proceedPayment
+  proceedPayment,
 };

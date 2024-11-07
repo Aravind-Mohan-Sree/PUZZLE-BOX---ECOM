@@ -112,6 +112,7 @@
                     <div class="form-check">
                       <input class="form-check-input me-3" type="radio" value="2" name="paymentMethod" id="flexRadioDefault3" />
                       <label class="form-check-label" for="flexRadioDefault3"> Wallet </label>
+                      <span class="badge badge-secondary ms-3">₹ <%= wallet?.balance || '0' %> available</span>
                     </div>
                   </div>
                 </div>
@@ -671,7 +672,7 @@
 
       if (ele.checked) {
         paymentMode = ele.value;
-      }
+      }      
     });
 
     // proceed with order placement if user has selected a valid address and payment method
@@ -707,7 +708,7 @@
           const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
 
           fetch(url, {
-              method: 'POST',
+              method: 'POST', 
               headers: {
                 'Content-Type': 'application/json'
               },
@@ -814,6 +815,49 @@
                   container: 'swal-css'
                 }
               })
+            })
+        }
+
+        // using fetch to place order through cash on delivery
+        if (parseInt(paymentMode) === 2) {
+          const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+
+          fetch(url, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            }).then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                window.location.href = '/order-confirmation';
+              }
+
+              if (data.insufficientFunds) {
+                Swal.fire({
+                  title: 'Insufficient funds',
+                  text: 'Please choose another payment method',
+                  icon: 'warning',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                });
+              }
+
+              if (data.error) {
+                Swal.fire({
+                  title: 'Error!',
+                  text: data.error,
+                  icon: 'error',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                })
+              }
             })
         }
       }
