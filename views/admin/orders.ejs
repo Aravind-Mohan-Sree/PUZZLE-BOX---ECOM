@@ -47,10 +47,23 @@
       <tbody class="datatable-body">
         <% if(orders.length != 0) { %>
         <% orders.forEach((ele, index) => { %>
+          <%function scrambleString(str) { %>
+          <% let shufflePattern = [12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10, 16, 21, 20, 23]; %>
+          <% let scrambledArray = []; %>
+
+          <% shufflePattern.forEach((newIndex, i) => { %>
+          <% scrambledArray[i] = str[newIndex]; %>
+          <% }) %>
+
+          <% scrambledArray.splice(20); %>
+          <% return scrambledArray.join(''); %>
+          <% } %>
+
+          <% let orderID = scrambleString(ele.id); %>
         <tr>
           <td class="" data-mdb-field="field_0" false="">
             <p class="fw-bold mb-1 name">
-              <%= ele._id %>
+              <%= orderID %>
             </p>
           </td>
           <td class="" data-mdb-field="field_1" false="">

@@ -83,9 +83,9 @@ const editOrderStatus = async (req, res) => {
             {
               orderID,
               reason: "Return Refund",
-              date: new Date(),
               amount: order.totalPrice,
               type: "credit",
+              runningBalance: order.totalPrice,
             },
           ],
         });
@@ -94,9 +94,9 @@ const editOrderStatus = async (req, res) => {
         wallet.transactions.push({
           orderID,
           reason: "Return Refund",
-          date: new Date(),
           amount: order.totalPrice,
           type: "credit",
+          runningBalance: wallet.balance + order.totalPrice,
         });
 
         await wallet.save();

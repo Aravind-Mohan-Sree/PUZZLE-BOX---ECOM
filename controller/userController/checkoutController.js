@@ -229,9 +229,9 @@ const orderPlacement = async (req, res) => {
         wallet.transactions.push({
           orderID: newOrder._id,
           reason: "Order Payment",
-          date: new Date(),
           amount: order.totalPrice,
           type: "Debit",
+          runningBalance: wallet.balance - order.totalPrice,
         });
 
         await wallet.save();

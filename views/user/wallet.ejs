@@ -47,50 +47,55 @@
                           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Balance</th>
                         </tr>
                       </thead>
-                      <tbody class="datatable-body">
-                        <% wallet?.orderID.forEach(ele=> { %>
+                      <tbody class="datatable-body">                        
+                        <% wallet?.transactions.forEach(ele=> { %>
+                          <%function scrambleString(str) { %>
+                          <% let shufflePattern = [12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10, 16, 21, 20, 23]; %>
+                          <% let scrambledArray = []; %>
+
+                          <% shufflePattern.forEach((newIndex, i) => { %>
+                          <% scrambledArray[i] = str[newIndex]; %>
+                          <% }) %>
+
+                          <% scrambledArray.splice(20); %>
+                          <% return scrambledArray.join(''); %>
+                          <% } %>
+
+                          <% let orderID = scrambleString(ele.orderID.id); %>
                         <tr>
                           <td class="" data-mdb-field="field_0" false="">
                             <p class="fw-bold mb-1 name">
-                              <%= ele.order._id %>
+                              <%= orderID %>
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_1" false="">
                             <p class="fw-normal mb-1">
-                              <%= new Date(ele.order.createdAt).toDateString() %>
+                              <%= new Date(ele.orderID.createdAt).toDateString() %>
                             </p>
                             <p class="fw-normal mb-0">
-                              <%= new Date(ele.order.createdAt).toTimeString().slice(0, 8) %>
+                              <%= new Date(ele.orderID.createdAt).toTimeString().slice(0, 8) %>
+                            </p>
+                          </td>
+                          <td class="" data-mdb-field="field_0" false="">
+                            <p class="mb-1">
+                              <%= ele.reason %>
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_2" false="">
                             <p class="fw-normal mb-1 updated-date">
-                              <%= new Date(category.updatedAt).toDateString() %>
+                              <%= new Date(ele.createdAt).toDateString() %>
                             </p>
                             <p class="fw-normal mb-0 updated-time">
-                              <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+                              <%= new Date(ele.createdAt).toTimeString().slice(0, 8) %>
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_3" false="">
-                            <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-                              <%= category.isActive ? 'Active' : 'Inactive' %>
-                            </span>
+                            <p><%= ele.amount %> <span><%= ele.type === 'credit' ? 'Cr' : 'Dr' %></span></p>
                           </td>
-                          <td class="" data-mdb-field="field_4" false="">
-                            <!-- active/inactive button -->
-                            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                              <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                            </button>
-
-                            <!-- edit button -->
-                            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                              <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                            </button>
-
-                            <!-- delete button -->
-                            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                              <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-                            </button>
+                          <td class="" data-mdb-field="field_0" false="">
+                            <p class="mb-1">
+                              <%= ele.runningBalance %>
+                            </p>
                           </td>
                         </tr>
                         <% }) %>
@@ -109,7 +114,7 @@
               <div class="text-white mt-5 me-4 fst-italic">
                 <h4>MY WALLET</h4>
                 <h4>Balance:</h4>
-                <h3 class="text-decoration-underline">₹ 3999</h3>
+                <h3 class="text-decoration-underline">₹ <span><%= wallet?.balance || '0' %></span></h3>
               </div>
             </div>
           </div>

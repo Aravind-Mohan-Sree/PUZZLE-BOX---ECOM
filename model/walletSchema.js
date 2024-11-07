@@ -10,10 +10,6 @@ const transaction = new mongoose.Schema(
       type: String,
       enum: ["Order Payment", "Return Refund", "Cancellation Refund"],
     },
-    date: {
-      type: Date,
-      required: true,
-    },
     amount: {
       type: Number,
       required: true,
@@ -21,6 +17,10 @@ const transaction = new mongoose.Schema(
     type: {
       type: String,
       enum: ["credit", "debit"],
+    },
+    runningBalance: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true, _id: false }

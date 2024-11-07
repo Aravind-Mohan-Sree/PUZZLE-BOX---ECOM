@@ -6,6 +6,7 @@ const getWallet = async (req, res) => {
   try {
     const wallet = await walletSchema
       .findOne({ userID: req.session.user })
+      .sort({ createdAt: -1 })
       .populate("transactions.orderID");
 
     /* ---------- querying active categories for including in the navbar --------- */
