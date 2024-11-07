@@ -9,6 +9,7 @@ const cartController = require('../controller/userController/cartController');
 const wishlistController = require('../controller/userController/wishlistController');
 const checkoutController = require('../controller/userController/checkoutController');
 const orderController = require('../controller/userController/orderController');
+const walletController = require("../controller/userController/walletController");
 const updateNavbarController = require('../controller/userController/updateNavbarController');
 const testimonialController = require('../controller/userController/testimonialController');
 const checkUserSession = require('../middleware/userSession');
