@@ -672,7 +672,7 @@
 
       if (ele.checked) {
         paymentMode = ele.value;
-      }      
+      }
     });
 
     // proceed with order placement if user has selected a valid address and payment method
@@ -708,7 +708,7 @@
           const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
 
           fetch(url, {
-              method: 'POST', 
+              method: 'POST',
               headers: {
                 'Content-Type': 'application/json'
               },
@@ -716,6 +716,19 @@
             .then(data => {
               if (data.success) {
                 window.location.href = '/order-confirmation';
+              }
+
+              if (data.noCOD) {
+                Swal.fire({
+                  title: 'Not Applicable',
+                  text: 'Please choose another payment method',
+                  icon: 'warning',
+                  confirmButtonText: 'OK',
+                  allowOutsideClick: false,
+                  customClass: {
+                    container: 'swal-css'
+                  }
+                });
               }
 
               if (data.failed) {

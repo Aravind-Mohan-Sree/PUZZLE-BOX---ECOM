@@ -78,10 +78,6 @@ const schema = new mongoose.Schema({
     default: 0
   },
 
-  couponID: {
-    type: String,
-  },
-
   paymentMethod: {
     type: String,
     required: true,

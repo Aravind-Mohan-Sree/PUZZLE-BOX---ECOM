@@ -158,9 +158,13 @@ const orderPlacement = async (req, res) => {
       .findOne({ userID: req.session.user })
       .populate("transactions.orderID");
 
-    const paymentMethod = ["Cash on delivery", "Razorpay", 'Wallet'];
+    const paymentMethod = ["Cash on delivery", "Razorpay", "Wallet"];
     const products = [];
     let totalQuantity = 0;
+
+    if (paymentMode === 0 && cart.payableAmount >= 1000) {
+      return res.status(404).json({ noCOD: true });
+    }
 
     if (paymentMode === 1) {
       const razorpay_payment_id = req.body.razorpay_payment_id;
@@ -170,7 +174,10 @@ const orderPlacement = async (req, res) => {
       paymentId = razorpay_payment_id;
     }
 
-    if (paymentMode === 2 && (!wallet || wallet?.balance < cart.payableAmount)) {
+    if (
+      paymentMode === 2 &&
+      (!wallet || wallet?.balance < cart.payableAmount)
+    ) {
       return res.status(404).json({ insufficientFunds: true });
     }
 
@@ -218,6 +225,7 @@ const orderPlacement = async (req, res) => {
         house: userDetails.address[addressIndex].house,
         area: userDetails.address[addressIndex].area,
       },
+      couponDiscount: cart.coupon?.discount || 0,
       paymentMethod: paymentMethod[paymentMode],
     });
 

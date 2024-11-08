@@ -75,28 +75,57 @@ const editOrderStatus = async (req, res) => {
         product.productQuantity += order.products[productIndex].quantity;
       }
 
+      let orderTotalPrice = 0;
+      let refundableAmount = 0;
+      let productShare = 0; // returning product share for calculating coupon discount
+      let couponDiscount = 0; // share of coupon discount for the returning item, if any
+
+      order.products.forEach((ele) => {
+        orderTotalPrice += ele.productID.productDiscountedPrice * ele.quantity;
+      });
+
+      productShare =
+        (order.products[productIndex].productID.productDiscountedPrice *
+          order.products[productIndex].quantity) /
+        orderTotalPrice;
+
+      refundableAmount =
+        order.products[productIndex].productID.productDiscountedPrice *
+        order.products[productIndex].quantity;
+
+      if (order.couponDiscount > 0) {
+        orderTotalPrice -= order.couponDiscount;
+
+        couponDiscount = order.couponDiscount * productShare;
+        refundableAmount -= Math.round(couponDiscount);
+      }
+
+      if (orderTotalPrice < 500) {
+        refundableAmount += 40 * order.products[productIndex].quantity;
+      }
+
       if (!wallet && statusEnum[orderStatus] === "Returned") {
         await walletSchema.create({
           userID: order.userID,
-          balance: order.totalPrice,
+          balance: refundableAmount,
           transactions: [
             {
               orderID,
               reason: "Return Refund",
-              amount: order.totalPrice,
+              amount: refundableAmount,
               type: "credit",
-              runningBalance: order.totalPrice,
+              runningBalance: refundableAmount,
             },
           ],
         });
       } else if (statusEnum[orderStatus] === "Returned") {
-        wallet.balance += order.totalPrice;
+        wallet.balance += refundableAmount;
         wallet.transactions.push({
           orderID,
           reason: "Return Refund",
-          amount: order.totalPrice,
+          amount: refundableAmount,
           type: "credit",
-          runningBalance: wallet.balance + order.totalPrice,
+          runningBalance: wallet.balance + refundableAmount,
         });
 
         await wallet.save();
