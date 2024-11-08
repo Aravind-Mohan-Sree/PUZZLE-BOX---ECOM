@@ -1,6 +1,7 @@
 const categorySchema = require("../../model/categorySchema");
 const productSchema = require("../../model/productSchema");
 const orderSchema = require("../../model/orderSchema");
+const walletSchema = require("../../model/walletSchema");
 const reviewSchema = require("../../model/reviewSchema");
 
 /* ----------------------- will render the order page ----------------------- */
@@ -60,12 +61,72 @@ const cancelOrderPost = async (req, res) => {
     const cancelReason = req.query.cancelReason;
 
     const order = await orderSchema.findById(orderID).populate('products.productID');
+    const wallet = await walletSchema.findOne({ userID: order.userID });
     const product = await productSchema.findById(order.products[productIndex].productID);
 
     if (order.products[productIndex].status !== 'Delivered') {
       order.products[productIndex].status = 'Cancelled';
       order.products[productIndex].reasonForCancel = cancelReason;
       product.productQuantity += order.products[productIndex].quantity;
+
+      if (order.paymentMethod === 'Razorpay' || order.paymentMethod === 'Wallet') {
+        let orderTotalPrice = 0;
+        let refundableAmount = 0;
+        let productShare = 0; // returning product share for calculating coupon discount
+        let couponDiscount = 0; // share of coupon discount for the returning item, if any
+
+        order.products.forEach((ele) => {
+          orderTotalPrice +=
+            ele.productID.productDiscountedPrice * ele.quantity;
+        });
+
+        productShare =
+          (order.products[productIndex].productID.productDiscountedPrice *
+            order.products[productIndex].quantity) /
+          orderTotalPrice;
+
+        refundableAmount =
+          order.products[productIndex].productID.productDiscountedPrice *
+          order.products[productIndex].quantity;
+
+        if (order.couponDiscount > 0) {
+          orderTotalPrice -= order.couponDiscount;
+
+          couponDiscount = order.couponDiscount * productShare;
+          refundableAmount -= Math.round(couponDiscount);
+        }
+
+        if (orderTotalPrice < 500) {
+          refundableAmount += 40 * order.products[productIndex].quantity;
+        }
+
+        if (!wallet) {
+          await walletSchema.create({
+            userID: order.userID,
+            balance: refundableAmount,
+            transactions: [
+              {
+                orderID,
+                reason: "Cancellation Refund",
+                amount: refundableAmount,
+                type: "credit",
+                runningBalance: refundableAmount,
+              },
+            ],
+          });
+        } else {
+          wallet.balance += refundableAmount;
+          wallet.transactions.push({
+            orderID,
+            reason: "Cancellation Refund",
+            amount: refundableAmount,
+            type: "credit",
+            runningBalance: wallet.balance,
+          });
+
+          await wallet.save();
+        }
+      }
 
       await order.save();
       await product.save();

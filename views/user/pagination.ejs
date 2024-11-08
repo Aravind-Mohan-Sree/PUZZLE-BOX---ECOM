@@ -1,42 +1,58 @@
 <!-- ----------------------------- pagination ------------------------------ -->
 <nav aria-label="Page navigation example" class="mt-5">
   <ul class="pagination justify-content-center">
-    <li class="page-item">
+    <!-- Previous Button -->
+    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
       <a class="page-link" href="#" onclick="previousPage('<%= parseInt(currentPage) %>')">Previous</a>
     </li>
-    <% for(let i = 1; i <= pageNumber; i++) { %>
-    <li class="page-item">
+
+    <!-- Dynamic Page Numbers -->
+    <% 
+      const current = parseInt(currentPage); 
+      const windowSize = 5; // Number of pages to show at a time
+      const halfWindow = Math.floor(windowSize / 2);
+      
+      // Calculate start and end based on the current page position
+      let startPage = Math.max(1, current - halfWindow);
+      let endPage = startPage + windowSize - 1;
+
+      // Adjust the window if it exceeds the total page number
+      if (endPage > pageNumber) {
+          endPage = pageNumber;
+          startPage = Math.max(1, endPage - windowSize + 1);
+      }
+    %>
+
+    <% for (let i = startPage; i <= endPage; i++) { %>
+    <li class="page-item <%= i === current ? 'active' : '' %>">
       <a class="page-link" href="?page=<%= i %>&searchTerm=<%= typeof search !== 'undefined' ? search : '' %>&minPrice=<%= typeof minPrice !== 'undefined' ? minPrice : '' %>&maxPrice=<%= typeof maxPrice !== 'undefined' ? maxPrice : '' %>&productCategory=<%= typeof selectedCategory !== 'undefined' ? selectedCategory : '' %>&sort=<%= typeof sort !== 'undefined' ? sort : '' %>&productRating=<%= typeof productRating !== 'undefined' ? productRating : '' %>&featured=<%= typeof featured !== 'undefined' ? featured : '' %>&inStock=<%= typeof inStock !== 'undefined' ? inStock : '' %>&outOfStock=<%= typeof outOfStock !== 'undefined' ? outOfStock : '' %>"><%= i %></a>
     </li>
     <% } %>
-    <li class="page-item">
+
+    <!-- Next Button -->
+    <li class="page-item <%= currentPage === pageNumber ? 'disabled' : '' %>">
       <a class="page-link" href="#" onclick="nextPage('<%= parseInt(currentPage) %>','<%= pageNumber %>')">Next</a>
     </li>
   </ul>
 </nav>
 <!-- ----------------------------------------------------------------------- -->
 
-
-<!-- ----------------------------- javaScript ------------------------------ -->
+<!-- ----------------------------- JavaScript ------------------------------ -->
 <script>
-  // next page
+  // Go to the next page
   function nextPage(currentPage, totalPage) {
     if (Number(currentPage) < Number(totalPage)) {
       const params = new URLSearchParams(window.location.search);
-
       params.set('page', Number(currentPage) + 1);
-
       window.location.href = `?${params.toString()}`;
     }
   }
 
-  // previous page
+  // Go to the previous page
   function previousPage(currentPage) {
-    if ((Number(currentPage) - 1) != 0) {
+    if ((Number(currentPage) - 1) > 0) {
       const params = new URLSearchParams(window.location.search);
-
       params.set('page', Number(currentPage) - 1);
-      
       window.location.href = `?${params.toString()}`;
     }
   }
