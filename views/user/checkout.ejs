@@ -90,6 +90,7 @@
                 <% cart.items.forEach((item, index) => { %>
                 <% totalProductQuantity1 += item.productCount %>
                 <% payableAmount1 += item.productID.productDiscountedPrice * item.productCount %>
+                <% payableAmount1 = cart.coupon ? payableAmount1 - cart.coupon?.discount : payableAmount1 %>
                 <% }) %>
                 <% } %>
                 <% if (payableAmount1 < 500) { %>
@@ -136,6 +137,7 @@
               <% cart.items.forEach((item, index, array) => { %>
               <% totalProductQuantity += item.productCount %>
               <% payableAmount += item.productID.productDiscountedPrice * item.productCount %>
+              <% payableAmount = cart.coupon ? payableAmount - cart.coupon?.discount : payableAmount %>
 
               <!-- Single item -->
               <div class="row mb-4 mt-4">
@@ -718,7 +720,7 @@
                 window.location.href = '/order-confirmation';
               }
 
-              if (data.noCOD) {
+              if (data.CODNotAvailable) {
                 Swal.fire({
                   title: 'Not Applicable',
                   text: 'Please choose another payment method',
@@ -844,6 +846,10 @@
             .then(data => {
               if (data.success) {
                 window.location.href = '/order-confirmation';
+              }
+
+              if (data.failed) {
+                window.location.href = '/cart';
               }
 
               if (data.insufficientFunds) {

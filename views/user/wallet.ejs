@@ -43,41 +43,41 @@
                           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Ordered Date</th>
                           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Reason</th>
                           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Transacted On</th>
-                          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Amount DR/CR</th>
+                          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Amount Cr/Dr</th>
                           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Balance</th>
                         </tr>
                       </thead>
-                      <tbody class="datatable-body">                        
-                        <% wallet?.transactions.forEach(ele=> { %>
-                          <%function scrambleString(str) { %>
-                          <% let shufflePattern = [12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10, 16, 21, 20, 23]; %>
-                          <% let scrambledArray = []; %>
+                      <tbody class="datatable-body">
+                        <% wallet[0]?.transactions.forEach(ele=> { %>
+                        <%function scrambleString(str) { %>
+                        <% let shufflePattern = [12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10, 16, 21, 20, 23]; %>
+                        <% let scrambledArray = []; %>
 
-                          <% shufflePattern.forEach((newIndex, i) => { %>
-                          <% scrambledArray[i] = str[newIndex]; %>
-                          <% }) %>
+                        <% shufflePattern.forEach((newIndex, i) => { %>
+                        <% scrambledArray[i] = str[newIndex]; %>
+                        <% }) %>
 
-                          <% scrambledArray.splice(20); %>
-                          <% return scrambledArray.join(''); %>
-                          <% } %>
+                        <% scrambledArray.splice(20); %>
+                        <% return scrambledArray.join(''); %>
+                        <% } %>
 
-                          <% let orderID = scrambleString(ele.orderID.id); %>
+                        <% let orderID = scrambleString(ele.orderDetails._id.toString()); %>
                         <tr>
                           <td class="" data-mdb-field="field_0" false="">
-                            <p class="fw-bold mb-1 name">
+                            <p class="fw-normal mb-1 name">
                               <%= orderID %>
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_1" false="">
                             <p class="fw-normal mb-1">
-                              <%= new Date(ele.orderID.createdAt).toDateString() %>
+                              <%= new Date(ele.orderDetails.createdAt).toDateString() %>
                             </p>
                             <p class="fw-normal mb-0">
-                              <%= new Date(ele.orderID.createdAt).toTimeString().slice(0, 8) %>
+                              <%= new Date(ele.orderDetails.createdAt).toTimeString().slice(0, 8) %>
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_0" false="">
-                            <p class="mb-1">
+                            <p class="mb-1 fw-normal">
                               <%= ele.reason %>
                             </p>
                           </td>
@@ -90,11 +90,11 @@
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_3" false="">
-                            <p><%= ele.amount %> <span><%= ele.type === 'credit' ? 'Cr' : 'Dr' %></span></p>
+                            <p class="fw-normal">₹ <%= ele.amount.toLocaleString() %> <span><%= ele.type === 'credit' ? 'Cr' : 'Dr' %></span></p>
                           </td>
                           <td class="" data-mdb-field="field_0" false="">
-                            <p class="mb-1">
-                              <%= ele.runningBalance %>
+                            <p class="mb-1 fw-normal <%= ele.type === 'credit' ? 'text-success' : 'text-danger' %>">
+                              ₹ <%= ele.runningBalance.toLocaleString() %>
                             </p>
                           </td>
                         </tr>
@@ -114,7 +114,7 @@
               <div class="text-white mt-5 me-4 fst-italic">
                 <h4>MY WALLET</h4>
                 <h4>Balance:</h4>
-                <h3 class="text-decoration-underline">₹ <span><%= wallet?.balance || '0' %></span></h3>
+                <h3 class="text-decoration-underline">₹ <span><%= wallet[0]?.balance.toLocaleString() || '0' %></span></h3>
               </div>
             </div>
           </div>
@@ -132,4 +132,12 @@
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+
+  })
+</script>
 <!-- ----------------------------------------------------------------------- -->

@@ -162,8 +162,12 @@ const orderPlacement = async (req, res) => {
     const products = [];
     let totalQuantity = 0;
 
+    if (cart?.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
+      return res.status(404).json({ failed: true });
+    }
+
     if (paymentMode === 0 && cart.payableAmount >= 1000) {
-      return res.status(404).json({ noCOD: true });
+      return res.status(404).json({ CODNotAvailable: true });
     }
 
     if (paymentMode === 1) {
@@ -232,18 +236,16 @@ const orderPlacement = async (req, res) => {
     await newOrder.save();
 
     if (paymentMode === 2) {
-      if (wallet && wallet.balance >= cart.payableAmount) {
-        wallet.balance -= cart.payableAmount;
-        wallet.transactions.push({
-          orderID: newOrder._id,
-          reason: "Order Payment",
-          amount: order.totalPrice,
-          type: "Debit",
-          runningBalance: wallet.balance - order.totalPrice,
-        });
+      wallet.balance -= newOrder.totalPrice;
+      wallet.transactions.push({
+        orderID: newOrder._id,
+        reason: "Order Payment",
+        amount: newOrder.totalPrice,
+        type: "debit",
+        runningBalance: wallet.balance,
+      });
 
-        await wallet.save();
-      }
+      await wallet.save();
     }
 
     /* ------- updating actual product quantity by deducting product count ------ */
@@ -283,6 +285,10 @@ const paymentRenderer = async (req, res) => {
           path: "productCategory",
         },
       });
+
+    if (cart?.coupon && new Date() >= new Date(cart.coupon.expiryDate)) {
+      return res.status(404).json({ failed: true });
+    }
 
     for (const product of cart.items) {
       if (

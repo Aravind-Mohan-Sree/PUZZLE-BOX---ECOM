@@ -125,7 +125,7 @@ const editOrderStatus = async (req, res) => {
           reason: "Return Refund",
           amount: refundableAmount,
           type: "credit",
-          runningBalance: wallet.balance + refundableAmount,
+          runningBalance: wallet.balance,
         });
 
         await wallet.save();

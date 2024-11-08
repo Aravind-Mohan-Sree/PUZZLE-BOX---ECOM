@@ -4,10 +4,40 @@ const walletSchema = require("../../model/walletSchema");
 
 const getWallet = async (req, res) => {
   try {
-    const wallet = await walletSchema
-      .findOne({ userID: req.session.user })
-      .sort({ createdAt: -1 })
-      .populate("transactions.orderID");
+    const wallet = await walletSchema.aggregate([
+      {
+        $match: { userID: req.session.user },
+      },
+      {
+        $addFields: {
+          transactions: {
+            $sortArray: { input: "$transactions", sortBy: { createdAt: -1 } },
+          },
+        },
+      },
+      {
+        $unwind: "$transactions",
+      },
+      {
+        $lookup: {
+          from: "orders",
+          localField: "transactions.orderID",
+          foreignField: "_id",
+          as: "transactions.orderDetails",
+        },
+      },
+      {
+        $unwind: "$transactions.orderDetails",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          userID: { $first: "$userID" },
+          balance: { $first: "$balance" },
+          transactions: { $push: "$transactions" },
+        },
+      },
+    ]);
 
     /* ---------- querying active categories for including in the navbar --------- */
     const activeCategories = await productSchema
