@@ -82,9 +82,9 @@ user.get('/checkout', checkUserSession, checkoutController.checkout);
 user.post('/payment-renderer', checkUserSession, checkoutController.paymentRenderer);
 user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
-// user.get('/pending-order',checkUserSession,checkoutController.pendingOrderPage)
-// user.get('/failed-payment',checkUserSession,checkoutController.failedPayment)
-// user.post('/proceed-payment/:orderID',checkUserSession,checkoutController.proceedPayment)
+user.post('/pending-order', checkUserSession, checkoutController.addPendingOrder);
+user.get('/payment-failed', checkUserSession, checkoutController.getPaymentFailed);
+user.get('/pending-order-confirmation', checkUserSession, checkoutController.pendingOrderConfirmation);
 
 // will handle the user order route
 user.get('/orders', checkUserSession, orderController.order);

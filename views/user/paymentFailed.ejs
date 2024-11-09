@@ -1,0 +1,44 @@
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  .payment-failed-container {
+    background-image: url('/image/bg.webp');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
+<%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------------- payment failed container -------------------------- -->
+<div class="payment-failed-container d-flex vh-100 justify-content-center align-items-center">
+  <!-- ----------------------- payment failed section ----------------------- -->
+  <section>
+    <div class="container px-4">
+      <div class="row">
+        <div class="col rounded-9 bg-opacity-25 bg-light bg-white p-5 text-dark">
+          <h1>Order Payment Failed!</h1>
+          <p>You can retry payment in orders.</p>
+          <a href="/orders">
+            <button class="btn btn-dark d-block mx-auto mt-4">go to orders</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<div class="mb-5">
+  <!-- --------------------------- testimonials included --------------------------- -->
+  <%- include('testimonial') %>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->

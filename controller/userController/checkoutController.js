@@ -38,6 +38,38 @@ const orderConfirmation = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* ------------------- will render the payment failure page ------------------- */
+const getPaymentFailed = async (req, res) => {
+  try {
+    /* ---------- querying active categories for including in the navbar --------- */
+    const activeCategories = await productSchema
+      .find({
+        isActive: true,
+        productCategory: {
+          $in: await categorySchema.find({ isActive: true }).select("_id"),
+        },
+      })
+      .populate("productCategory");
+
+    const activeCategoryNames = Array.from(
+      new Set(
+        activeCategories.map((product) => product.productCategory.categoryName)
+      )
+    ).sort((a, b) => a.localeCompare(b));
+
+    res.render("user/paymentFailed", {
+      title: "Payment Failed",
+      alert: req.flash("alert"),
+      user: req.session.user,
+      activeCategoryNames,
+      content: "",
+    });
+  } catch (err) {
+    console.log("Error while rendering payment failure page", err);
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 /* ---------------------- will render the checkout page --------------------- */
 const checkout = async (req, res) => {
   try {
@@ -170,19 +202,11 @@ const orderPlacement = async (req, res) => {
       return res.status(404).json({ CODNotAvailable: true });
     }
 
-    if (paymentMode === 1) {
-      const razorpay_payment_id = req.body.razorpay_payment_id;
-      const razorpay_order_id = req.body.razorpay_order_id;
-      const razorpay_signature = req.body.razorpay_signature;
-
-      paymentId = razorpay_payment_id;
-    }
-
     if (
       paymentMode === 2 &&
       (!wallet || wallet?.balance < cart.payableAmount)
     ) {
-      return res.status(404).json({ insufficientFunds: true });
+      return res.status(404).json({ insufficientBalance: true });
     }
 
     for (const ele of cart.items) {
@@ -231,6 +255,9 @@ const orderPlacement = async (req, res) => {
       },
       couponDiscount: cart.coupon?.discount || 0,
       paymentMethod: paymentMethod[paymentMode],
+      ...(paymentMode === 1 && {
+        paymentId: req.body.razorpay_payment_id,
+      }),
     });
 
     await newOrder.save();
@@ -341,7 +368,7 @@ const paymentRenderer = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 
 /* ---------------- controller which handles failed payments ---------------- */
-const failedPayment = async (req, res) => {
+const addPendingOrder = async (req, res) => {
   try {
     const products = [];
     let totalQuantity = 0;
@@ -395,7 +422,7 @@ const failedPayment = async (req, res) => {
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------ will proceed with payment ----------------------- */
-const proceedPayment = async (req, res) => {
+const pendingOrderConfirmation = async (req, res) => {
   try {
     const orderID = req.query.orderID;
 
@@ -459,9 +486,10 @@ const proceedPayment = async (req, res) => {
 
 module.exports = {
   orderConfirmation,
+  getPaymentFailed,
   checkout,
   orderPlacement,
   paymentRenderer,
-  failedPayment,
-  proceedPayment,
+  addPendingOrder,
+  pendingOrderConfirmation,
 };
