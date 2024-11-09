@@ -254,9 +254,9 @@
             </div>
             <div class="card-body p-4 pb-0">
               <% ele.products.forEach((product,index,array)=> { %>
-              <% totalPriceWithoutDiscount += product.price * product.quantity %>              
-              <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">                
-                <div class="flex-fill product-detail">                  
+              <% totalPriceWithoutDiscount += product.price * product.quantity %>
+              <div class="d-flex flex-row mb-3 mb-lg-3 pb-2">
+                <div class="flex-fill product-detail">
                   <a href="/product-details?productId=<%= product.productID._id %>&productCategory=<%= product.productID.productCategory.categoryName %>" class="text-dark d-inline-block">
                     <p class="h5"><%= product.productName %></p>
                   </a>
@@ -264,7 +264,7 @@
                   <% if (product.status !== 'Pending' && !(product.status === 'Cancelled' && ele.paymentMethod === 'Cash on delivery')) { %>
                   <div>
                     <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
-                  </div>  
+                  </div>
                   <% } %>
                   <% if (product.status === 'Pending-Return') { %>
                   <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending-return</button>
@@ -315,6 +315,46 @@
                 </div>
                 <!-- Image -->
               </div>
+              <% 
+              let orderTotalPrice = 0;
+              let refundableAmount = 0;
+              let productShare = 0; // returning product share for calculating coupon discount
+              let couponDiscount = 0; // share of coupon discount for the returning item, if any
+
+              // calculate the total order price
+              ele.products.forEach((ele) => {
+                orderTotalPrice += ele.productID.productDiscountedPrice * ele.quantity;
+              });
+
+              // calculate the product share of the returning product
+              productShare =
+                (product.productID.productDiscountedPrice *
+                  product.quantity) /
+                orderTotalPrice;
+
+              // initial refundable amount for the returning product
+              refundableAmount =
+                product.productID.productDiscountedPrice *
+                product.quantity;
+
+              // adjust for coupon discount if applicable
+              if (ele.couponDiscount > 0) {
+                orderTotalPrice -= ele.couponDiscount;
+                
+                couponDiscount = ele.couponDiscount * productShare;
+                refundableAmount -= Math.round(couponDiscount);
+              }
+
+              // add delivery charge if total price is less than 500 after coupon discount
+              if (orderTotalPrice < 500) {
+                refundableAmount += 40 * product.quantity;
+              }
+              %>
+              <% if (product.status === 'Returned' || (product.status === 'Cancelled' && (ele.paymentMethod === 'Razorpay' || ele.paymentMethod === 'Wallet'))) { %>
+              <div class="text-center">
+                <p class="mb-4 text-success">Refund of ₹ <%= refundableAmount %> is credited to your wallet!</p>
+              </div>
+              <% } %>
               <% if (product.status === 'Returned') { %>
               <div class="text-center">
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
