@@ -367,62 +367,72 @@ const paymentRenderer = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------- controller which handles failed payments ---------------- */
-const addPendingOrder = async (req, res) => {
+/* ---------------- will create pending order ---------------- */
+const createPendingOrder = async (req, res) => {
   try {
-    const products = [];
-    let totalQuantity = 0;
+    const addressIndex = req.query.addressIndex;
+    const paymentMode = parseInt(req.query.paymentMode);
 
     const cart = await cartSchema
       .findOne({ userID: req.session.user })
       .populate("items.productID");
 
-    cart.items.forEach((ele) => {
+    const paymentMethod = ["Cash on delivery", "Razorpay", "Wallet"];
+    const products = [];
+    let totalQuantity = 0;
+
+    for (const ele of cart.items) {
       products.push({
         productID: ele.productID._id,
         productName: ele.productID.productName,
-        brand: ele.productID.productBrand,
         quantity: ele.productCount,
         price: ele.productID.productPrice,
         discount: ele.productID.productDiscount,
         productImage: ele.productID.productImage[0],
+        status: "Pending",
       });
 
       totalQuantity += ele.productCount;
-    });
+    }
 
-    /* -------------------------- creating a new order -------------------------- */
+    const userDetails = await userSchema.findById(req.session.user);
+
+    /* ------------- creating new order with the products from cart ------------- */
     const newOrder = new orderSchema({
       userID: req.session.user,
       products,
       totalQuantity,
-      totalPrice:
-        cart.payableAmount < 550 ? cart.payableAmount - 50 : cart.payableAmount,
-      paymentMethod: "Razorpay",
-      orderStatus: "Pending",
-      couponDiscount: cart.couponDiscount,
+      totalPrice: cart.payableAmount,
+      address: {
+        contactName: userDetails.address[addressIndex].contactName,
+        phone: userDetails.address[addressIndex].phone,
+        pincode: userDetails.address[addressIndex].pincode,
+        state: userDetails.address[addressIndex].state,
+        city: userDetails.address[addressIndex].city,
+        house: userDetails.address[addressIndex].house,
+        area: userDetails.address[addressIndex].area,
+      },
+      couponDiscount: cart.coupon?.discount || 0,
+      paymentMethod: paymentMethod[paymentMode],
+      ...(paymentMode === 1 && {
+        paymentId: req.body.razorpay_payment_id,
+      }),
     });
 
-    /* ---------------------------- saving the new order ---------------------------- */
     await newOrder.save();
 
-    /* --------------- deleting user cart after saving the order --------------- */
+    /* --------------- deleting user cart after creating pending order -------------- */
     await cartSchema.deleteOne({ userID: req.session.user });
 
-    req.flash("alert", {
-      message: "Payment could not be processed. Try again!",
-      color: "bg-danger",
-    });
-
-    res.redirect("/orders");
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.log("Error while handling failed payment", err);
+    console.log("Error while creating pending order", err);
   }
 };
 /* -------------------------------------------------------------------------- */
 
 /* ------------------------ will proceed with payment ----------------------- */
-const pendingOrderConfirmation = async (req, res) => {
+const pendingOrderPlacement = async (req, res) => {
   try {
     const orderID = req.query.orderID;
 
@@ -483,6 +493,71 @@ const pendingOrderConfirmation = async (req, res) => {
     console.log("Error while proceeding with failed payment", err);
   }
 };
+/* -------------------------------------------------------------------------- */
+
+/* ------------------------ will proceed with payment ----------------------- */
+const removePendingOrder = async (req, res) => {
+  try {
+    const orderID = req.query.orderID;
+
+    const order = await orderSchema.findById(orderID);
+
+    const cart = await cartSchema.findOne({ userID: req.session.user });
+
+    const items = [];
+    let totalPrice = 0;
+    let totalQuantity = 0;
+
+    order.products.forEach((product) => {
+      items.push({
+        productID: product.productID,
+        productCount: product.quantity,
+        productPrice: product.price,
+      });
+      totalPrice += product.price * product.quantity;
+      totalQuantity += product.quantity;
+    });
+
+    if (cart) {
+      /* ------------------------- deleting the user cart ------------------------- */
+      await cartSchema.findByIdAndDelete(cart.id);
+
+      /* --------------------------- creating a new cart -------------------------- */
+      const newCart = new cartSchema({
+        userID: req.session.user,
+        items: items,
+        payableAmount: order.totalPrice,
+        totalPrice: totalPrice,
+        couponDiscount: 0,
+      });
+
+      /* --------------------------- saving the new cart -------------------------- */
+      await newCart.save();
+
+      /* --------------------------- deleting the order --------------------------- */
+      await orderSchema.findByIdAndDelete(orderID);
+
+      return res.status(200).json({ success: true, url: "/proceed-checkout" });
+    } else {
+      const newCart = new cartSchema({
+        userID: req.session.user,
+        items: items,
+        payableAmount: order.totalPrice,
+        totalPrice: totalPrice,
+        couponDiscount: 0,
+      });
+
+      await newCart.save();
+
+      await orderSchema.findByIdAndDelete(orderID);
+
+      return res.status(200).json({ success: true, url: "/proceed-checkout" });
+    }
+  } catch (err) {
+    console.log("Error while proceeding with failed payment", err);
+  }
+};
+/* -------------------------------------------------------------------------- */
 
 module.exports = {
   orderConfirmation,
@@ -490,6 +565,7 @@ module.exports = {
   checkout,
   orderPlacement,
   paymentRenderer,
-  addPendingOrder,
-  pendingOrderConfirmation,
+  createPendingOrder,
+  pendingOrderPlacement,
+  removePendingOrder,
 };

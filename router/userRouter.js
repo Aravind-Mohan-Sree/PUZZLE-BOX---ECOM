@@ -22,7 +22,7 @@ user.post('/login', userController.loginPost);
 
 // will handle google auth routes
 user.get('/auth/google', userController.googleAuth)
-user.get('/auth/google/callback', userController.googleAuthCallback)
+user.get('/auth/google/callback', userController.googleAuthCallback);
 
 // will handle user signup route
 user.get('/signup', userController.signup);
@@ -82,9 +82,10 @@ user.get('/checkout', checkUserSession, checkoutController.checkout);
 user.post('/payment-renderer', checkUserSession, checkoutController.paymentRenderer);
 user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
-user.post('/pending-order', checkUserSession, checkoutController.addPendingOrder);
+user.post('/pending-order', checkUserSession, checkoutController.createPendingOrder);
 user.get('/payment-failed', checkUserSession, checkoutController.getPaymentFailed);
-user.get('/pending-order-confirmation', checkUserSession, checkoutController.pendingOrderConfirmation);
+user.post('/place-pending-order', checkUserSession, checkoutController.pendingOrderPlacement);
+user.delete('/remove-pending-order', checkUserSession, checkoutController.removePendingOrder);
 
 // will handle the user order route
 user.get('/orders', checkUserSession, orderController.order);

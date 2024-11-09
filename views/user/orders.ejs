@@ -230,7 +230,7 @@
           <% let totalPriceWithoutDiscount = 0 %>
           <% if(orders.length!=0) { %>
           <% orders.forEach((ele,index)=> { %>
-          <div class="card card-stepper mb-4" style="border-radius: 16px;">
+          <div class="card card-stepper mb-4" style="border-radius: 16px;" data-orderId="<%= ele._id %>">
             <div class="card-header p-4">
               <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -248,7 +248,7 @@
 
                   <% let orderID = scrambleString(ele.id); %>
                   <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= orderID %></span></p>
-                  <p class="text-muted mb-0"> Place On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+                  <p class="text-muted mb-0"><%= ele.products[0].status === 'Pending' ? 'Pending' : 'Place' %> On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
               </div>
             </div>
@@ -263,11 +263,13 @@
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <% if (product.status !== 'Pending' && !(product.status === 'Cancelled' && ele.paymentMethod === 'Cash on delivery')) { %>
                   <div>
-                    <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
+                    <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
                   </div>
                   <% } %>
-                  <% if (product.status === 'Pending-Return') { %>
-                  <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-3" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending-return</button>
+                  <% if (product.status === 'Pending') { %>
+                  <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending</button>
+                  <% } else if (product.status === 'Pending-Return') { %>
+                  <button class="mt-2 mb-2 btn btn-secondary btn-sm shadow-0 text-black cancel-modal-btn disabled opacity-100" data-mdb-modal-init data-mdb-target="#cancel-modal" type="button"><i class="fa-solid fa-clock fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>pending-return</button>
                   <div>
                     <details class="m-0">
                       <summary class="text-decoration-underline text-dark">
@@ -365,10 +367,10 @@
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
               </div>
               <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
-              <% } else if (product.status !== 'Cancelled') { %>
+              <% } else if (product.status !== 'Cancelled' && product.status !== 'Pending') { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } %>
-              <% if (product.status !== 'Cancelled') { %>
+              <% if (product.status !== 'Cancelled' && product.status !== 'Pending') { %>
               <div class="stepper-container mb-4" data-order-status="<%= product.status %>">
                 <div class="stepper">
                   <div class="progress-bar">
@@ -414,8 +416,31 @@
               <% } %>
               <% }) %>
             </div>
+            <% if (ele.products[0].status === 'Pending') { %>
             <div class="card-footer">
+              <div class="text-center mb-1">
+                <button class="mt-2 btn btn-success text-black" data-order-id="<%= ele._id %>" type="button"><i class="fa-duotone fa-solid fa-money-bills-simple fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>retry payment</button>
+                <div class="row align-items-center justify-content-center mt-2 text-black">
+                  <div class="col-5">
+                    <hr class="m-0">
+                  </div>
+                  <div class="col-auto">
+                    <p class="m-0">OR</p>
+                  </div>
+                  <div class="col-5">
+                    <hr class="m-0">
+                  </div>
+                </div>
+                <small class="text-danger">This order will automatically remove after <span id="timer"></span> minutes</small>
+              </div>
+            </div>
+            <% } %>
+            <div class="card-footer">
+              <% if (ele.products[0].status === 'Pending') { %>
+              <h4 class="mb-3 mt-2"><span class="small text-muted">Order Total :</span> ₹ <%= ele.totalPrice.toLocaleString() %></h4>
+              <% } else { %>
               <h4 class="mb-3 mt-2"> ₹ <%= ele.totalPrice.toLocaleString() %> <span class="small text-muted"> via <%= ele.paymentMethod %> </span></h4>
+              <% } %>
               <h4 class="h5"><span class="small text-muted">Total Savings :</span> ₹ <%= ele.totalPrice < totalPriceWithoutDiscount ? (totalPriceWithoutDiscount - ele.totalPrice).toLocaleString() : '0' %></h4>
             </div>
             <div class="card-footer p-4">
@@ -822,6 +847,41 @@
         }
       }
     });
+
+    // remove pending orders using fetch after a predefined time
+    const orders = JSON.parse('<%- JSON.stringify(orders) %>');
+
+    orders.forEach(ele => {
+      if (ele.products[0].status === 'Pending') {
+        const orderElement = document.querySelector(`[data-orderId="${ele._id}"]`);
+        const timerElement = orderElement.querySelector('#timer');
+        const timeDifference = new Date() - new Date(ele.createdAt);
+        const timeLimit = 300000; // in milliseconds
+        const minutes = String(Math.floor(timeLimit / (1000 * 60))).padStart(2, '0');
+        const seconds = String(Math.floor(timeLimit % (1000 * 60)) / 1000).padStart(2, '0');
+
+        timerElement.innerHTML = `${minutes}:${seconds}`;
+
+        function updateOrder() {
+          const timeDifference = new Date() - new Date(ele.createdAt);
+          const diff = timeLimit - timeDifference;
+
+          const minutes = Math.floor(diff / (1000 * 60));
+          const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+          const formattedMinutes = String(minutes).padStart(2, '0');
+          const formattedSeconds = String(seconds).padStart(2, '0');
+
+          timerElement.innerHTML = `${formattedMinutes}:${formattedSeconds}`;
+
+          if (diff <= 0) {
+            
+          }
+        }
+
+        setInterval(updateOrder, 1000);
+      }
+    })
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->
