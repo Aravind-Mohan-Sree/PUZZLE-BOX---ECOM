@@ -83,6 +83,7 @@ user.post('/payment-renderer', checkUserSession, checkoutController.paymentRende
 user.post('/place-order', checkUserSession, checkoutController.orderPlacement);
 user.get('/order-confirmation', checkUserSession, checkoutController.orderConfirmation);
 user.post('/pending-order', checkUserSession, checkoutController.createPendingOrder);
+user.post('/retry-payment-renderer', checkUserSession, checkoutController.retryPaymentRenderer);
 user.get('/payment-failed', checkUserSession, checkoutController.getPaymentFailed);
 user.post('/place-pending-order', checkUserSession, checkoutController.pendingOrderPlacement);
 user.delete('/remove-pending-order', checkUserSession, checkoutController.removePendingOrder);

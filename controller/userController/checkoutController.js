@@ -431,6 +431,67 @@ const createPendingOrder = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* ------------------- payment renderer for pending orders ------------------ */
+const retryPaymentRenderer = async (req, res) => {
+  try {
+    const { orderID } = req.query;
+
+    const order = await orderSchema
+      .findById(orderID)
+      .populate("products.productID");
+
+    const timeLimit = 300000;
+    const difference = new Date() - new Date(order.createdAt);
+
+    if (difference >= timeLimit) {
+      return res.status(400).json({ timeLimitExceeded: true });      
+    }
+
+    for (const product of order.products) {
+      if (
+        product.productID.productQuantity === 0 ||
+        product.productID.productQuantity < product.quantity
+      ) {
+        return res.status(400).json({ productQuantityMismatch: true });
+      }
+    }
+
+    const payableAmount = order.totalPrice;
+
+    const instance = new Razorpay({
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+    });
+
+    /* ------------------------ creates an order instance ----------------------- */
+    instance.orders.create(
+      {
+        amount: payableAmount * 100,
+        currency: "INR",
+        receipt: "receipt#1",
+      },
+      (err, order) => {
+        if (err) {
+          console.error("Failed to create order", err);
+
+          return res
+            .status(500)
+            .json({ error: `Failed to create order: ${err.message}` });
+        }
+
+        return res.status(201).json({
+          order,
+        });
+      }
+    );
+  } catch (err) {
+    console.error("Error while rendering pending order payment", err);
+
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 /* ------------------------ will proceed with payment ----------------------- */
 const pendingOrderPlacement = async (req, res) => {
   try {
@@ -495,66 +556,16 @@ const pendingOrderPlacement = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
-/* ------------------------ will proceed with payment ----------------------- */
+/* ------------------------ will delete the pending order ----------------------- */
 const removePendingOrder = async (req, res) => {
   try {
     const orderID = req.query.orderID;
 
-    const order = await orderSchema.findById(orderID);
+    await orderSchema.findByIdAndDelete(orderID);
 
-    const cart = await cartSchema.findOne({ userID: req.session.user });
-
-    const items = [];
-    let totalPrice = 0;
-    let totalQuantity = 0;
-
-    order.products.forEach((product) => {
-      items.push({
-        productID: product.productID,
-        productCount: product.quantity,
-        productPrice: product.price,
-      });
-      totalPrice += product.price * product.quantity;
-      totalQuantity += product.quantity;
-    });
-
-    if (cart) {
-      /* ------------------------- deleting the user cart ------------------------- */
-      await cartSchema.findByIdAndDelete(cart.id);
-
-      /* --------------------------- creating a new cart -------------------------- */
-      const newCart = new cartSchema({
-        userID: req.session.user,
-        items: items,
-        payableAmount: order.totalPrice,
-        totalPrice: totalPrice,
-        couponDiscount: 0,
-      });
-
-      /* --------------------------- saving the new cart -------------------------- */
-      await newCart.save();
-
-      /* --------------------------- deleting the order --------------------------- */
-      await orderSchema.findByIdAndDelete(orderID);
-
-      return res.status(200).json({ success: true, url: "/proceed-checkout" });
-    } else {
-      const newCart = new cartSchema({
-        userID: req.session.user,
-        items: items,
-        payableAmount: order.totalPrice,
-        totalPrice: totalPrice,
-        couponDiscount: 0,
-      });
-
-      await newCart.save();
-
-      await orderSchema.findByIdAndDelete(orderID);
-
-      return res.status(200).json({ success: true, url: "/proceed-checkout" });
-    }
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.log("Error while proceeding with failed payment", err);
+    console.log("Error while deleting pending order", err);
   }
 };
 /* -------------------------------------------------------------------------- */
@@ -566,6 +577,7 @@ module.exports = {
   orderPlacement,
   paymentRenderer,
   createPendingOrder,
+  retryPaymentRenderer,
   pendingOrderPlacement,
   removePendingOrder,
 };

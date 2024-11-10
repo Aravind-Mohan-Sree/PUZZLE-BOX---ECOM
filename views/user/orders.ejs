@@ -419,7 +419,7 @@
             <% if (ele.products[0].status === 'Pending') { %>
             <div class="card-footer">
               <div class="text-center mb-1">
-                <button class="mt-2 btn btn-success text-black" data-order-id="<%= ele._id %>" type="button"><i class="fa-duotone fa-solid fa-money-bills-simple fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>retry payment</button>
+                <button class="mt-2 btn btn-success text-black retry-payment-btn" data-order-id="<%= ele._id %>" type="button"><i class="fa-duotone fa-solid fa-money-bills-simple fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>retry payment</button>
                 <div class="row align-items-center justify-content-center mt-2 text-black">
                   <div class="col-5">
                     <hr class="m-0">
@@ -848,6 +848,131 @@
       }
     });
 
+    // for retrying payment on pending orders through razorpay gateway
+    const retryPaymentElements = document.querySelectorAll('.retry-payment-btn');
+
+    retryPaymentElements.forEach(ele => {
+      ele.addEventListener('click', function() {
+        const orderID = ele.getAttribute('data-order-id');
+        const url = `/retry-payment-renderer?orderID=${orderID}`;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          }).then(response => response.json())
+          .then(data => {
+            if (data.timeLimitExceeded || data.productQuantityMismatch) {
+              Swal.fire({
+                icon: "warning",
+                title: "Order can't be placed",
+                text: data.timeLimitExceeded ? 'Retry payment time limit exceeded.' : 'One or more products is not available.',
+                confirmButtonText: "Remove Order",
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const url = `/remove-pending-order?orderID=${orderID}`;
+
+                  fetch(url, {
+                      method: "DELETE",
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                    }).then(response => response.json())
+                    .then((data) => {
+                      if (data.success) {
+                        window.location.reload();
+                      }
+                    }).catch((err) => {
+                      console.error('Error while deleting pending order', err);
+                    })
+                }
+              })
+            }
+
+            if (data.order) {
+              const options = {
+                "key": "rzp_test_3MjpZb7TBnz8Ul",
+                "amount": data.order.amount,
+                "currency": "INR",
+                "name": "PUZZLE BOX",
+                "order_id": data.order.id,
+                "handler": function(response) {
+                  const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+
+                  fetch(url, {
+                      method: "POST",
+                      headers: {
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature
+                      })
+                    }).then(response => response.json())
+                    .then((data) => {
+                      if (data.success) {
+                        window.location.href = '/order-confirmation';
+                      }
+                    }).catch((err) => {
+                      console.error('Error on razor pay payment callback', err);
+                    })
+                },
+                "prefill": {
+                  "name": this.getAttribute('data-username'),
+                  "email": this.getAttribute('data-email'),
+                  "contact": this.getAttribute('data-phone')
+                },
+                "notes": {
+                  "address": "Razorpay Corporate Office"
+                },
+                "theme": {
+                  "color": "#3399cc"
+                }
+              };
+
+              const rzp1 = new Razorpay(options);
+
+              rzp1.on('payment.failed', function(response) {
+                const url = `/pending-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                  }).then(response => response.json())
+                  .then((data) => {
+                    if (data.success) {
+                      window.location.href = '/payment-failed';
+                    }
+                  }).catch((err) => {
+                    console.error('Error while creating pending order', err);
+                  })
+              });
+
+              rzp1.open();
+            }
+          }).catch(err => {
+            Swal.fire({
+              title: 'Error!',
+              text: 'Error while loading payment method',
+              icon: 'error',
+              confirmButtonText: 'OK',
+              allowOutsideClick: false,
+              customClass: {
+                container: 'swal-css'
+              }
+            })
+          })
+      })
+    })
+
     // remove pending orders using fetch after a predefined time
     const orders = JSON.parse('<%- JSON.stringify(orders) %>');
 
@@ -875,7 +1000,21 @@
           timerElement.innerHTML = `${formattedMinutes}:${formattedSeconds}`;
 
           if (diff <= 0) {
-            
+            const url = `/remove-pending-order?orderID=${ele._id}`;
+
+            fetch(url, {
+                method: "DELETE",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+              }).then(response => response.json())
+              .then((data) => {
+                if (data.success) {
+                  window.location.reload();
+                }
+              }).catch((err) => {
+                console.error('Error while deleting pending order', err);
+              })
           }
         }
 
