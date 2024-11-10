@@ -414,9 +414,6 @@ const createPendingOrder = async (req, res) => {
       },
       couponDiscount: cart.coupon?.discount || 0,
       paymentMethod: paymentMethod[paymentMode],
-      ...(paymentMode === 1 && {
-        paymentId: req.body.razorpay_payment_id,
-      }),
     });
 
     await newOrder.save();
@@ -440,11 +437,11 @@ const retryPaymentRenderer = async (req, res) => {
       .findById(orderID)
       .populate("products.productID");
 
-    const timeLimit = 300000;
+    const timeLimit = 300000; // in milliseconds
     const difference = new Date() - new Date(order.createdAt);
 
     if (difference >= timeLimit) {
-      return res.status(400).json({ timeLimitExceeded: true });      
+      return res.status(400).json({ timeLimitExceeded: true });
     }
 
     for (const product of order.products) {
@@ -492,66 +489,38 @@ const retryPaymentRenderer = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
-/* ------------------------ will proceed with payment ----------------------- */
+/* ------------------------ will place pending order ----------------------- */
 const pendingOrderPlacement = async (req, res) => {
   try {
-    const orderID = req.query.orderID;
+    const { orderID } = req.query;
 
-    const order = await orderSchema.findById(orderID);
+    const order = await orderSchema
+      .findById(orderID)
+      .populate("products.productID");
 
-    const cart = await cartSchema.findOne({ userID: req.session.user });
-
-    const items = [];
-    let totalPrice = 0;
-    let totalQuantity = 0;
-
-    order.products.forEach((product) => {
-      items.push({
-        productID: product.productID,
-        productCount: product.quantity,
-        productPrice: product.price,
-      });
-      totalPrice += product.price * product.quantity;
-      totalQuantity += product.quantity;
-    });
-
-    if (cart) {
-      /* ------------------------- deleting the user cart ------------------------- */
-      await cartSchema.findByIdAndDelete(cart.id);
-
-      /* --------------------------- creating a new cart -------------------------- */
-      const newCart = new cartSchema({
-        userID: req.session.user,
-        items: items,
-        payableAmount: order.totalPrice,
-        totalPrice: totalPrice,
-        couponDiscount: 0,
-      });
-
-      /* --------------------------- saving the new cart -------------------------- */
-      await newCart.save();
-
-      /* --------------------------- deleting the order --------------------------- */
-      await orderSchema.findByIdAndDelete(orderID);
-
-      return res.status(200).json({ success: true, url: "/proceed-checkout" });
-    } else {
-      const newCart = new cartSchema({
-        userID: req.session.user,
-        items: items,
-        payableAmount: order.totalPrice,
-        totalPrice: totalPrice,
-        couponDiscount: 0,
-      });
-
-      await newCart.save();
-
-      await orderSchema.findByIdAndDelete(orderID);
-
-      return res.status(200).json({ success: true, url: "/proceed-checkout" });
+    for (const product of order.products) {
+      product.status = "Confirmed";
     }
+
+    order.paymentId = req.body.razorpay_payment_id;
+
+    await order.save();
+
+    /* ------- updating actual product quantity by deducting order product quantity ------ */
+    for (const ele of order.products) {
+      const product = await productSchema.findById(ele.productID._id);
+
+      if (product) {
+        product.productQuantity -= ele.quantity;
+        product.productQuantity = Math.max(product.productQuantity, 0);
+
+        await product.save();
+      }
+    }
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.log("Error while proceeding with failed payment", err);
+    console.log("Error while placing pending order", err);
   }
 };
 /* -------------------------------------------------------------------------- */

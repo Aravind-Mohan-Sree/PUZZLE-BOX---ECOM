@@ -575,6 +575,7 @@
 <!-- ----------------------------------------------------------------------- -->
 
 <!-- ----------------------------- javaScript ------------------------------ -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // modals initialization
@@ -850,6 +851,7 @@
 
     // for retrying payment on pending orders through razorpay gateway
     const retryPaymentElements = document.querySelectorAll('.retry-payment-btn');
+    let intervalId;
 
     retryPaymentElements.forEach(ele => {
       ele.addEventListener('click', function() {
@@ -895,6 +897,8 @@
             }
 
             if (data.order) {
+              clearInterval(intervalId);
+
               const options = {
                 "key": "rzp_test_3MjpZb7TBnz8Ul",
                 "amount": data.order.amount,
@@ -902,7 +906,7 @@
                 "name": "PUZZLE BOX",
                 "order_id": data.order.id,
                 "handler": function(response) {
-                  const url = `/place-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
+                  const url = `/place-pending-order?orderID=${orderID}`;
 
                   fetch(url, {
                       method: "POST",
@@ -939,21 +943,7 @@
               const rzp1 = new Razorpay(options);
 
               rzp1.on('payment.failed', function(response) {
-                const url = `/pending-order?addressIndex=${addressIndex}&paymentMode=${paymentMode}`;
-
-                fetch(url, {
-                    method: "POST",
-                    headers: {
-                      'Content-Type': 'application/json'
-                    },
-                  }).then(response => response.json())
-                  .then((data) => {
-                    if (data.success) {
-                      window.location.href = '/payment-failed';
-                    }
-                  }).catch((err) => {
-                    console.error('Error while creating pending order', err);
-                  })
+                window.location.reload();
               });
 
               rzp1.open();
@@ -1018,7 +1008,7 @@
           }
         }
 
-        setInterval(updateOrder, 1000);
+        intervalId = setInterval(updateOrder, 1000);
       }
     })
   });
