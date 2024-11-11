@@ -261,7 +261,7 @@
                     <p class="h5"><%= product.productName %></p>
                   </a>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
-                  <% if (product.status !== 'Pending' && !(product.status === 'Cancelled' && ele.paymentMethod === 'Cash on delivery')) { %>
+                  <% if ((ele.paymentMethod === 'Cash on delivery' && (product.status === 'Delivered' || product.status === 'Returned' || product.status === 'Pending-Return')) || (ele.paymentMethod === 'Razorpay' && product.status !== 'Pending') || (ele.paymentMethod === 'Wallet')) { %>
                   <div>
                     <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
                   </div>
