@@ -367,6 +367,11 @@
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
               </div>
               <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+              <% } else if (product.status === 'Pending-Return') { %>
+              <div class="text-center">
+                <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
+              </div>
+              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } else if (product.status !== 'Cancelled' && product.status !== 'Pending') { %>
               <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } %>
