@@ -532,6 +532,8 @@ const removePendingOrder = async (req, res) => {
 
     await orderSchema.findByIdAndDelete(orderID);
 
+    req.flash("alert", { message: "Pending order removed!", color: "bg-danger" });
+
     return res.status(200).json({ success: true });
   } catch (err) {
     console.log("Error while deleting pending order", err);
