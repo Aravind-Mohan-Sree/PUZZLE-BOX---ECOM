@@ -36,13 +36,18 @@
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
-    caret-color: rgb(255, 255, 255);
-    -webkit-text-fill-color: #ffffff !important;
+    caret-color: rgb(0, 0, 0);
+    -webkit-text-fill-color: #000000 !important;
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px transparent !important;
   }
 
-  #categories {
+  small {
+    display: none;
+    font-size: .75rem;
+  }
+
+  #offers {
     background-color: rgba(51, 45, 45, .05);
   }
 </style>
@@ -80,46 +85,46 @@
       </thead>
       <tbody class="datatable-body">
         <% offers.forEach(offer=> { %>
-        <tr>
+        <tr class="offer-row">
           <td class="" data-mdb-field="field_0" false="">
-            <p class="fw-bold mb-1 name">
-              <%= category.categoryName %>
+            <p class="fw-normal mb-1 offer-target">
+              <%= offer.offerTarget %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-normal mb-1 offer-for">
+              <%= offer.offerCategoryDetails ? offer.offerCategoryDetails.categoryName : offer.offerProductDetails.productName %>
+            </p>
+          </td>
+          <td class="" data-mdb-field="field_0" false="">
+            <p class="fw-normal mb-1 discount">
+              <%= offer.offerValue %> %
             </p>
           </td>
           <td class="" data-mdb-field="field_1" false="">
             <p class="fw-normal mb-1">
-              <%= new Date(category.createdAt).toDateString() %>
+              <%= new Date(offer.createdAt).toDateString() %>
             </p>
             <p class="fw-normal mb-0">
-              <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
+              <%= new Date(offer.createdAt).toTimeString().slice(0, 8) %>
             </p>
           </td>
           <td class="" data-mdb-field="field_2" false="">
             <p class="fw-normal mb-1 updated-date">
-              <%= new Date(category.updatedAt).toDateString() %>
+              <%= new Date(offer.updatedAt).toDateString() %>
             </p>
             <p class="fw-normal mb-0 updated-time">
-              <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+              <%= new Date(offer.updatedAt).toTimeString().slice(0, 8) %>
             </p>
           </td>
-          <td class="" data-mdb-field="field_3" false="">
-            <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-              <%= category.isActive ? 'Active' : 'Inactive' %>
-            </span>
-          </td>
           <td class="" data-mdb-field="field_4" false="">
-            <!-- active/inactive button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-              <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-            </button>
-
             <!-- edit button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-offer-id="<%= offer._id %>">
               <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
             </button>
 
             <!-- delete button -->
-            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+            <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-offer-id="<%= offer._id %>">
               <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
             </button>
           </td>
@@ -138,39 +143,54 @@
         <h5 class="modal-title" id="exampleModalLabel">Add Offer</h5>
       </div>
       <div class="modal-body">
-        <ul class="navbar-nav mb-3">
+        <ul class="navbar-nav">
           <li class="nav-item px-3">
             <label for="offerTarget" class="mb-1">Offer Target <span class="text-danger">*</span></label>
             <select data-mdb-select-init class="form-control select" name="offerTarget">
               <option value="" disabled selected hidden>Select</option>
-              <option value="">Category</option>
-              <option value="">Product</option>
+              <option value="Category">Category</option>
+              <option value="Product">Product</option>
             </select>
+            <small class="offer-target-alert top-100 text-danger"></small>
           </li>
         </ul>
-        <ul class="navbar-nav mb-3">
+        <ul class="navbar-nav mt-3 mb-3 d-none" id="offer-for-category">
           <li class="nav-item px-3">
-            <label for="offerFor" class="mb-1">Offer For <span class="text-danger">*</span></label>
-            <select data-mdb-select-init class="form-control select" name="offerFor">
+            <label for="offerForCategory" class="mb-1">Offer For <span class="text-danger">*</span></label>
+            <select data-mdb-select-init class="form-control select" name="offerForCategory">
               <option value="" disabled selected hidden>Select</option>
               <% activeCategories.forEach(category=> { %>
-              <option value="<%= category %>">
+              <option value="<%= category._id %>">
                 <%= category.categoryName %>
               </option>
               <% }) %>
             </select>
-            <small class="offer-for-alert top-100 text-danger"></small>
+            <small class="category-offer-alert top-100 text-danger"></small>
           </li>
         </ul>
-        <div class="position-relative px-3">
+        <ul class="navbar-nav mt-3 mb-3 d-none" id="offer-for-product">
+          <li class="nav-item px-3">
+            <label for="offerForProduct" class="mb-1">Offer For <span class="text-danger">*</span></label>
+            <select data-mdb-select-init class="form-control select" name="offerForProduct">
+              <option value="" disabled selected hidden>Select</option>
+              <% activeProducts.forEach(product=> { %>
+              <option value="<%= product._id %>">
+                <%= product.productName %>
+              </option>
+              <% }) %>
+            </select>
+            <small class="product-offer-alert top-100 text-danger"></small>
+          </li>
+        </ul>
+        <div class="position-relative px-3 d-none" id="discount">
           <label for="discount" class="mb-1">Discount Percentage <span class="text-danger">*</span></label>
-          <input type="text" id="form1" class="form-control mb-2" name="discount" placeholder="type..." />
-          <small class="minimum-amount-alert position-absolute top-100 text-danger"></small>
+          <input type="text" id="form1" class="form-control" name="discount" placeholder="type..." />
+          <small class="discount-alert top-100 text-danger"></small>
         </div>
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer mt-2">
         <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
+        <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init id="save-offer-btn">Save</button>
       </div>
     </div>
   </div>
@@ -216,6 +236,137 @@
     // opens offer modal on button click  
     addOfferBtn.addEventListener('click', function() {
       offerModalInstance.show();
+    })
+
+    // for showing appropriate field based on which offer target chosen
+    document.querySelector('select[name="offerTarget"]').addEventListener('change', function(event) {
+      const offerTarget = event.target.value;
+
+      document.querySelector('#offer-for-category').classList.add('d-none');
+      document.querySelector('#offer-for-product').classList.add('d-none');
+      document.querySelector('#discount').classList.add('d-none');
+
+      if (offerTarget === 'Category') {
+        document.querySelector('#offer-for-category').classList.remove('d-none');
+        document.querySelector('#discount').classList.remove('d-none');
+      }
+
+      if (offerTarget === 'Product') {
+        document.querySelector('#offer-for-product').classList.remove('d-none');
+        document.querySelector('#discount').classList.remove('d-none');
+      }
+    })
+
+    // will validate the offer details and create new offer using fetch
+    document.querySelector('#save-offer-btn').addEventListener('click', function() {
+      const offerTarget = document.querySelector('select[name="offerTarget"]').value;
+      const offerForCategory = document.querySelector('select[name="offerForCategory"]').value;
+      const offerForProduct = document.querySelector('select[name="offerForProduct"]').value;
+      const discount = document.querySelector('input[name="discount"]').value;
+
+      const offerTargetAlert = document.querySelector('.offer-target-alert');
+      const categoryOfferAlert = document.querySelector('.category-offer-alert');
+      const productOfferAlert = document.querySelector('.product-offer-alert');
+      const discountAlert = document.querySelector('.discount-alert');
+
+      offerTargetAlert.style.display = 'none';
+      categoryOfferAlert.style.display = 'none';
+      productOfferAlert.style.display = 'none';
+      offerTargetAlert.style.display = 'none';
+      discountAlert.style.display = 'none';
+
+      let isValid = true;
+
+      if (!offerTarget) {
+        offerTargetAlert.style.display = 'inline';
+        offerTargetAlert.innerHTML = 'Please select an option';
+
+        isValid = false;
+      } else {
+        if (offerTarget === 'Category' && !offerForCategory) {
+          categoryOfferAlert.style.display = 'inline';
+          categoryOfferAlert.innerHTML = 'Please select an option';
+
+          isValid = false;
+        }
+
+        if (offerTarget === 'Product' && !offerForProduct) {
+          productOfferAlert.style.display = 'inline';
+          productOfferAlert.innerHTML = 'Please select an option';
+
+          isValid = false;
+        }
+
+        if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount === '0' || discount > 99) {
+          if (discount === '') {
+            discountAlert.style.display = 'inline';
+            discountAlert.innerText = `Discount is required`;
+          } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
+            discountAlert.style.display = 'inline';
+            discountAlert.innerText = `Input is not valid`;
+          } else if (/\s/.test(discount)) {
+            discountAlert.style.display = 'inline';
+            discountAlert.innerText = `Can't contain spaces`;
+          } else if (discount === '0') {
+            discountAlert.style.display = 'inline';
+            discountAlert.innerText = `Minimum value is 1`;
+          } else {
+            discountAlert.style.display = 'inline';
+            discountAlert.innerText = `Maximum value is 99`;
+          }
+
+          isValid = false;
+        }
+      }
+
+      if (isValid) {
+        const id = offerTarget === 'Category' ? offerForCategory : offerForProduct;
+
+        fetch('/admin/add-offer', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              offerTarget,
+              id,
+              discount
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.categoryExists || data.productExists) {
+              Swal.fire({
+                text: data.categoryExists ? 'Offer for this category already exists.' : 'Offer for this product already exists.',
+                icon: 'warning',
+                confirmButtonText: 'OK',
+                allowOutsideClick: false,
+                customClass: {
+                  container: 'swal-css'
+                }
+              });
+            }
+
+            if (data.success) {
+              window.location.reload();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
+    })
+
+    // will insert modal with appropriate values when edit button is clicked
+    document.querySelector('body').addEventListener('click', function (event) {
+      const editButton = event.target.closest('.edit-button');
+
+      if (editButton) {
+        const offerRow = editButton.closest('.offer-row');
+
+        const offerTarget = offerRow.querySelector('.offer-target').value;
+
+        console.log(offerTarget);
+      }
     })
   });
 </script>

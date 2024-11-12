@@ -2,10 +2,10 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema(
   {
-    offerFor: {
+    offerTarget: {
       type: String,
       required: true,
-      enum: ["PRODUCT", "CATEGORY"],
+      enum: ["Category", "Product"],
     },
 
     offerCategoryId: {

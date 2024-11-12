@@ -368,7 +368,7 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 100) {
+    } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 99) {
       if (discount === '') {
         discountAlert.style.display = 'inline';
         discountAlert.innerText = `Discount is required`;
@@ -380,7 +380,7 @@
         discountAlert.innerText = `Can't contain spaces`;
       } else {
         discountAlert.style.display = 'inline';
-        discountAlert.innerText = `Maximum value is 100`;
+        discountAlert.innerText = `Maximum value is 99`;
       }
 
       discountAlert.scrollIntoView({
