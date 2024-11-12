@@ -54,31 +54,32 @@
 <%- include('sidenav') %>
 
 <!-- title -->
-<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CATEGORIES</h2>
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">OFFERS</h2>
 
 <hr>
 
-<!-- add category button -->
-<div id="add-category" class="text-center mb-3">
-  <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-grid-2 fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
-    category</button>
+<!-- add offer button -->
+<div id="add-offer" class="text-center mb-3">
+  <button class="btn btn-dark" id="add-offer-btn"><i class="fa-duotone fa-solid fa-badge-percent fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
+    offer</button>
 </div>
 
-<!-- category table container -->
+<!-- offer table container -->
 <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true" id="content">
   <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
     <table class="table datatable-table" id="exampleTable">
       <thead class="datatable-header">
         <tr>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Category Name</th>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
-          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Offer Target</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Offer For</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Discount Percentage</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
+          <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
           <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
         </tr>
       </thead>
       <tbody class="datatable-body">
-        <% categories.forEach(category=> { %>
+        <% offers.forEach(offer=> { %>
         <tr>
           <td class="" data-mdb-field="field_0" false="">
             <p class="fw-bold mb-1 name">
@@ -129,328 +130,92 @@
   </div>
 </div>
 
+<!-- ----------------------- modal for adding offer ------------------------ -->
+<div class="modal p-0" id="offer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Add Offer</h5>
+      </div>
+      <div class="modal-body">
+        <ul class="navbar-nav mb-3">
+          <li class="nav-item px-3">
+            <label for="offerTarget" class="mb-1">Offer Target <span class="text-danger">*</span></label>
+            <select data-mdb-select-init class="form-control select" name="offerTarget">
+              <option value="" disabled selected hidden>Select</option>
+              <option value="">Category</option>
+              <option value="">Product</option>
+            </select>
+          </li>
+        </ul>
+        <ul class="navbar-nav mb-3">
+          <li class="nav-item px-3">
+            <label for="offerFor" class="mb-1">Offer For <span class="text-danger">*</span></label>
+            <select data-mdb-select-init class="form-control select" name="offerFor">
+              <option value="" disabled selected hidden>Select</option>
+              <% activeCategories.forEach(category=> { %>
+              <option value="<%= category %>">
+                <%= category.categoryName %>
+              </option>
+              <% }) %>
+            </select>
+            <small class="offer-for-alert top-100 text-danger"></small>
+          </li>
+        </ul>
+        <div class="position-relative px-3">
+          <label for="discount" class="mb-1">Discount Percentage <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control mb-2" name="discount" placeholder="type..." />
+          <small class="minimum-amount-alert position-absolute top-100 text-danger"></small>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success me-auto shadow-0" data-mdb-ripple-init>Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
 <!-- footer included -->
 <%- include('footer') %>
 
 <!-- javaScript -->
 <script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
+  document.addEventListener('DOMContentLoaded', function() {
+    // after redirection, remove the query parameter from the URL
+    window.history.replaceState(null, null, window.location.pathname);
 
-  // dynamically adds padding to h2 tag
-  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+    // dynamically adds padding to h2 tag
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
-  // dynamically adds padding to table container
-  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
-  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+    // dynamically adds padding to table container
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+    document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-  // using fetch to add category
-  document.getElementById('add-category').addEventListener('click', function() {
-    Swal.fire({
-      title: "New Category",
-      input: "text",
-      inputLabel: "Enter the category name below",
-      inputPlaceholder: "type...",
-      showCancelButton: true,
-      allowOutsideClick: false,
-      customClass: {
-        container: 'swal-css'
-      },
-      inputValidator: (value) => {
-        if (!value) {
-          return "Please enter something";
-        }
-      }
-    }).then(result => {
-      if (result.value) {
-        const categoryName = result.value;
+    const addOfferBtn = document.querySelector('#add-offer-btn');
+    const offerModal = document.querySelector('#offer-modal');
+    let offerModalInstance = mdb.Modal.getInstance(offerModal);
 
-        fetch('/admin/categories', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              categoryName
-            })
-          }).then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              Swal.fire({
-                title: 'Error!',
-                text: 'Something went wrong. Try again',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            } else if (data.exist) {
-              Swal.fire({
-                title: 'Error!',
-                text: 'Category already exist',
-                icon: 'error',
-                confirmButtonText: 'OK',
-                allowOutsideClick: false,
-                customClass: {
-                  container: 'swal-css'
-                }
-              });
-            } else {
-              window.location.reload();
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-      }
-    }).catch(err => {
-      console.log(err);
+    // if no instance exists, create a new one
+    if (!offerModalInstance) {
+      offerModalInstance = new mdb.Modal(offerModal);
+    }
+
+    offerModal.addEventListener('hide.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'block';
+      document.querySelector('#add-offer').style.display = 'block';
     })
-  });
 
-  // using fetch to active/inactive category        
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
+    offerModal.addEventListener('show.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'none';
+      document.querySelector('#add-offer').style.display = 'none';
+    })
 
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const statusButton = event.target.closest('.status-button');
-        const row = event.target.closest('tr');
-
-        if (statusButton) {
-          // Find the element within the same row
-          const categoryId = statusButton.getAttribute('data-db-categoryId');
-          const dateElement = row.querySelector('.updated-date');
-          const timeElement = row.querySelector('.updated-time');
-          const statusElement = row.querySelector('.status');
-          const iconElement = row.querySelector('.status-icon');
-
-          fetch('/admin/categories', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                status: true,
-                categoryId
-              })
-            }).then(response => response.json())
-            .then(data => {
-              if (data.error) {
-                Swal.fire({
-                  title: 'Error!',
-                  text: 'Something went wrong. Try again',
-                  icon: 'error',
-                  confirmButtonText: 'OK',
-                  allowOutsideClick: false,
-                  customClass: {
-                    container: 'swal-css'
-                  }
-                });
-              } else if (data.isActive) {
-                dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                statusElement.innerText = 'Active';
-                statusElement.classList.remove('badge-danger');
-                statusElement.classList.add('badge-success');
-
-                iconElement.classList.remove('fa-circle-xmark');
-                iconElement.classList.add('fa-circle-check');
-              } else {
-                dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                statusElement.innerText = 'Inactive';
-                statusElement.classList.add('badge-danger');
-
-                iconElement.classList.add('fa-circle-xmark');
-              }
-            }).catch(err => {
-              console.log(err);
-            })
-        }
-      });
-    }
-  });
-
-  // using fetch to edit category       
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
-
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const editButton = event.target.closest('.edit-button');
-        const row = event.target.closest('tr');
-
-        if (editButton) {
-          // Find the element within the same row
-          const categoryId = editButton.getAttribute('data-db-categoryId');
-          const dateElement = row.querySelector('.updated-date');
-          const timeElement = row.querySelector('.updated-time');
-          const nameElement = row.querySelector('.name');
-
-          Swal.fire({
-            title: "Edit Category",
-            input: "text",
-            inputLabel: "Enter the category name below",
-            inputPlaceholder: nameElement.innerText,
-            showCancelButton: true,
-            allowOutsideClick: false,
-            customClass: {
-              container: 'swal-css'
-            },
-            inputValidator: (value) => {
-              if (!value) {
-                return "Please enter something";
-              }
-            }
-          }).then(result => {
-            if (result.value) {
-              const newCategoryName = result.value;
-
-              fetch('/admin/categories', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    categoryId,
-                    newCategoryName
-                  })
-                }).then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Something went wrong. Try again',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else if (data.exist) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Category already exist',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else {
-                    dateElement.innerText = new Date(data.lastUpdated).toDateString();
-                    timeElement.innerText = new Date(data.lastUpdated).toTimeString().slice(0, 8);
-
-                    nameElement.innerText = newCategoryName;
-
-                    Swal.fire({
-                      title: 'Success!',
-                      text: 'Category updated successfully',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  }
-                }).catch(err => {
-                  console.log(err);
-                })
-            }
-          }).catch(err => {
-            console.log(err);
-          })
-        }
-      });
-    }
-  });
-
-  // using fetch to delete category
-  document.addEventListener('DOMContentLoaded', function() {
-    const datatableBody = document.querySelector('.datatable-body');
-
-    if (datatableBody) {
-      datatableBody.addEventListener('click', function(event) {
-        const deleteButton = event.target.closest('.delete-button');
-
-        if (deleteButton) {
-          const categoryId = deleteButton.getAttribute('data-db-categoryId');
-
-          Swal.fire({
-            title: "Are you sure?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            allowOutsideClick: false,
-            customClass: {
-              container: 'swal-css'
-            }
-          }).then((result) => {
-            if (result.isConfirmed) {
-              fetch('/admin/categories', {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    delete: true,
-                    categoryId
-                  })
-                })
-                .then(response => response.json())
-                .then(data => {
-                  if (data.error) {
-                    Swal.fire({
-                      title: 'Error!',
-                      text: 'Something went wrong. Try again',
-                      icon: 'error',
-                      confirmButtonText: 'OK',
-                      allowOutsideClick: false,
-                      customClass: {
-                        container: 'swal-css'
-                      }
-                    });
-                  } else {
-                    window.location.reload();
-                  }
-                })
-                .catch(err => {
-                  console.error('Fetch error:', err);
-                  Swal.fire({
-                    title: 'Error!',
-                    text: 'Something went wrong. Try again',
-                    icon: 'error',
-                    confirmButtonText: 'OK',
-                    allowOutsideClick: false,
-                    customClass: {
-                      container: 'swal-css'
-                    }
-                  });
-                });
-            }
-          }).catch(err => {
-            console.error('Swal error:', err);
-          });
-        }
-      });
-    }
-  });
-
-  // for searching categories
-  document.addEventListener('DOMContentLoaded', function() {
-    const searchButton = document.getElementById('search-button');
-
-    searchButton.addEventListener('click', function() {
-      const searchTerm = document.getElementById('search-input').value;
-
-      window.location.href = `/admin/categories?searchTerm=${searchTerm}`;
-    });
+    // opens offer modal on button click  
+    addOfferBtn.addEventListener('click', function() {
+      offerModalInstance.show();
+    })
   });
 </script>

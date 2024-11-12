@@ -1,4 +1,3 @@
-const { utc } = require('moment');
 const couponSchema = require('../../model/couponSchema');
 const voucherCodes = require('voucher-code-generator');
 

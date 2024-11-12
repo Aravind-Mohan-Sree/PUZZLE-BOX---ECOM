@@ -1,30 +1,29 @@
-const mongoose = require('mongoose')
+const mongoose = require("mongoose");
 
-const schema = new mongoose.Schema({
+const schema = new mongoose.Schema(
+  {
     offerFor: {
-        type: String,
-        required: true,
-        enum: ["PRODUCT", "CATEGORY", "REFERRAL"]
+      type: String,
+      required: true,
+      enum: ["PRODUCT", "CATEGORY"],
     },
 
     offerCategoryId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "category",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "category",
     },
 
     offerProductId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "product",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "product",
     },
 
     offerValue: {
-        type: Number,
-        required: true
+      type: Number,
+      required: true,
     },
-    
-    expiryDate: {
-        type: Date
-    }
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model("offer", schema);
