@@ -98,7 +98,7 @@
           </td>
           <td class="" data-mdb-field="field_0" false="">
             <p class="fw-normal mb-1 discount">
-              <%= offer.offerValue %> %
+              <%= offer.offerValue %>%
             </p>
           </td>
           <td class="" data-mdb-field="field_1" false="">
@@ -434,23 +434,36 @@
       if (deleteButton) {
         offerId = deleteButton.getAttribute('data-offer-id');
 
-        fetch('/admin/delete-offer', {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              offerId
-            })
-          }).then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              window.location.reload();
-            }
-          })
-          .catch(err => {
-            console.log(err);
-          })
+        Swal.fire({
+          title: "Are you sure?",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Yes",
+          allowOutsideClick: false,
+          customClass: {
+            container: 'swal-css'
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            fetch('/admin/delete-offer', {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  offerId
+                })
+              }).then(response => response.json())
+              .then(data => {
+                if (data.success) {
+                  window.location.reload();
+                }
+              })
+              .catch(err => {
+                console.log(err);
+              })
+          }
+        })
       }
     })
 

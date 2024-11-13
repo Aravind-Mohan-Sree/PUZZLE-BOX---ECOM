@@ -188,16 +188,56 @@ const editOffer = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: true });
 
-    console.log("Error while creating new offer", err);
+    console.log("Error while updating the current offer", err);
   }
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------------------- will ---------------------------------- */
-const deleteOffer = (req, res) => {
+/* ---------------------------------- will delete the current offer ---------------------------------- */
+const deleteOffer = async (req, res) => {
   try {
+    const { offerId } = req.body;
+
+    const offer = await offerSchema.findByIdAndDelete(offerId);
+
+    if (offer.offerTarget === "Category") {
+      const products = await productSchema.find({
+        productCategory: offer.offerCategoryId,
+      });
+
+      for (const product of products) {
+        product.productDiscount = 0;
+
+        product.productDiscountedPrice = Math.round(
+          product.productPrice * (1 - 0 / 100)
+        );
+
+        await product.save();
+      }
+    }
+
+    if (offer.offerTarget === "Product") {
+      const product = await productSchema.findById(offer.offerProductId);
+
+      product.productDiscount = 0;
+
+      product.productDiscountedPrice = Math.round(
+        product.productPrice * (1 - 0 / 100)
+      );
+
+      await product.save();
+    }
+
+    req.flash("alert", {
+      message: "Offer deleted successfully!",
+      color: "bg-success",
+    });
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.log();
+    res.status(500).json({ error: true });
+
+    console.log("Error while deleting the current offer", err);
   }
 };
 /* -------------------------------------------------------------------------- */
