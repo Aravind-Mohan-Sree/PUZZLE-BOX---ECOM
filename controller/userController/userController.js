@@ -374,13 +374,13 @@ const otpPost = async (req, res) => {
 
         const referrerWallet = await walletSchema.findById(referrer._id);
 
+        // creates wallet for referrer if not exist else update wallet
         if (!referrerWallet) {
           await walletSchema.create({
             userID: referrer._id,
             balance: rewardAmount,
             transactions: [
               {
-                orderID,
                 reason: "Referral Reward",
                 amount: rewardAmount,
                 type: "credit",
@@ -389,17 +389,30 @@ const otpPost = async (req, res) => {
             ],
           });
         } else {
-          wallet.balance += rewardAmount;
-          wallet.transactions.push({
-            orderID,
+          referrerWallet.balance += rewardAmount;
+          referrerWallet.transactions.push({
             reason: "Referral Reward",
             amount: rewardAmount,
             type: "credit",
-            runningBalance: wallet.balance,
+            runningBalance: referrerWallet.balance,
           });
 
-          await wallet.save();
+          await referrerWallet.save();
         }
+
+        // creates wallet for referred
+        await walletSchema.create({
+          userID: userDetails._id,
+          balance: rewardAmount,
+          transactions: [
+            {
+              reason: "Referral Reward",
+              amount: rewardAmount,
+              type: "credit",
+              runningBalance: rewardAmount,
+            },
+          ],
+        });
       }
 
       // mail will be sent to the user using nodemailer
