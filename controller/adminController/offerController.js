@@ -140,11 +140,55 @@ const addOffer = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
-/* ---------------------------------- will ---------------------------------- */
-const editOffer = (req, res) => {
+/* ---------------------------------- will update the current offer ---------------------------------- */
+const editOffer = async (req, res) => {
   try {
+    const { offerId, discount } = req.body;
+
+    const offer = await offerSchema.findById(offerId);
+
+    if (offer.offerTarget === "Category") {
+      const products = await productSchema.find({
+        productCategory: offer.offerCategoryId,
+      });
+
+      for (const product of products) {
+        product.productDiscount = discount;
+
+        product.productDiscountedPrice = Math.round(
+          product.productPrice * (1 - discount / 100)
+        );
+
+        await product.save();
+      }
+    }
+
+    if (offer.offerTarget === "Product") {
+      const product = await productSchema.findById(offer.offerProductId);
+
+      product.productDiscount = discount;
+
+      product.productDiscountedPrice = Math.round(
+        product.productPrice * (1 - discount / 100)
+      );
+
+      await product.save();
+    }
+
+    offer.offerValue = discount;
+
+    await offer.save();
+
+    req.flash("alert", {
+      message: "Offer updated successfully!",
+      color: "bg-success",
+    });
+
+    return res.status(200).json({ success: true });
   } catch (err) {
-    console.log();
+    res.status(500).json({ error: true });
+
+    console.log("Error while creating new offer", err);
   }
 };
 /* -------------------------------------------------------------------------- */

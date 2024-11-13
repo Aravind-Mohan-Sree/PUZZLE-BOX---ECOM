@@ -65,7 +65,7 @@
 
 <!-- add offer button -->
 <div id="add-offer" class="text-center mb-3">
-  <button class="btn btn-dark" id="add-offer-btn"><i class="fa-duotone fa-solid fa-badge-percent fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
+  <button class="btn btn-dark" id="open-create-offer-modal"><i class="fa-duotone fa-solid fa-badge-percent fa-xl pe-3" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>add
     offer</button>
 </div>
 
@@ -85,7 +85,7 @@
       </thead>
       <tbody class="datatable-body">
         <% offers.forEach(offer=> { %>
-        <tr class="offer-row">
+        <tr>
           <td class="" data-mdb-field="field_0" false="">
             <p class="fw-normal mb-1 offer-target">
               <%= offer.offerTarget %>
@@ -135,8 +135,8 @@
   </div>
 </div>
 
-<!-- ----------------------- modal for adding offer ------------------------ -->
-<div class="modal p-0" id="offer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- ----------------------- modal for creating offer ------------------------ -->
+<div class="modal p-0" id="create-offer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -197,6 +197,41 @@
 </div>
 <!-- ----------------------------------------------------------------------- -->
 
+<!-- ----------------------- modal for updating offer ------------------------ -->
+<div class="modal p-0" id="update-offer-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Offer</h5>
+      </div>
+      <div class="modal-body">
+        <div class="position-relative px-3">
+          <label for="offerTargetInput" class="mb-1">Offer Target</label>
+          <input type="text" id="form1" class="form-control" name="offerTargetInput" disabled />
+          <small class="top-100 text-danger"></small>
+        </div>
+
+        <div class="position-relative px-3 mt-3 mb-3">
+          <label for="offerForInput" class="mb-1">Offer For</label>
+          <input type="text" id="form1" class="form-control" name="offerForInput" disabled />
+          <small class="top-100 text-danger"></small>
+        </div>
+
+        <div class="position-relative px-3" id="discount">
+          <label for="discount" class="mb-1">Discount Percentage <span class="text-danger">*</span></label>
+          <input type="text" id="form1" class="form-control" name="discountInput" />
+          <small class="edit-discount-alert top-100 text-danger"></small>
+        </div>
+      </div>
+      <div class="modal-footer mt-2">
+        <button type="button" class="btn btn-secondary ms-auto shadow-0" data-mdb-ripple-init data-mdb-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-info me-auto shadow-0" data-mdb-ripple-init id="update-offer-btn">Update</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
 <!-- footer included -->
 <%- include('footer') %>
 
@@ -214,28 +249,44 @@
     const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
     document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
 
-    const addOfferBtn = document.querySelector('#add-offer-btn');
-    const offerModal = document.querySelector('#offer-modal');
-    let offerModalInstance = mdb.Modal.getInstance(offerModal);
+    const openCreateOfferModal = document.querySelector('#open-create-offer-modal');
+    const createOfferModal = document.querySelector('#create-offer-modal');
+    const updateOfferModal = document.querySelector('#update-offer-modal');
+    let createOfferModalInstance = mdb.Modal.getInstance(createOfferModal);
+    let updateOfferModalInstance = mdb.Modal.getInstance(updateOfferModal);
 
     // if no instance exists, create a new one
-    if (!offerModalInstance) {
-      offerModalInstance = new mdb.Modal(offerModal);
+    if (!createOfferModalInstance) {
+      createOfferModalInstance = new mdb.Modal(createOfferModal);
     }
 
-    offerModal.addEventListener('hide.mdb.modal', function() {
+    if (!updateOfferModalInstance) {
+      updateOfferModalInstance = new mdb.Modal(updateOfferModal);
+    }
+
+    createOfferModal.addEventListener('hide.mdb.modal', function() {
       document.querySelector('#content').style.display = 'block';
       document.querySelector('#add-offer').style.display = 'block';
     })
 
-    offerModal.addEventListener('show.mdb.modal', function() {
+    createOfferModal.addEventListener('show.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'none';
+      document.querySelector('#add-offer').style.display = 'none';
+    })
+
+    updateOfferModal.addEventListener('hide.mdb.modal', function() {
+      document.querySelector('#content').style.display = 'block';
+      document.querySelector('#add-offer').style.display = 'block';
+    })
+
+    updateOfferModal.addEventListener('show.mdb.modal', function() {
       document.querySelector('#content').style.display = 'none';
       document.querySelector('#add-offer').style.display = 'none';
     })
 
     // opens offer modal on button click  
-    addOfferBtn.addEventListener('click', function() {
-      offerModalInstance.show();
+    openCreateOfferModal.addEventListener('click', function() {
+      createOfferModalInstance.show();
     })
 
     // for showing appropriate field based on which offer target chosen
@@ -356,16 +407,102 @@
       }
     })
 
-    // will insert modal with appropriate values when edit button is clicked
-    document.querySelector('body').addEventListener('click', function (event) {
+    let offerId;
+
+    document.querySelector('body').addEventListener('click', function(event) {
       const editButton = event.target.closest('.edit-button');
+      const deleteButton = event.target.closest('.delete-button');
 
+      // will insert update offer modal with appropriate values when edit button is clicked
       if (editButton) {
-        const offerRow = editButton.closest('.offer-row');
+        const offerRow = editButton.closest('tr');
 
-        const offerTarget = offerRow.querySelector('.offer-target').value;
+        offerId = editButton.getAttribute('data-offer-id');
 
-        console.log(offerTarget);
+        const offerTarget = offerRow.querySelector('.offer-target').innerText;
+        const offerFor = offerRow.querySelector('.offer-for').innerText;
+        const discount = offerRow.querySelector('.discount').innerText.slice(0, -1).trim();
+
+        document.querySelector('input[name="offerTargetInput"]').value = offerTarget;
+        document.querySelector('input[name="offerForInput"]').value = offerFor;
+        document.querySelector('input[name="discountInput"]').value = discount;
+
+        updateOfferModalInstance.show();
+      }
+
+      // will use fetch to delete the offer when delete button is clicked
+      if (deleteButton) {
+        offerId = deleteButton.getAttribute('data-offer-id');
+
+        fetch('/admin/delete-offer', {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              offerId
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
+      }
+    })
+
+    // will validate and update the offer using fetch
+    document.querySelector('#update-offer-btn').addEventListener('click', function() {
+      const discount = document.querySelector('input[name="discountInput"]').value
+      const discountAlert = document.querySelector('.edit-discount-alert');
+
+      discountAlert.style.display = 'none';
+
+      let isValid = true;
+
+      if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount === '0' || discount > 99) {
+        if (discount === '') {
+          discountAlert.style.display = 'inline';
+          discountAlert.innerText = `Discount is required`;
+        } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
+          discountAlert.style.display = 'inline';
+          discountAlert.innerText = `Input is not valid`;
+        } else if (/\s/.test(discount)) {
+          discountAlert.style.display = 'inline';
+          discountAlert.innerText = `Can't contain spaces`;
+        } else if (discount === '0') {
+          discountAlert.style.display = 'inline';
+          discountAlert.innerText = `Minimum value is 1`;
+        } else {
+          discountAlert.style.display = 'inline';
+          discountAlert.innerText = `Maximum value is 99`;
+        }
+
+        isValid = false;
+      }
+
+      if (isValid) {
+        fetch('/admin/edit-offer', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              offerId,
+              discount
+            })
+          }).then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.reload();
+            }
+          })
+          .catch(err => {
+            console.log(err);
+          })
       }
     })
   });
