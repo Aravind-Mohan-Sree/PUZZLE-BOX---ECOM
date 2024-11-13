@@ -186,9 +186,7 @@ const orderPlacement = async (req, res) => {
       .findOne({ userID: req.session.user })
       .populate("items.productID");
 
-    const wallet = await walletSchema
-      .findOne({ userID: req.session.user })
-      .populate("transactions.orderID");
+    const wallet = await walletSchema.findOne({ userID: req.session.user });
 
     const paymentMethod = ["Cash on delivery", "Razorpay", "Wallet"];
     const products = [];
@@ -265,7 +263,6 @@ const orderPlacement = async (req, res) => {
     if (paymentMode === 2) {
       wallet.balance -= newOrder.totalPrice;
       wallet.transactions.push({
-        orderID: newOrder._id,
         reason: "Order Payment",
         amount: newOrder.totalPrice,
         type: "debit",
@@ -532,7 +529,10 @@ const removePendingOrder = async (req, res) => {
 
     await orderSchema.findByIdAndDelete(orderID);
 
-    req.flash("alert", { message: "Pending order removed!", color: "bg-danger" });
+    req.flash("alert", {
+      message: "Pending order removed!",
+      color: "bg-danger",
+    });
 
     return res.status(200).json({ success: true });
   } catch (err) {

@@ -46,7 +46,7 @@
 <!-- form container -->
 <div class="d-flex vh-100 form-container justify-content-center align-items-center">
   <!-- signup form -->
-  <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3" method="post" action="/signup">
+  <form id="form" class="w-auto ps-4 pe-4 form-control bg-opacity-25 bg-light pt-4 pb-4 rounded-9 ms-3 me-3 mt-5" method="post" action="/signup">
     <h3 class="text-center mb-4 text-dark fw-bold">CREATE A NEW ACCOUNT!</h3>
     <!-- name and phone input -->
     <div class="row mb-4">
@@ -95,6 +95,13 @@
       </button>
     </div>
 
+    <!-- referral input -->
+    <div data-mdb-input-init class="form-outline mb-4">
+      <input type="text" id="referral-input" class="form-control" name="referralCode" />
+      <label class="form-label" for="form3Example3">Referral Code (Optional)</label>
+      <small id="referral-alert" class="position-absolute text-danger"></small>
+    </div>
+
     <!-- submit button -->
     <input data-mdb-ripple-init type="submit" class="btn btn-dark btn-block text-white" value="sign up">
 
@@ -129,16 +136,19 @@
     const email = document.getElementById('email-input').value.toLowerCase();
     const password = document.getElementById('password-input1').value;
     const confirmPassword = document.getElementById('password-input2').value;
+    const referralCode = document.getElementById('referral-input').value;
 
     const namePhoneAlert = document.getElementById('name-phone-alert');
     const emailAlert = document.getElementById('email-alert');
     const passwordAlert1 = document.getElementById('password-alert1');
     const passwordAlert2 = document.getElementById('password-alert2');
+    const referralAlert = document.getElementById('referral-alert');
 
     namePhoneAlert.style.display = 'none';
     emailAlert.style.display = 'none';
     passwordAlert1.style.display = 'none';
     passwordAlert2.style.display = 'none';
+    referralAlert.style.display = 'none';
 
     if (name === '' || /[^\w\s]/.test(name) || /\d/.test(name) || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 3 || name.replace(/\s+/g, '').length > 15) {
       if (name === '') {
@@ -233,7 +243,26 @@
             emailAlert.style.display = 'inline';
             emailAlert.innerText = 'Email already exist';
           } else {
-            this.submit();
+            fetch(`/check-referral-code`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  referralCode
+                })
+              }).then(response => response.json())
+              .then(data => {
+                if (data.error) {
+                  referralAlert.style.display = 'inline';
+                  referralAlert.innerText = 'Something went wrong. Try again';
+                } else if (data.failure) {
+                  referralAlert.style.display = 'inline';
+                  referralAlert.innerText = 'Invalid referral code';
+                } else {
+                  this.submit();
+                }
+              })
           }
         }).catch(err => {
           console.log(err);

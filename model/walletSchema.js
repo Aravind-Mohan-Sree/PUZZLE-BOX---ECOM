@@ -1,14 +1,19 @@
 const mongoose = require("mongoose");
+const voucherCodes = require("voucher-code-generator");
 
 const transaction = new mongoose.Schema(
   {
-    orderID: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "order",
+    transactionID: {
+      type: String,
     },
     reason: {
       type: String,
-      enum: ["Order Payment", "Return Refund", "Cancellation Refund"],
+      enum: [
+        "Order Payment",
+        "Return Refund",
+        "Cancellation Refund",
+        "Referral Reward",
+      ],
     },
     amount: {
       type: Number,
@@ -25,6 +30,20 @@ const transaction = new mongoose.Schema(
   },
   { timestamps: true, _id: false }
 );
+
+/* ------ pre-save middleware to generate transactionID if not provided ----- */
+transaction.pre("save", function (next) {
+  if (!this.transactionID) {
+    this.transactionID = voucherCodes.generate({
+      length: 14,
+      count: 1,
+      charset: voucherCodes.charset("alphanumeric"),
+      prefix: "pay_",
+      pattern: "##############",
+    })[0];
+  }
+  next();
+});
 
 const schema = new mongoose.Schema(
   {

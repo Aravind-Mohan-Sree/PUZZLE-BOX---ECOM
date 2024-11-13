@@ -1,15 +1,17 @@
-const bcrypt = require('bcrypt');
-const generateOtp = require('../../services/generateOtp');
-const userSchema = require('../../model/userSchema');
-const mailSender = require('../../services/emailSender');
-const passport = require('passport');
-const productSchema = require('../../model/productSchema');
-const categorySchema = require('../../model/categorySchema');
-require('../../services/auth');
+const userSchema = require("../../model/userSchema");
+const walletSchema = require("../../model/walletSchema");
+const mailSender = require("../../services/emailSender");
+const passport = require("passport");
+const productSchema = require("../../model/productSchema");
+const categorySchema = require("../../model/categorySchema");
+const bcrypt = require("bcrypt");
+const generateOtp = require("../../services/generateOtp");
+const voucherCodes = require("voucher-code-generator");
+require("../../services/auth");
 
 // will redirect to user login page
 const user = (req, res) => {
-  res.redirect('/login');
+  res.redirect("/login");
 };
 
 // will render user login page if user session is not present
@@ -19,29 +21,53 @@ const login = async (req, res) => {
     delete req.session.otp;
 
     if (req.session.user) {
-      res.redirect('/home');
+      res.redirect("/home");
     } else {
       if (req.query.changePassword) {
-        req.flash('alert', { message: 'Password changed successfully!', color: 'bg-success' });
+        req.flash("alert", {
+          message: "Password changed successfully!",
+          color: "bg-success",
+        });
       }
 
       if (req.query.logout) {
-        req.flash('alert', { message: 'Logout successful!', color: 'bg-success' });
+        req.flash("alert", {
+          message: "Logout successful!",
+          color: "bg-success",
+        });
       }
 
       if (req.query.isBlocked) {
-        req.flash('alert', { message: 'You are blocked by the admin!', color: 'bg-danger' });
+        req.flash("alert", {
+          message: "You are blocked by the admin!",
+          color: "bg-danger",
+        });
       }
 
-      const activeCategories = await productSchema.find({
-        isActive: true,
-        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-      })
-        .populate('productCategory');
-  
-      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+      const activeCategories = await productSchema
+        .find({
+          isActive: true,
+          productCategory: {
+            $in: await categorySchema.find({ isActive: true }).select("_id"),
+          },
+        })
+        .populate("productCategory");
 
-      res.render('user/login', { title: 'User Login', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
+      const activeCategoryNames = Array.from(
+        new Set(
+          activeCategories.map(
+            (product) => product.productCategory.categoryName
+          )
+        )
+      ).sort((a, b) => a.localeCompare(b));
+
+      res.render("user/login", {
+        title: "User Login",
+        alert: req.flash("alert"),
+        user: req.session.user,
+        activeCategoryNames,
+        content: "",
+      });
     }
   } catch (err) {
     console.error(`Error while rendering user login page ${err}`);
@@ -56,16 +82,19 @@ const loginPost = async (req, res) => {
     if (!userDetails || userDetails.isBlocked) {
       if (!userDetails) {
         res.json({ wrongEmail: true });
-      } else {      
+      } else {
         res.json({ isBlocked: true });
       }
     } else {
-      const validPassword = await bcrypt.compare(req.body.password, userDetails.password);
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        userDetails.password
+      );
 
       if (validPassword) {
         req.session.user = userDetails._id;
 
-        res.json({ url: '/home?login=true' });
+        res.json({ url: "/home?login=true" });
       } else {
         res.json({ wrongPassword: true });
       }
@@ -73,7 +102,7 @@ const loginPost = async (req, res) => {
   } catch (err) {
     res.json({ error: true });
 
-    console.log('Error in user login post', err);
+    console.log("Error in user login post", err);
   }
 };
 
@@ -81,17 +110,32 @@ const loginPost = async (req, res) => {
 const signup = async (req, res) => {
   try {
     if (req.session.user) {
-      res.redirect('/home');
+      res.redirect("/home");
     } else {
-      const activeCategories = await productSchema.find({
-        isActive: true,
-        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-      })
-        .populate('productCategory');
-  
-      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+      const activeCategories = await productSchema
+        .find({
+          isActive: true,
+          productCategory: {
+            $in: await categorySchema.find({ isActive: true }).select("_id"),
+          },
+        })
+        .populate("productCategory");
 
-      res.render('user/signup', { title: 'User Signup', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
+      const activeCategoryNames = Array.from(
+        new Set(
+          activeCategories.map(
+            (product) => product.productCategory.categoryName
+          )
+        )
+      ).sort((a, b) => a.localeCompare(b));
+
+      res.render("user/signup", {
+        title: "User Signup",
+        alert: req.flash("alert"),
+        user: req.session.user,
+        activeCategoryNames,
+        content: "",
+      });
     }
   } catch (err) {
     console.error(`Error while rendering user signup page ${err}`);
@@ -105,13 +149,15 @@ const signupPost = async (req, res) => {
       name: req.body.name,
       phone: req.body.phone,
       email: req.body.email,
-      password: req.body.password
+      password: req.body.password,
+      referralCode: req.body.referralCode,
     };
 
     req.session.name = userDetails.name;
     req.session.phone = userDetails.phone;
     req.session.email = userDetails.email;
     req.session.password = await bcrypt.hash(userDetails.password, 10);
+    req.session.referralCode = userDetails.referralCode;
 
     // generates a random OTP and assigns to the variable
     const otp = generateOtp();
@@ -124,9 +170,9 @@ const signupPost = async (req, res) => {
     // mail will be sent to the user using nodemailer
     mailSender.sendOtpMail(userDetails.email, otp);
 
-    res.redirect('/otp');
+    res.redirect("/otp");
   } catch (err) {
-    console.error('Error in user signup post', err);
+    console.error("Error in user signup post", err);
   }
 };
 
@@ -143,7 +189,30 @@ const checkEmail = async (req, res) => {
   } catch (err) {
     res.json({ error: true });
 
-    console.error('Error while validating email', err);
+    console.error("Error while validating email", err);
+  }
+};
+
+// will check if the referral code is valid or not
+const checkReferralCode = async (req, res) => {
+  try {
+    const { referralCode } = req.body;
+
+    if (!referralCode) {
+      return res.json({ success: true });
+    }
+
+    const referral = await userSchema.findOne({ referralCode });
+
+    if (referral) {
+      res.json({ success: true });
+    } else {
+      res.json({ failure: true });
+    }
+  } catch (err) {
+    res.json({ error: true });
+
+    console.error("Error while validating referral code", err);
   }
 };
 
@@ -151,27 +220,43 @@ const checkEmail = async (req, res) => {
 const otp = async (req, res) => {
   try {
     if (req.session.otp) {
-      const activeCategories = await productSchema.find({
-        isActive: true,
-        productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-      })
-        .populate('productCategory');
-  
-      const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+      const activeCategories = await productSchema
+        .find({
+          isActive: true,
+          productCategory: {
+            $in: await categorySchema.find({ isActive: true }).select("_id"),
+          },
+        })
+        .populate("productCategory");
 
-      res.render('user/otp', { title: 'Verify OTP', alert: req.flash('alert'), user: req.session.user, activeCategoryNames, content: '' });
+      const activeCategoryNames = Array.from(
+        new Set(
+          activeCategories.map(
+            (product) => product.productCategory.categoryName
+          )
+        )
+      ).sort((a, b) => a.localeCompare(b));
+
+      res.render("user/otp", {
+        title: "Verify OTP",
+        alert: req.flash("alert"),
+        user: req.session.user,
+        activeCategoryNames,
+        content: "",
+      });
     } else {
-      res.redirect('/login');
+      res.redirect("/login");
     }
   } catch (err) {
-    console.error('Error on rendering user OTP page', err);
+    console.error("Error on rendering user OTP page", err);
   }
 };
 
 // will delete OTP from the session if expired
 const otpTimer = (req, res) => {
   try {
-    const timeDifference = Number(req.query.currentTime) - req.session.otpSendTime;
+    const timeDifference =
+      Number(req.query.currentTime) - req.session.otpSendTime;
 
     if (timeDifference >= req.query.expiryTime || req.query.time < 0) {
       delete req.session.otp;
@@ -182,7 +267,7 @@ const otpTimer = (req, res) => {
   } catch (err) {
     res.json({ error: true });
 
-    console.log('Error on OTP timer', err);
+    console.log("Error on OTP timer", err);
   }
 };
 
@@ -201,7 +286,7 @@ const checkOtp = (req, res) => {
   } catch (err) {
     res.json({ error: true });
 
-    console.error('Error while validating OTP', err);
+    console.error("Error while validating OTP", err);
   }
 };
 
@@ -223,29 +308,99 @@ const resendOtp = (req, res) => {
   } catch (err) {
     res.json({ success: false });
 
-    console.error('Error in resending OTP', err);
+    console.error("Error in resending OTP", err);
   }
 };
 
 // will redirect to home page and store user details in database
 const otpPost = async (req, res) => {
   try {
+    let uniqueReferralCode = false;
+    let referralCode;
+
+    /* ------ will loop continuously until a unique code is being generated ----- */
+    while (!uniqueReferralCode) {
+      /* ---------- generate a referral code with specific options ---------- */
+      referralCode = voucherCodes.generate({
+        length: 10,
+        count: 1,
+        charset: voucherCodes.charset("alphabetic").toUpperCase(),
+        pattern: "##########",
+      });
+
+      const existingReferralCode = await userSchema.aggregate([
+        {
+          $match: { referralCode },
+        },
+      ]);
+
+      if (existingReferralCode.length === 0) {
+        uniqueReferralCode = true;
+      }
+    }
+
     // will delete OTP stored in session
     delete req.session.otp;
 
     if (req.session.name) {
-      await userSchema.create({
-        name: req.session.name,
-        phone: req.session.phone,
-        email: req.session.email,
-        password: req.session.password
-      }).then(() => {
-        console.log('User details saved into database');
-      }).catch(err => {
-        console.log(err);
-      })
+      await userSchema
+        .create({
+          name: req.session.name,
+          phone: req.session.phone,
+          email: req.session.email,
+          password: req.session.password,
+          referralCode,
+        })
+        .then(() => {
+          console.log("User details saved into database");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-      const userDetails = await userSchema.findOne({ email: req.session.email });
+      const userDetails = await userSchema.findOne({
+        email: req.session.email,
+      });
+
+      // if there is a valid referral code, then a certain amount will be credited to both users wallet
+      const { referralCode } = req.session.referralCode;
+
+      if (referralCode) {
+        const rewardAmount = 500;
+
+        const referrer = await userSchema.findOne({
+          referralCode,
+        });
+
+        const referrerWallet = await walletSchema.findById(referrer._id);
+
+        if (!referrerWallet) {
+          await walletSchema.create({
+            userID: referrer._id,
+            balance: rewardAmount,
+            transactions: [
+              {
+                orderID,
+                reason: "Referral Reward",
+                amount: rewardAmount,
+                type: "credit",
+                runningBalance: rewardAmount,
+              },
+            ],
+          });
+        } else {
+          wallet.balance += rewardAmount;
+          wallet.transactions.push({
+            orderID,
+            reason: "Referral Reward",
+            amount: rewardAmount,
+            type: "credit",
+            runningBalance: wallet.balance,
+          });
+
+          await wallet.save();
+        }
+      }
 
       // mail will be sent to the user using nodemailer
       mailSender.sendWelcomeMail(userDetails.email, userDetails.name);
@@ -254,42 +409,42 @@ const otpPost = async (req, res) => {
       delete req.session.phone;
       delete req.session.email;
       delete req.session.password;
+      delete req.session.referralCode;
 
       // creating user session
       req.session.user = userDetails._id;
 
-      res.redirect('/home?login=true');
+      res.redirect("/home?login=true");
     } else {
-      res.redirect('/change-password');
+      res.redirect("/change-password");
     }
   } catch (err) {
-    console.log('Error in OTP post request', err);
+    console.log("Error in OTP post request", err);
   }
 };
 
-// google auth 
+// google auth
 const googleAuth = (req, res) => {
   try {
-    passport.authenticate('google', {
-      scope:
-        ['email', 'profile']
-    })(req, res)
+    passport.authenticate("google", {
+      scope: ["email", "profile"],
+    })(req, res);
   } catch (err) {
-    console.log(`Error on google authentication ${err}`)
+    console.log(`Error on google authentication ${err}`);
   }
-}
+};
 
 // google auth callback from the auth service
 const googleAuthCallback = (req, res, next) => {
   try {
-    passport.authenticate('google', (err, user, info) => {
+    passport.authenticate("google", (err, user, info) => {
       if (err) {
         console.log(`Error on google auth callback: ${err}`);
         return next(err);
       }
 
       if (!user) {
-        return res.redirect('/login');
+        return res.redirect("/login");
       }
 
       req.logIn(user, (err) => {
@@ -300,36 +455,34 @@ const googleAuthCallback = (req, res, next) => {
         // Store the user ID in the session
         req.session.user = user.id;
 
-        return res.redirect('/home?login=true');
+        return res.redirect("/home?login=true");
       });
     })(req, res, next);
   } catch (err) {
     console.log(`Error on google callback ${err}`);
   }
-}
+};
 
 // will destroy the session and logout user
 const logout = (req, res) => {
   try {
-    req.session.destroy(err => {
+    req.session.destroy((err) => {
       if (err) {
         console.log(err);
       } else {
-        res.redirect('/login?logout=true');
+        res.redirect("/login?logout=true");
       }
     });
   } catch (err) {
-    console.log('Error on user logout', err);
+    console.log("Error on user logout", err);
   }
 };
 
 const addUser = async (req, res) => {
   await userSchema.create({
     name: req.body.username,
-    password: req.body.password
-  })
-
-  
+    password: req.body.password,
+  });
 };
 
 module.exports = {
@@ -339,6 +492,7 @@ module.exports = {
   signup,
   signupPost,
   checkEmail,
+  checkReferralCode,
   otp,
   otpTimer,
   checkOtp,
@@ -346,5 +500,5 @@ module.exports = {
   otpPost,
   googleAuth,
   googleAuthCallback,
-  logout
+  logout,
 };

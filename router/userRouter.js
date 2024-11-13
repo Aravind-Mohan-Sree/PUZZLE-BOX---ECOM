@@ -31,6 +31,9 @@ user.post('/signup', userController.signupPost);
 // will handle user check-email route
 user.post('/check-email', userController.checkEmail);
 
+// will handle user check-referral-code route
+user.post('/check-referral-code', userController.checkReferralCode);
+
 // will handle OTP routes
 user.get('/otp', userController.otp);
 user.get('/otp-timer', userController.otpTimer);
