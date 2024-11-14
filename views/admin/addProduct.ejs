@@ -305,6 +305,8 @@
     descriptionAlert.style.display = 'none';
     imageAlert.style.display = 'none';
 
+    let isValid = true;
+
     if (name === '' || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 8) {
       if (name === '') {
         nameAlert.style.display = 'inline';
@@ -321,27 +323,39 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (category === '') {
+
+      isValid = false;
+    }
+    
+    if (category === '') {
       categoryAlert.style.display = 'inline';
       categoryAlert.innerText = 'Category is required';
       categoryAlert.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (featured === '') {
+
+      isValid = false;
+    }
+    
+    if (featured === '') {
       featuredAlert.style.display = 'inline';
       featuredAlert.innerText = 'Featured is required';
       featuredAlert.scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
+
+      isValid = false;
+    }
+    
+    if (price === '' || /[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price) || /\s/.test(price)) {
       if (price === '') {
         priceAlert.style.display = 'inline';
         priceAlert.innerText = `Price is required`;
       } else if (/[a-zA-Z]/.test(price) || /[^\w\s.]|(\..*\.)|(\.$)/.test(price)) {
         priceAlert.style.display = 'inline';
-        priceAlert.innerText = `Input is not valid`;
+        priceAlert.innerText = `Invalid input`;
       } else {
         priceAlert.style.display = 'inline';
         priceAlert.innerText = `Can't contain spaces`;
@@ -351,14 +365,18 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (stock === '' || /[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock) || /\s/.test(stock)) {
+
+      isValid = false;
+    }
+    
+    if (stock === '' || /[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock) || /\s/.test(stock)) {
       if (stock === '') {
         stockAlert.style.display = 'inline';
         console.log(stock);
         stockAlert.innerText = `Stock is required`;
       } else if (/[a-zA-Z]/.test(stock) || /[^\w\s]/.test(stock)) {
         stockAlert.style.display = 'inline';
-        stockAlert.innerText = `Input is not valid`;
+        stockAlert.innerText = `Invalid input`;
       } else {
         stockAlert.style.display = 'inline';
         stockAlert.innerText = `Can't contain spaces`;
@@ -368,13 +386,17 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 99) {
+
+      isValid = false;
+    }
+    
+    if (discount === '' || /[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount) || /\s/.test(discount) || discount > 99) {
       if (discount === '') {
         discountAlert.style.display = 'inline';
         discountAlert.innerText = `Discount is required`;
       } else if (/[a-zA-Z]/.test(discount) || /[^\w\s]/.test(discount)) {
         discountAlert.style.display = 'inline';
-        discountAlert.innerText = `Input is not valid`;
+        discountAlert.innerText = `Invalid input`;
       } else if (/\s/.test(discount)) {
         discountAlert.style.display = 'inline';
         discountAlert.innerText = `Can't contain spaces`;
@@ -387,13 +409,17 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (length === '' || /[a-zA-Z]/.test(length) || /[^\w\s.]|(\..*\.)|(\.$)/.test(length) || /\s/.test(length) || width === '' || /[a-zA-Z]/.test(width) || /[^\w\s.]|(\..*\.)|(\.$)/.test(width) || /\s/.test(width) || height === '' || /[a-zA-Z]/.test(height) || /[^\w\s.]|(\..*\.)|(\.$)/.test(height) || /\s/.test(height)) {
+
+      isValid = false;
+    }
+    
+    if (length === '' || /[a-zA-Z]/.test(length) || /[^\w\s.]|(\..*\.)|(\.$)/.test(length) || /\s/.test(length) || width === '' || /[a-zA-Z]/.test(width) || /[^\w\s.]|(\..*\.)|(\.$)/.test(width) || /\s/.test(width) || height === '' || /[a-zA-Z]/.test(height) || /[^\w\s.]|(\..*\.)|(\.$)/.test(height) || /\s/.test(height)) {
       if (length === '' || width === '' || height === '') {
         dimensionAlert.style.display = 'inline';
         dimensionAlert.innerText = `Dimension is required`;
       } else if (/[a-zA-Z]/.test(length) || /[a-zA-Z]/.test(width) || /[a-zA-Z]/.test(height) || /[^\w\s.]|(\..*\.)|(\.$)/.test(length) || /[^\w\s.]|(\..*\.)|(\.$)/.test(width) || /[^\w\s.]|(\..*\.)|(\.$)/.test(height)) {
         dimensionAlert.style.display = 'inline';
-        dimensionAlert.innerText = `Input is not valid`;
+        dimensionAlert.innerText = `Invalid input`;
       } else {
         dimensionAlert.style.display = 'inline';
         dimensionAlert.innerText = `Can't contain spaces`;
@@ -403,13 +429,17 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (difficulty === '' || /[a-zA-Z]/.test(difficulty) || /[^\w\s]/.test(difficulty) || /\s/.test(difficulty) || difficulty > 10) {
+
+      isValid = false;
+    }
+    
+    if (difficulty === '' || /[a-zA-Z]/.test(difficulty) || /[^\w\s]/.test(difficulty) || /\s/.test(difficulty) || difficulty > 10) {
       if (difficulty === '') {
         difficultyAlert.style.display = 'inline';
         difficultyAlert.innerText = `Difficulty is required`;
       } else if (/[a-zA-Z]/.test(difficulty) || /[^\w\s]/.test(difficulty)) {
         difficultyAlert.style.display = 'inline';
-        difficultyAlert.innerText = `Input is not valid`;
+        difficultyAlert.innerText = `Invalid input`;
       } else if (/\s/.test(difficulty)) {
         difficultyAlert.style.display = 'inline';
         difficultyAlert.innerText = `Can't contain spaces`;
@@ -422,7 +452,11 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (description === '' || /^\s|\s{2,}|\s$/.test(description) || description.replace(/\s+/g, '').length > 500) {
+
+      isValid = false;
+    }
+    
+    if (description === '' || /^\s|\s{2,}|\s$/.test(description) || description.replace(/\s+/g, '').length > 500) {
       if (description === '') {
         descriptionAlert.style.display = 'inline';
         descriptionAlert.innerText = 'Description is required';
@@ -438,7 +472,11 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else if (productImages.length < 3) {
+
+      isValid = false;
+    }
+    
+    if (productImages.length < 3) {
       imageAlert.style.display = 'inline';
       imageAlert.innerText = 'Product image is required';
 
@@ -446,7 +484,11 @@
         behavior: 'smooth',
         block: 'center'
       });
-    } else {
+
+      isValid = false;
+    }
+    
+    if (isValid) {
       Swal.fire({
         title: 'Please wait...',
         text: 'Product is adding.',
