@@ -316,12 +316,12 @@ const resendOtp = (req, res) => {
 const otpPost = async (req, res) => {
   try {
     let uniqueReferralCode = false;
-    let referralCode;
+    let referralCodes;
 
     /* ------ will loop continuously until a unique code is being generated ----- */
     while (!uniqueReferralCode) {
       /* ---------- generate a referral code with specific options ---------- */
-      referralCode = voucherCodes.generate({
+      referralCodes = voucherCodes.generate({
         length: 10,
         count: 1,
         charset: voucherCodes.charset("alphabetic").toUpperCase(),
@@ -330,7 +330,7 @@ const otpPost = async (req, res) => {
 
       const existingReferralCode = await userSchema.aggregate([
         {
-          $match: { referralCode },
+          $match: { referralCode: referralCodes[0] },
         },
       ]);
 
@@ -349,7 +349,7 @@ const otpPost = async (req, res) => {
           phone: req.session.phone,
           email: req.session.email,
           password: req.session.password,
-          referralCode,
+          referralCode: referralCodes[0],
         })
         .then(() => {
           console.log("User details saved into database");
@@ -363,13 +363,13 @@ const otpPost = async (req, res) => {
       });
 
       // if there is a valid referral code, then a certain amount will be credited to both users wallet
-      const { referralCode } = req.session.referralCode;
+      const signupReferralCode = req.session.referralCode;
 
-      if (referralCode) {
+      if (signupReferralCode) {
         const rewardAmount = 500;
 
         const referrer = await userSchema.findOne({
-          referralCode,
+          referralCode: signupReferralCode,
         });
 
         const referrerWallet = await walletSchema.findById(referrer._id);

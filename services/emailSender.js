@@ -18,7 +18,7 @@ const sendOtpMail = async (email, otp) => {
     to: email,
     subject: 'OTP from PUZZLEBOX',
     html: `<p>Dear Puzzler,</p>
-           <p style="margin-top: 1.3rem; margin-bottom: 1.3rem;">Your PUZZLE BOX One Time Password (OTP) is <strong>${otp}</strong>. Don't share it with anyone. OTP is valid for 2 mins.</p>
+           <p style="margin-top: 1.3rem; margin-bottom: 1.3rem;">Your PUZZLE BOX One Time Password (OTP) is <strong>${otp}</strong>. Don't share it with anyone. OTP is valid for 1 minute.</p>
            <p style="margin-bottom: 1.3rem;">Thanks & Regards<br>PUZZLE BOX Team</p>
            <p>This is an automatically generated email. Please do not reply to this email.</p>`
   };
