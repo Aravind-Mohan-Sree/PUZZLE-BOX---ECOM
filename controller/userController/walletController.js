@@ -19,17 +19,6 @@ const getWallet = async (req, res) => {
         $unwind: "$transactions",
       },
       {
-        $lookup: {
-          from: "orders",
-          localField: "transactions.orderID",
-          foreignField: "_id",
-          as: "transactions.orderDetails",
-        },
-      },
-      {
-        $unwind: "$transactions.orderDetails",
-      },
-      {
         $group: {
           _id: "$_id",
           userID: { $first: "$userID" },

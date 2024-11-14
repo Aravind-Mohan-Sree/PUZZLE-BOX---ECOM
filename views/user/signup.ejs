@@ -50,18 +50,19 @@
     <h3 class="text-center mb-4 text-dark fw-bold">CREATE A NEW ACCOUNT!</h3>
     <!-- name and phone input -->
     <div class="row mb-4">
-      <div class="col">
+      <div class="col-12 col-md-6 mb-4 mb-md-0">
         <div data-mdb-input-init class="form-outline">
           <input type="text" id="name-input" class="form-control" name="name" />
           <label class="form-label" for="form3Example1">Name</label>
         </div>
-        <small id="name-phone-alert" class="position-absolute text-danger"></small>
+        <small id="name-alert" class="position-absolute text-danger"></small>
       </div>
-      <div class="col">
+      <div class="col-12 col-md-6">
         <div data-mdb-input-init class="form-outline">
           <input type="tel" inputmode="tel" id="phone-input" class="form-control" name="phone" />
           <label class="form-label" for="form3Example2">Phone</label>
         </div>
+        <small id="phone-alert" class="position-absolute text-danger"></small>
       </div>
     </div>
 
@@ -84,7 +85,7 @@
       </button>
     </div>
 
-    <div class="input-group mb-2">
+    <div class="input-group mb-4">
       <div class="form-outline" data-mdb-input-init>
         <input id="password-input2" type="password" class="form-control" name="confirmPassword" />
         <label class="form-label" for="form1">Confirm Password</label>
@@ -96,7 +97,7 @@
     </div>
 
     <!-- referral input -->
-    <small class="d-block mb-2 fw-bold">Save ₹ 500 instantly with a referral!</small>
+    <small class="d-block mb-2 fw-bold">Get ₹ 500 instantly with a referral!</small>
     <div data-mdb-input-init class="form-outline mb-4">
       <input type="text" id="referral-input" class="form-control" name="referralCode" />
       <label class="form-label" for="form3Example3">Referral Code (Optional)</label>
@@ -139,94 +140,115 @@
     const confirmPassword = document.getElementById('password-input2').value;
     const referralCode = document.getElementById('referral-input').value;
 
-    const namePhoneAlert = document.getElementById('name-phone-alert');
+    const nameAlert = document.getElementById('name-alert');
+    const phoneAlert = document.getElementById('phone-alert');
     const emailAlert = document.getElementById('email-alert');
     const passwordAlert1 = document.getElementById('password-alert1');
     const passwordAlert2 = document.getElementById('password-alert2');
     const referralAlert = document.getElementById('referral-alert');
 
-    namePhoneAlert.style.display = 'none';
+    nameAlert.style.display = 'none';
+    phoneAlert.style.display = 'none';
     emailAlert.style.display = 'none';
     passwordAlert1.style.display = 'none';
     passwordAlert2.style.display = 'none';
     referralAlert.style.display = 'none';
 
+    let isValid = true;
+
     if (name === '' || /[^\w\s]/.test(name) || /\d/.test(name) || /^\s|\s{2,}|\s$/.test(name) || name.replace(/\s+/g, '').length < 3 || name.replace(/\s+/g, '').length > 15) {
       if (name === '') {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = 'Name is required';
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = 'Name is required';
       } else if (/[^\w\s]/.test(name)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Name can't contain special characters`;
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = `Can't contain special characters`;
       } else if (/\d/.test(name)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Name can't contain numbers`;
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = `Can't contain numbers`;
       } else if (/^\s|\s{2,}|\s$/.test(name)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Name can't contain unwanted spaces`;
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = `Can't contain unwanted spaces`;
       } else if (name.replace(/\s+/g, '').length < 3) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Name minimum length is 3`;
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = `Minimum length is 3`;
       } else {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Name maximum length is 15`;
+        nameAlert.style.display = 'inline';
+        nameAlert.innerText = `Maximum length is 15`;
       }
-    } else if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
+
+      isValid = false;
+    }
+
+    if (phone === '' || /[a-zA-Z]/.test(phone) || /[^\w\s]/.test(phone) || /\s/.test(phone) || phone.length !== 10) {
       if (phone === '') {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Phone is required`;
+        phoneAlert.style.display = 'inline';
+        phoneAlert.innerText = `Phone is required`;
       } else if (/[a-zA-Z]/.test(phone)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Phone can't contain alphabets`;
+        phoneAlert.style.display = 'inline';
+        phoneAlert.innerText = `Can't contain alphabets`;
       } else if (/[^\w\s]/.test(phone)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Phone can't contain special characters`;
+        phoneAlert.style.display = 'inline';
+        phoneAlert.innerText = `Can't contain special characters`;
       } else if (/\s/.test(phone)) {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Phone can't contain spaces`;
+        phoneAlert.style.display = 'inline';
+        phoneAlert.innerText = `Can't contain spaces`;
       } else {
-        namePhoneAlert.style.display = 'inline';
-        namePhoneAlert.innerText = `Phone length must be 10`;
+        phoneAlert.style.display = 'inline';
+        phoneAlert.innerText = `Invalid phone number`;
       }
-    } else if (email === '' || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
+
+      isValid = false;
+    }
+
+    if (email === '' || !/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
       if (email === '') {
         emailAlert.style.display = 'inline';
         emailAlert.innerText = `Email is required`;
       } else if (!/^[a-zA-Z0-9._%+-]+@gmail\.com$/.test(email)) {
         emailAlert.style.display = 'inline';
-        emailAlert.innerText = `Email format is invalid`;
+        emailAlert.innerText = `Invalid email ID`;
       }
-    } else if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
+
+      isValid = false;
+    }
+
+    if (password === '' || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/[^\w\s]/.test(password) || !/\d/.test(password) || /\s/.test(password) || password.length < 8 || password.length > 30) {
       passwordAlert1.style.width = window.getComputedStyle(document.getElementById('password1')).width;
       if (password === '') {
         passwordAlert1.style.display = 'inline';
         passwordAlert1.innerText = `Password is required`;
-      } else if (!/[a-z]/.test(password)) {
+      } else if (!/[a-z]/.test(password) || !/[A-Z]/.test(password)) {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password must be case-sensitive`;
-      } else if (!/[A-Z]/.test(password)) {
-        passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password must be case-sensitive`;
+        passwordAlert1.innerText = `Must be case-sensitive`;
       } else if (!/[^\w\s]/.test(password)) {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password must contain a special character`;
+        passwordAlert1.innerText = `Must contain a special character`;
       } else if (!/\d/.test(password)) {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password must contain a number`;
+        passwordAlert1.innerText = `Must contain a number`;
       } else if (/\s/.test(password)) {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password can't contain spaces`;
+        passwordAlert1.innerText = `Can't contain spaces`;
       } else if (password.length < 8) {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password minimum length is 8`;
+        passwordAlert1.innerText = `Minimum length is 8`;
       } else {
         passwordAlert1.style.display = 'inline';
-        passwordAlert1.innerText = `Password maximum length is 30`;
+        passwordAlert1.innerText = `Maximum length is 30`;
       }
-    } else if (password !== confirmPassword) {
+
+      isValid = false;
+    }
+
+    if (password !== confirmPassword) {
       passwordAlert2.style.display = 'inline';
       passwordAlert2.innerText = `Passwords mismatch`;
-    } else {
+
+      isValid = false;
+    }
+
+    if (isValid) {
       fetch(`/check-email`, {
           method: 'POST',
           headers: {

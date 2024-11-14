@@ -110,7 +110,6 @@ const editOrderStatus = async (req, res) => {
           balance: refundableAmount,
           transactions: [
             {
-              ...(order.paymentId && { transactionID: order.paymentId }),
               reason: "Return Refund",
               amount: refundableAmount,
               type: "credit",
@@ -121,7 +120,6 @@ const editOrderStatus = async (req, res) => {
       } else if (statusEnum[orderStatus] === "Returned") {
         wallet.balance += refundableAmount;
         wallet.transactions.push({
-          ...(order.paymentId && { transactionID: order.paymentId }),
           reason: "Return Refund",
           amount: refundableAmount,
           type: "credit",

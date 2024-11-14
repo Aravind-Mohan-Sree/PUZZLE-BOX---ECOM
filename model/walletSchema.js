@@ -10,8 +10,8 @@ const transaction = new mongoose.Schema(
       type: String,
       enum: [
         "Order Payment",
-        "Return Refund",
         "Cancellation Refund",
+        "Return Refund",
         "Referral Reward",
       ],
     },
@@ -31,17 +31,30 @@ const transaction = new mongoose.Schema(
   { timestamps: true, _id: false }
 );
 
-/* ------ pre-save middleware to generate transactionID if not provided ----- */
-transaction.pre("save", function (next) {
+/* ------ pre-save middleware to generate unique transactionID ----- */
+transaction.pre("save", async function (next) {
   if (!this.transactionID) {
-    this.transactionID = voucherCodes.generate({
-      length: 14,
-      count: 1,
-      charset: voucherCodes.charset("alphanumeric"),
-      prefix: "pay_",
-      pattern: "##############",
-    })[0];
+    let unique = false;
+    let newID;
+
+    while (!unique) {
+      newID = voucherCodes.generate({
+        length: 14,
+        count: 1,
+        charset: voucherCodes.charset("alphanumeric"),
+        prefix: "T",
+        pattern: "##############",
+      })[0];
+
+      const existingTransaction = await mongoose
+        .model("wallet")
+        .findOne({ transactionID: newID });
+      if (!existingTransaction) unique = true;
+    }
+
+    this.transactionID = newID;
   }
+
   next();
 });
 

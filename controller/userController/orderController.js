@@ -106,7 +106,6 @@ const cancelOrderPost = async (req, res) => {
             balance: refundableAmount,
             transactions: [
               {
-                ...(order.paymentId && { transactionID: order.paymentId }),
                 reason: "Cancellation Refund",
                 amount: refundableAmount,
                 type: "credit",
@@ -117,7 +116,6 @@ const cancelOrderPost = async (req, res) => {
         } else {
           wallet.balance += refundableAmount;
           wallet.transactions.push({
-            ...(order.paymentId && { transactionID: order.paymentId }),
             reason: "Cancellation Refund",
             amount: refundableAmount,
             type: "credit",
