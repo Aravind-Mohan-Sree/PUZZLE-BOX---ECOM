@@ -372,9 +372,11 @@ const otpPost = async (req, res) => {
           referralCode: signupReferralCode,
         });
 
-        const referrerWallet = await walletSchema.findById(referrer._id);
+        const referrerWallet = await walletSchema.findOne({
+          userID: referrer._id,
+        });
 
-        // creates wallet for referrer if not exist else update wallet
+        // creates wallet for referrer if not exist, else update wallet
         if (!referrerWallet) {
           await walletSchema.create({
             userID: referrer._id,

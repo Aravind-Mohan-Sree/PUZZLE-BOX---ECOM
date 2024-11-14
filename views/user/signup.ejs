@@ -264,7 +264,7 @@
             emailAlert.innerText = 'Something went wrong. Try again';
           } else if (data.exist) {
             emailAlert.style.display = 'inline';
-            emailAlert.innerText = 'Email already exist';
+            emailAlert.innerText = 'Email ID already exists';
           } else {
             fetch(`/check-referral-code`, {
                 method: 'POST',

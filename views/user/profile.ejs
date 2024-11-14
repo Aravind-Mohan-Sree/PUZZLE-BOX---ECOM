@@ -40,6 +40,14 @@
     box-shadow: none;
     border-color: rgb(255, 255, 255);
   }
+
+  .copy-icon {
+    cursor: pointer;
+  }
+
+  .copied-popup {
+    display: none;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -58,6 +66,20 @@
             <div class="card-body text-center">
               <img src="/image/user.svg" alt="avatar" class="img-fluid" style="width: 150px;">
               <h5 class="my-3 text-uppercase"><%= userDetails.name %></h5>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body p-0">
+              <ul class="list-group list-group-flush rounded-3">
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <i class="fa-duotone fa-solid fa-copy fa-2xl copy-icon" onclick="copyReferralCode()" style="--fa-primary-color: #50ff8b; --fa-secondary-color: #b3ffcc; --fa-secondary-opacity: 1;"></i>
+                  <p class="ms-3 m-0 h3 referral-code"><%= userDetails.referralCode %></p>
+                  <span class="badge badge-success copied-popup">Copied!</span>
+                </li>
+                <li class="list-group-item d-flex justify-content-center align-items-center p-3">
+                  <p class="m-0">Refer a friend with the code above and instantly get ₹ 500 credited to your wallet!</p>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -218,11 +240,11 @@
 </form>
 <!-- ----------------------------------------------------------------------- -->
 
-<!-- --------------------------- testimonials included --------------------------- -->
-<%- include('testimonial') %>
-<!-- ----------------------------------------------------------------------- -->
+<div class="mb-5">
+  <!-- --------------------------- testimonials included --------------------------- -->
+  <%- include('testimonial') %>
+  <!-- ----------------------------------------------------------------------- -->
 </div>
-<!-- ----------------------------------------------------------------------- -->
 
 <!-- --------------------------- footer included --------------------------- -->
 <%- include('footer') %>
@@ -725,6 +747,25 @@
           }
         })
     });
+
+    // for copying the referral code
+    window.copyReferralCode = function() {
+      const referralCode = document.getElementsByClassName("referral-code")[0].textContent;
+
+      navigator.clipboard.writeText(referralCode).then(() => {
+        const popup = document.getElementsByClassName("copied-popup")[0];
+        popup.style.display = "inline";
+        popup.style.position = "absolute";
+        popup.style.top = 0;
+        popup.style.transform = "translateX(-160%)";
+
+        setTimeout(() => {
+          popup.style.display = "none";
+        }, 1000);
+      }).catch(err => {
+        console.error("Failed to copy:", err);
+      });
+    }
   });
 </script>
 <!-- ----------------------------------------------------------------------- -->
