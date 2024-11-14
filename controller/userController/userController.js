@@ -429,7 +429,7 @@ const otpPost = async (req, res) => {
       // creating user session
       req.session.user = userDetails._id;
 
-      res.redirect("/home?login=true");
+      res.redirect("/home?signup=true");
     } else {
       res.redirect("/change-password");
     }
@@ -452,7 +452,7 @@ const googleAuth = (req, res) => {
 // google auth callback from the auth service
 const googleAuthCallback = (req, res, next) => {
   try {
-    passport.authenticate("google", (err, user, info) => {
+    passport.authenticate("google", async (err, user, info) => {
       if (err) {
         console.log(`Error on google auth callback: ${err}`);
         return next(err);

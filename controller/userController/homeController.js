@@ -10,6 +10,10 @@ const home = async (req, res) => {
       req.flash('alert', { message: 'Login successful!', color: 'bg-success' });
     }
 
+    if (req.query.signup) {
+      req.flash("alert", { message: "Signup successful!", color: "bg-success" });
+    }
+
     const activeProducts = await productSchema.find({
       isActive: true,
       productCategory: {
