@@ -155,12 +155,16 @@
           <i class="fa-duotone fa-solid fa-gauge-high fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Dashboard</a>
       </li>
       <li class="sidenav-item">
+        <a class="sidenav-link" href="/admin/sales-report" id="salesReport">
+          <i class="fa-duotone fa-solid fa-file-invoice fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Sales Report</a>
+      </li>
+      <li class="sidenav-item">
         <a class="sidenav-link" href="/admin/trending" id="trending">
           <i class="fa-duotone fa-solid fa-arrow-trend-up fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Trending</a>
       </li>
       <li class="sidenav-item">
-        <a class="sidenav-link" href="/admin/sales-report" id="salesReport">
-          <i class="fa-duotone fa-solid fa-file-invoice fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Sales Report</a>
+        <a class="sidenav-link" href="/admin/customers" id="customers">
+          <i class="fa-duotone fa-solid fa-user fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Customers</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link" href="/admin/categories" id="categories">
@@ -169,10 +173,6 @@
       <li class="sidenav-item">
         <a class="sidenav-link" id="products" href="/admin/products">
           <i class="fa-duotone fa-solid fa-box-open-full fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Products</a>
-      </li>
-      <li class="sidenav-item">
-        <a class="sidenav-link" href="/admin/customers" id="customers">
-          <i class="fa-duotone fa-solid fa-user fa-xl pe-3" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>Customers</a>
       </li>
       <li class="sidenav-item">
         <a class="sidenav-link" id="orders" href="/admin/orders">
@@ -301,7 +301,7 @@
 
   // show or hide sidenav according to viewport width
   let viewportWidth = document.documentElement.clientWidth;
-  
+
   if (viewportWidth <= 660) {
     sidenav.setAttribute('data-mdb-mode', 'over');
     sidenav.setAttribute('data-mdb-hidden', 'true');

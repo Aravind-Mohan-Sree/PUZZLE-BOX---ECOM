@@ -1,0 +1,362 @@
+<!-- styles -->
+<style>
+  .datatable thead {
+    color: rgb(255, 255, 255);
+    background-color: #332d2d;
+  }
+
+  .status {
+    display: block !important;
+    width: 3.75rem;
+  }
+
+  .swal-css .swal2-popup {
+    color: rgb(255, 255, 255);
+    background-color: rgba(51, 45, 45, .75);
+    backdrop-filter: blur(8px);
+    border-radius: 1.5rem;
+  }
+
+  .swal-css .swal2-confirm {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-cancel {
+    color: rgb(51, 45, 45);
+    background-color: rgb(255, 255, 255);
+  }
+
+  .swal-css .swal2-input {
+    box-shadow: none;
+    border-color: rgb(255, 255, 255);
+  }
+
+  .swal2-success-circular-line-left,
+  .swal2-success-fix,
+  .swal2-success-circular-line-right {
+    background-color: transparent !important
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    caret-color: rgb(255, 255, 255);
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 20px 20px transparent !important;
+  }
+
+  input[name="startDate"],
+  input[name="endDate"] {
+    pointer-events: none;
+  }
+
+  .datepicker-toggle-button {
+    right: 8%;
+    top: 55%;
+    transform: translate(0%, 0%);
+  }
+
+  #salesReport {
+    background-color: rgba(51, 45, 45, .05);
+  }
+</style>
+
+<!-- navbar included -->
+<%- include('navbar') %>
+
+<!-- sidenav included -->
+<%- include('sidenav') %>
+
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CATEGORIES</h2>
+
+<hr class="mb-4">
+
+<div id="content">
+  <div class="container-fluid">
+    <div class="row px-4">
+      <div class="col-12">
+        <div class="row gy-4">
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-boxes-stacked fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <h5 class="card-title fst-italic m-0">Overall Sales Count</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-indian-rupee-sign fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <h5 class="card-title fst-italic m-0">Overall Sales Amount</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-percent fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <h5 class="card-title fst-italic m-0">Overall Sales Discount</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-calendar-day fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <h5 class="card-title fst-italic m-0">Sales: <%= new Date().toDateString().split(" ").slice(1, 3).join(" ") %></h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-calendar-week fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <%                        
+                        function getLastWeekRange () {
+                        const today = new Date();
+                        const startDate = new Date(today.setDate(today.getDate() - 7)).toDateString().split(" ").slice(1, 3).join(" ");
+                        const endDate = new Date().toDateString().split(" ").slice(1, 3).join(" ");
+
+                        return `${startDate} - ${endDate}`;
+                        }
+                        %>
+                        <h5 class="card-title fst-italic m-0">Sales: <%= getLastWeekRange() %></h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-calendar-days fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <%                        
+                        function getLastMonthRange () {
+                        const today = new Date();
+                        const startDate = new Date(today.setDate(today.getDate() - 30)).toDateString().split(" ").slice(1, 3).join(" ");
+                        const endDate = new Date().toDateString().split(" ").slice(1, 3).join(" ");
+
+                        return `${startDate} - ${endDate}`;
+                        }
+                        %>
+                        <h5 class="card-title fst-italic m-0">Sales: <%= getLastMonthRange() %></h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr class="my-4">
+      <div class="col-12 mb-4">
+        <div class="row justify-content-center align-items-cente">
+          <%
+          function convertDateFormat(dateString) {
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+
+          return `${day}/${month}/${year}`;
+          }
+          %>
+          <div class="col-2">
+            <div class="position-relative datepicker">
+              <label class="form-label text-dark" for="form12">Start Date</span></label>
+              <input type="text" id="form1" class="form-control mb-2" name="startDate" value="<%= convertDateFormat(new Date()) %>" />
+              <small class="expiry-date-alert position-absolute top-100 text-danger"></small>
+            </div>
+          </div>
+          <div class="col-2">
+            <div class="position-relative datepicker">
+              <label class="form-label text-dark" for="form12">End Date</span></label>
+              <input type="text" id="form1" class="form-control mb-2" name="startDate" value="<%= convertDateFormat(new Date()) %>" />
+              <small class="expiry-date-alert position-absolute top-100 text-danger"></small>
+            </div>
+          </div>
+          <div class="col-2">
+            <label for="" class="mb-2">Custom Date</label>
+            <select data-mdb-select-init class="form-control select" name="offerTarget">
+              <option value="" disabled selected hidden>Select</option>
+              <option value="Category">Category</option>
+              <option value="Product">Product</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- category table container -->
+  <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
+    <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
+      <table class="table datatable-table" id="exampleTable">
+        <thead class="datatable-header">
+          <tr>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Category Name</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
+          </tr>
+        </thead>
+        <tbody class="datatable-body">
+          <% orders.forEach(category=> { %>
+          <tr>
+            <td class="" data-mdb-field="field_0" false="">
+              <p class="fw-bold mb-1 name">
+                <%= category.categoryName %>
+              </p>
+            </td>
+            <td class="" data-mdb-field="field_1" false="">
+              <p class="fw-normal mb-1">
+                <%= new Date(category.createdAt).toDateString() %>
+              </p>
+              <p class="fw-normal mb-0">
+                <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
+              </p>
+            </td>
+            <td class="" data-mdb-field="field_2" false="">
+              <p class="fw-normal mb-1 updated-date">
+                <%= new Date(category.updatedAt).toDateString() %>
+              </p>
+              <p class="fw-normal mb-0 updated-time">
+                <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+              </p>
+            </td>
+            <td class="" data-mdb-field="field_3" false="">
+              <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
+                <%= category.isActive ? 'Active' : 'Inactive' %>
+              </span>
+            </td>
+            <td class="" data-mdb-field="field_4" false="">
+              <!-- active/inactive button -->
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+              </button>
+
+              <!-- edit button -->
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+              </button>
+
+              <!-- delete button -->
+              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
+                <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
+              </button>
+            </td>
+          </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- footer included -->
+<%- include('footer') %>
+
+<!-- javaScript -->
+<script>
+  // after redirection, remove the query parameter from the URL
+  window.history.replaceState(null, null, window.location.pathname);
+
+  // dynamically adds padding to h2 tag
+  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+
+  // dynamically adds padding to table container
+  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+</script>
