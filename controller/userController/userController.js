@@ -438,9 +438,50 @@ const otpPost = async (req, res) => {
   }
 };
 
-// google auth
-const googleAuth = (req, res) => {
+// google auth login
+const googleLogin = (req, res) => {
   try {
+    req.session.intendedAction = "login";
+
+    passport.authenticate("google", {
+      scope: ["email", "profile"],
+    })(req, res);
+  } catch (err) {
+    console.log(`Error on google authentication ${err}`);
+  }
+};
+
+// google auth signup
+const googleSignup = async (req, res) => {
+  try {
+    let uniqueReferralCode = false;
+    let referralCodes;
+
+    /* ------ will loop continuously until a unique code is being generated ----- */
+    while (!uniqueReferralCode) {
+      /* ---------- generate a referral code with specific options ---------- */
+      referralCodes = voucherCodes.generate({
+        length: 10,
+        count: 1,
+        charset: voucherCodes.charset("alphabetic").toUpperCase(),
+        pattern: "##########",
+      });
+
+      const existingReferralCode = await userSchema.aggregate([
+        {
+          $match: { referralCode: referralCodes[0] },
+        },
+      ]);
+
+      if (existingReferralCode.length === 0) {
+        uniqueReferralCode = true;
+      }
+    }
+
+    req.session.intendedAction = "signup";
+    req.session.signupReferralCode = req.query.referralCode;
+    req.session.referralCode = referralCodes[0];
+
     passport.authenticate("google", {
       scope: ["email", "profile"],
     })(req, res);
@@ -458,6 +499,83 @@ const googleAuthCallback = (req, res, next) => {
         return next(err);
       }
 
+      const existingUser = await userSchema.findOne({ email: user.email });
+      const intendedAction = req.session.intendedAction;
+      const signupReferralCode = req.session.signupReferralCode;
+      delete req.session.intendedAction;
+      delete req.session.signupReferralCode;
+      delete req.session.referralCode;
+
+      if (!existingUser && intendedAction === "login") {
+        req.flash("alert", {
+          message: "Account not exists. Try signup!",
+          color: "bg-danger",
+        });
+
+        return res.redirect("/signup");
+      }
+
+      if (!info.newUser && intendedAction === "signup") {
+        req.flash("alert", {
+          message: "Account already exists. Try login!",
+          color: "bg-danger",
+        });
+
+        return res.redirect("/login");
+      }
+
+      if (info.newUser && signupReferralCode) {
+        const rewardAmount = 500;
+
+        const referrer = await userSchema.findOne({
+          referralCode: signupReferralCode,
+        });
+
+        const referrerWallet = await walletSchema.findOne({
+          userID: referrer._id,
+        });
+
+        // creates wallet for referrer if not exist, else update wallet
+        if (!referrerWallet) {
+          await walletSchema.create({
+            userID: referrer._id,
+            balance: rewardAmount,
+            transactions: [
+              {
+                reason: "Referral Reward",
+                amount: rewardAmount,
+                type: "credit",
+                runningBalance: rewardAmount,
+              },
+            ],
+          });
+        } else {
+          referrerWallet.balance += rewardAmount;
+          referrerWallet.transactions.push({
+            reason: "Referral Reward",
+            amount: rewardAmount,
+            type: "credit",
+            runningBalance: referrerWallet.balance,
+          });
+
+          await referrerWallet.save();
+        }
+
+        // creates wallet for referred
+        await walletSchema.create({
+          userID: user._id,
+          balance: rewardAmount,
+          transactions: [
+            {
+              reason: "Referral Reward",
+              amount: rewardAmount,
+              type: "credit",
+              runningBalance: rewardAmount,
+            },
+          ],
+        });
+      }
+
       if (!user) {
         return res.redirect("/login");
       }
@@ -468,9 +586,14 @@ const googleAuthCallback = (req, res, next) => {
         }
 
         // Store the user ID in the session
-        req.session.user = user.id;
+        req.session.user = user._id;
 
-        return res.redirect("/home?login=true");
+        const redirectUrl =
+          intendedAction === "signup"
+            ? "/home?signup=true"
+            : "/home?login=true";
+
+        return res.redirect(redirectUrl);
       });
     })(req, res, next);
   } catch (err) {
@@ -513,7 +636,8 @@ module.exports = {
   checkOtp,
   resendOtp,
   otpPost,
-  googleAuth,
+  googleLogin,
+  googleSignup,
   googleAuthCallback,
   logout,
 };

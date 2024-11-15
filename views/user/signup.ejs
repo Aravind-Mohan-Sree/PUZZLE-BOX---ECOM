@@ -111,9 +111,9 @@
       <p>Already a member? <a href="/login" class="text-dark text-decoration-underline" id="signup">Log In</a></p>
       <!-- google signup -->
       <p>or sign up with:</p>
-      <a href="/auth/google"><button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1">
-          <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
-        </button></a>
+      <button data-mdb-ripple-init type="button" class="btn btn-dark btn-floating mx-1 google-signup-btn">
+        <i class="fa-brands fa-google fa-lg" style="color: #ffffff;"></i>
+      </button></a>
     </div>
   </form>
 </div>
@@ -318,4 +318,31 @@
     document.getElementById('eye2').classList.toggle('fa-eye');
     document.getElementById('eye2').classList.toggle('fa-eye-slash');
   });
+
+  // will check the referral code and if its valid, then will redirect to google auth
+  document.querySelector('.google-signup-btn').addEventListener('click', function() {
+    const referralCode = document.getElementById('referral-input').value;
+    const referralAlert = document.getElementById('referral-alert');
+
+    fetch(`/check-referral-code`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          referralCode
+        })
+      }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          referralAlert.style.display = 'inline';
+          referralAlert.innerText = 'Something went wrong. Try again';
+        } else if (data.failure) {
+          referralAlert.style.display = 'inline';
+          referralAlert.innerText = 'Invalid referral code';
+        } else {
+          window.location.href = `/google/signup?referralCode=${referralCode}`;
+        }
+      })
+  })
 </script>

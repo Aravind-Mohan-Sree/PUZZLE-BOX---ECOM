@@ -15,21 +15,25 @@ passport.use(
       try {
         // check the user details on the collection
         let user = await userSchema.findOne({ email: profile.email });
+        let info = { newUser: false };
 
-        if (!user) {
+        if (!user && request.session.intendedAction === "signup") {
           // Create a new user
           user = new userSchema({
             name: profile.displayName,
             email: profile.email,
             googleID: profile.id,
+            referralCode: request.session.referralCode,
           });
           // Save the new user
           await user.save();
 
+          info = { newUser: true };
+
           // mail will be sent to the user using nodemailer
           mailSender.sendWelcomeMail(user.email, user.name);
         }
-        done(null, user);
+        done(null, user, info);
       } catch (err) {
         done(err, null);
       }
