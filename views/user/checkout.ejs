@@ -84,13 +84,12 @@
           <div class="card mb-4">
             <div class="card-body">
               <div class="row">
-                <% let payableAmount1 = 0 %>
+                <% let payableAmount1 = cart.coupon ? 0 - cart.coupon?.discount : 0 %>
                 <% let totalProductQuantity1 = 0 %>
                 <% if (cart) { %>
                 <% cart.items.forEach((item, index) => { %>
                 <% totalProductQuantity1 += item.productCount %>
                 <% payableAmount1 += item.productID.productDiscountedPrice * item.productCount %>
-                <% payableAmount1 = cart.coupon ? payableAmount1 - cart.coupon?.discount : payableAmount1 %>
                 <% }) %>
                 <% } %>
                 <% if (payableAmount1 < 500) { %>
@@ -131,13 +130,12 @@
               <h5 class="mb-0"><%= cart ? cart.items.length : '0' %> item(s)</h5>
             </div>
             <div class="card-body pt-0 pb-0">
-              <% let payableAmount = 0 %>
+              <% let payableAmount = cart.coupon ? 0 - cart.coupon?.discount : 0 %>
               <% let totalProductQuantity = 0 %>
               <% if (cart) { %>
               <% cart.items.forEach((item, index, array) => { %>
               <% totalProductQuantity += item.productCount %>
               <% payableAmount += item.productID.productDiscountedPrice * item.productCount %>
-              <% payableAmount = cart.coupon ? payableAmount - cart.coupon?.discount : payableAmount %>
 
               <!-- Single item -->
               <div class="row mb-4 mt-4">

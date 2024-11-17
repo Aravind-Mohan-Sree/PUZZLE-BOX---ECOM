@@ -51,6 +51,12 @@
   input[name="startDate"],
   input[name="endDate"] {
     pointer-events: none;
+    border: 2px solid #000;
+    height: 35px;
+  }
+
+  .select-input.form-control[readonly]:not([disabled]) {
+    height: 35px;
   }
 
   .datepicker-toggle-button {
@@ -71,7 +77,7 @@
 <%- include('sidenav') %>
 
 <!-- title -->
-<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">CATEGORIES</h2>
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">SALES REPORT</h2>
 
 <hr class="mb-4">
 
@@ -240,7 +246,7 @@
       </div>
       <hr class="my-4">
       <div class="col-12 mb-4">
-        <div class="row justify-content-center align-items-cente">
+        <div class="row justify-content-center">
           <%
           function convertDateFormat(dateString) {
           const date = new Date(dateString);
@@ -266,33 +272,47 @@
             </div>
           </div>
           <div class="col-2">
-            <label for="" class="mb-2">Custom Date</label>
-            <select data-mdb-select-init class="form-control select" name="offerTarget">
+            <label for="" class="mb-2 text-dark">Sales Duration</label>
+            <select data-mdb-select-init class="form-control select" name="salesDuration">
               <option value="" disabled selected hidden>Select</option>
-              <option value="Category">Category</option>
-              <option value="Product">Product</option>
+              <option value="Category">Daily</option>
+              <option value="Product">Weekly</option>
+              <option value="Product">Monthly</option>
+              <option value="Product">Yearly</option>
             </select>
+          </div>
+        </div>
+        <div class="row justify-content-center mt-2">
+          <div class="col-auto">
+            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
+          </div>
+          <div class="col-auto">
+            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- category table container -->
+  <!-- sales report table container -->
   <div data-mdb-datatable-init="" class="datatable datatable-bordered datatable-hover" data-mdb-datatable-initialized="true" data-mdb-entries="4" data-mdb-full-pagination="true">
     <div class="datatable-inner table-responsive ps ps--active-x" style="overflow: auto; position: relative;">
       <table class="table datatable-table" id="exampleTable">
         <thead class="datatable-header">
           <tr>
-            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Category Name</th>
-            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Added On</th>
-            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Last Updated</th>
-            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Status</th>
-            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Actions</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_0" class="datatable-sort-icon fas fa-arrow-up"></i> Order ID</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_1" class="datatable-sort-icon fas fa-arrow-up"></i> Ordered Date</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_2" class="datatable-sort-icon fas fa-arrow-up"></i> Payment Method</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_3" class="datatable-sort-icon fas fa-arrow-up"></i> Discount</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Coupon Discount</th>
+            <th style="cursor: pointer;" scope="col"><i data-mdb-sort="field_4" class="datatable-sort-icon fas fa-arrow-up"></i> Order Total</th>
           </tr>
         </thead>
         <tbody class="datatable-body">
-          <% orders.forEach(category=> { %>
+          <% orders?.forEach(category=> { %>
           <tr>
             <td class="" data-mdb-field="field_0" false="">
               <p class="fw-bold mb-1 name">
@@ -349,14 +369,16 @@
 
 <!-- javaScript -->
 <script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
+  document.addEventListener('DOMContentLoaded', function() {
+    // after redirection, remove the query parameter from the URL
+    window.history.replaceState(null, null, window.location.pathname);
 
-  // dynamically adds padding to h2 tag
-  const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
-  document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+    // dynamically adds padding to h2 tag
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
 
-  // dynamically adds padding to table container
-  const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
-  document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+    // dynamically adds padding to table container
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+    document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+  })
 </script>
