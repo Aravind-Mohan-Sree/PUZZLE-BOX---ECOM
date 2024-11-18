@@ -2,6 +2,7 @@ const express = require('express');
 const admin = express.Router();
 const adminController = require('../controller/adminController/adminController');
 const salesReportController = require("../controller/adminController/salesReportController");
+const excelSalesReportController = require("../controller/adminController/excelSalesReportController");
 const categoryController = require('../controller/adminController/categoryController');
 const productController = require('../controller/adminController/productController');
 const customerController = require('../controller/adminController/customerController');
@@ -22,6 +23,7 @@ admin.get('/dashboard', checkAdminSession, adminController.dashboard);
 
 // will handle admin sales report route
 admin.get('/sales-report', checkAdminSession, salesReportController.getSalesReport);
+admin.post('/generate-excel-sales-report', checkAdminSession, excelSalesReportController.generateExcelSalesReport);
 
 // will handle admin category route
 admin.get('/categories', checkAdminSession, categoryController.category);

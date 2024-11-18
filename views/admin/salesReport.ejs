@@ -287,7 +287,7 @@
             <button class="btn btn-dark generate-report btn-block"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
           </div>
           <div class="col-12 col-lg-4 col-xl-2 mb-3 mb-lg-0">
-            <button class="btn btn-dark excel-report btn-block"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
+            <button class="btn btn-dark excel-report btn-block" onclick="downloadSalesReport()"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
           </div>
           <div class="col-12 col-lg-3 col-xl-2">
             <button class="btn btn-dark pdf-report btn-block"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
@@ -494,5 +494,40 @@
         window.location.href = `/admin/sales-report?startDate=${startDate}&endDate=${endDate}`
       }
     })
+
+    // for downloading excel sales report on button click
+    window.downloadSalesReport = async function() {
+      try {
+        const response = await fetch('/admin/generate-excel-sales-report', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startDate,
+            endDate
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch the sales report');
+        }
+
+        // Get the response as a Blob
+        const blob = await response.blob();
+
+        // Create a link element to trigger the download
+        const link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = `Sales_Report_${startDate}_to_${endDate}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+      } catch (error) {
+        console.error('Error downloading the sales report:', error);
+      }
+    };
   })
 </script>
