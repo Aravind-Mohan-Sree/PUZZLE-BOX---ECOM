@@ -48,8 +48,8 @@
     box-shadow: inset 0 0 20px 20px transparent !important;
   }
 
-  input[name="startDate"],
-  input[name="endDate"] {
+  input[name="startDateInput"],
+  input[name="endDateInput"] {
     pointer-events: none;
     border: 2px solid #000;
     height: 35px;
@@ -61,7 +61,7 @@
 
   .datepicker-toggle-button {
     right: 8%;
-    top: 55%;
+    top: 50%;
     transform: translate(0%, 0%);
   }
 
@@ -86,7 +86,7 @@
     <div class="row px-4">
       <div class="col-12">
         <div class="row gy-4">
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -96,7 +96,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic"><%= overallStats.overall.totalSalesCount %></h1>
+                        <h1 class="m-0 fst-italic"><%= overallStats.overall.totalSalesCount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -109,7 +109,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -119,7 +119,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalDiscount %></h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalDiscount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -132,7 +132,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -142,7 +142,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalSalesAmount %></h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalSalesAmount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -155,7 +155,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -165,7 +165,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ <%= overallStats.daily.metrics.totalSalesAmount %></h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.daily.metrics.totalSalesAmount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -178,7 +178,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -188,7 +188,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ <%= overallStats.weekly.metrics.totalSalesAmount %></h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.weekly.metrics.totalSalesAmount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -210,7 +210,7 @@
               </div>
             </div>
           </div>
-          <div class="col-4">
+          <div class="col-12 col-lg-6 col-xl-4">
             <div class="card">
               <div class="card-body">
                 <div class="row align-items-center">
@@ -220,7 +220,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ <%= overallStats.yearly.metrics.totalSalesAmount %></h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.yearly.metrics.totalSalesAmount.toLocaleString() %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -257,22 +257,22 @@
           return `${day}/${month}/${year}`;
           }
           %>
-          <div class="col-2">
+          <div class="col-12 col-lg-3 col-xl-2">
             <div class="position-relative datepicker" id="start-date-picker">
-              <label class="form-label text-dark" for="form12">Start Date</span></label>
+              <label class="form-label text-dark m-0" for="form12">Start Date</span></label>
               <input type="text" id="form1" class="form-control mb-2" name="startDateInput" value="<%= convertDateFormat(customStats.customRange.dateRange.start) %>" />
               <small class="start-date-alert position-absolute top-100 text-danger"></small>
             </div>
           </div>
-          <div class="col-2">
+          <div class="col-12 col-lg-3 col-xl-2 mt-2 mb-2 mt-lg-0 mb-lg-0">
             <div class="position-relative datepicker" id="end-date-picker">
-              <label class="form-label text-dark" for="form12">End Date</span></label>
+              <label class="form-label text-dark m-0" for="form12">End Date</span></label>
               <input type="text" id="form1" class="form-control mb-2" name="endDateInput" value="<%= convertDateFormat(customStats.customRange.dateRange.end) %>" />
               <small class="end-date-alert position-absolute top-100 text-danger"></small>
             </div>
           </div>
-          <div class="col-2">
-            <label for="" class="mb-2 text-dark">Sales Duration</label>
+          <div class="col-12 col-lg-3 col-xl-2">
+            <label for="" class="text-dark m-0">Sales Duration</label>
             <select data-mdb-select-init class="form-control select" name="salesDuration">
               <option value="" disabled selected hidden>Select</option>
               <option value="0">Daily</option>
@@ -282,15 +282,15 @@
             </select>
           </div>
         </div>
-        <div class="row justify-content-center mt-2">
-          <div class="col-auto">
-            <button class="btn btn-dark generate-report"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
+        <div class="row justify-content-center mt-3">
+          <div class="col-12 col-lg-4 col-xl-3 mb-3 mb-lg-0">
+            <button class="btn btn-dark generate-report btn-block"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
           </div>
-          <div class="col-auto">
-            <button class="btn btn-dark excel-report"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
+          <div class="col-12 col-lg-4 col-xl-2 mb-3 mb-lg-0">
+            <button class="btn btn-dark excel-report btn-block"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
           </div>
-          <div class="col-auto">
-            <button class="btn btn-dark pdf-report"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
+          <div class="col-12 col-lg-3 col-xl-2">
+            <button class="btn btn-dark pdf-report btn-block"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
           </div>
         </div>
       </div>
@@ -328,7 +328,7 @@
           <% let orderID = scrambleString(order.orderId.toString()); %>
           <tr>
             <td class="" data-mdb-field="field_0" false="">
-              <p class="fw-bold mb-1 name">
+              <p class="fw-normal mb-1 name">
                 <%= orderID %>
               </p>
             </td>
@@ -347,17 +347,17 @@
             </td>
             <td class="" data-mdb-field="field_0" false="">
               <p class="fw-normal mb-1 name">
-                <%= order.totalDiscount %>
+                ₹ <%= order.totalDiscount.toLocaleString() %>
               </p>
             </td>
             <td class="" data-mdb-field="field_0" false="">
               <p class="fw-normal mb-1 name">
-                <%= order.totalCouponDiscount %>
+                ₹ <%= order.totalCouponDiscount.toLocaleString() %>
               </p>
             </td>
             <td class="" data-mdb-field="field_0" false="">
               <p class="fw-normal mb-1 name">
-                <%= order.totalSalesAmount %>
+                ₹ <%= order.totalSalesAmount.toLocaleString() %>
               </p>
             </td>
           </tr>
@@ -390,6 +390,8 @@
     const endDatePicker = document.querySelector('#end-date-picker');
     const startDateInput = document.querySelector('input[name="startDateInput"]');
     const endDateInput = document.querySelector('input[name="endDateInput"]');
+    const startDateAlert = document.querySelector('.start-date-alert');
+    const endDateAlert = document.querySelector('.end-date-alert');
 
     function convertDateFormat(dateStr) {
       const [day, month, year] = dateStr.split('/');
@@ -406,6 +408,18 @@
 
     endDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
       endDate = new Date(convertDateFormat(endDateInput.value));
+    })
+
+    document.addEventListener('open.mdb.datepicker', function() {
+      document.querySelector('#h2').style.display = 'none';
+      document.querySelector('#content').style.display = 'none';
+    })
+
+    document.addEventListener('close.mdb.datepicker', function() {
+      setTimeout(function() {
+        document.querySelector('#h2').style.display = 'block';
+        document.querySelector('#content').style.display = 'block';
+      }, 250)
     })
 
     // will get the selected sales duration
@@ -450,9 +464,35 @@
       endDateInput.value = convertDateFormat(endDate.toString());
     })
 
-    // will generate updated sales report based on the selected dates
+    // will generate updated sales report based on the selected dates on button click
     document.querySelector('.generate-report').addEventListener('click', function() {
-      window.location.href = `/admin/sales-report?startDate=${startDate}&endDate=${endDate}`
+      const currentDate = new Date();
+      let isValid = true;
+
+      startDateAlert.style.display = 'none';
+      endDateAlert.style.display = 'none';
+
+      if (startDate > currentDate) {
+        startDateAlert.style.display = 'inline';
+        startDateAlert.innerHTML = 'Invalid start date';
+        isValid = false;
+      }
+
+      if (endDate > currentDate) {
+        endDateAlert.style.display = 'inline';
+        endDateAlert.innerHTML = 'Invalid end date';
+        isValid = false;
+      }
+
+      if (startDate > endDate) {
+        startDateAlert.style.display = 'inline';
+        startDateAlert.innerHTML = 'Invalid start date';
+        isValid = false;
+      }
+
+      if (isValid) {
+        window.location.href = `/admin/sales-report?startDate=${startDate}&endDate=${endDate}`
+      }
     })
   })
 </script>
