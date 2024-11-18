@@ -22,7 +22,6 @@ admin.get('/dashboard', checkAdminSession, adminController.dashboard);
 
 // will handle admin sales report route
 admin.get('/sales-report', checkAdminSession, salesReportController.getSalesReport);
-// admin.post('/dashboard', adminController.dashboardPost);
 
 // will handle admin category route
 admin.get('/categories', checkAdminSession, categoryController.category);

@@ -96,7 +96,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">24</h1>
+                        <h1 class="m-0 fst-italic"><%= overallStats.overall.totalSalesCount %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -114,35 +114,12 @@
               <div class="card-body">
                 <div class="row align-items-center">
                   <div class="col-3">
-                    <i class="fa-duotone fa-solid fa-indian-rupee-sign fa-2xl display-3"></i>
-                  </div>
-                  <div class="col-9 text-end">
-                    <div class="row mb-2">
-                      <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ 24</h1>
-                      </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-12">
-                        <h5 class="card-title fst-italic m-0">Overall Sales Amount</h5>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="row align-items-center">
-                  <div class="col-3">
                     <i class="fa-duotone fa-solid fa-percent fa-2xl display-3"></i>
                   </div>
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalDiscount %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -160,12 +137,35 @@
               <div class="card-body">
                 <div class="row align-items-center">
                   <div class="col-3">
+                    <i class="fa-duotone fa-solid fa-indian-rupee-sign fa-2xl display-3"></i>
+                  </div>
+                  <div class="col-9 text-end">
+                    <div class="row mb-2">
+                      <div class="col-12">
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.overall.totalSalesAmount %></h1>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-12">
+                        <h5 class="card-title fst-italic m-0">Overall Sales Amount</h5>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col-3">
                     <i class="fa-duotone fa-solid fa-calendar-day fa-2xl display-3"></i>
                   </div>
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.daily.metrics.totalSalesAmount %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -188,7 +188,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.weekly.metrics.totalSalesAmount %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -220,7 +220,7 @@
                   <div class="col-9 text-end">
                     <div class="row mb-2">
                       <div class="col-12">
-                        <h1 class="m-0 fst-italic">₹ 24</h1>
+                        <h1 class="m-0 fst-italic">₹ <%= overallStats.yearly.metrics.totalSalesAmount %></h1>
                       </div>
                     </div>
                     <div class="row">
@@ -258,39 +258,39 @@
           }
           %>
           <div class="col-2">
-            <div class="position-relative datepicker">
+            <div class="position-relative datepicker" id="start-date-picker">
               <label class="form-label text-dark" for="form12">Start Date</span></label>
-              <input type="text" id="form1" class="form-control mb-2" name="startDate" value="<%= convertDateFormat(new Date()) %>" />
-              <small class="expiry-date-alert position-absolute top-100 text-danger"></small>
+              <input type="text" id="form1" class="form-control mb-2" name="startDateInput" value="<%= convertDateFormat(customStats.customRange.dateRange.start) %>" />
+              <small class="start-date-alert position-absolute top-100 text-danger"></small>
             </div>
           </div>
           <div class="col-2">
-            <div class="position-relative datepicker">
+            <div class="position-relative datepicker" id="end-date-picker">
               <label class="form-label text-dark" for="form12">End Date</span></label>
-              <input type="text" id="form1" class="form-control mb-2" name="startDate" value="<%= convertDateFormat(new Date()) %>" />
-              <small class="expiry-date-alert position-absolute top-100 text-danger"></small>
+              <input type="text" id="form1" class="form-control mb-2" name="endDateInput" value="<%= convertDateFormat(customStats.customRange.dateRange.end) %>" />
+              <small class="end-date-alert position-absolute top-100 text-danger"></small>
             </div>
           </div>
           <div class="col-2">
             <label for="" class="mb-2 text-dark">Sales Duration</label>
             <select data-mdb-select-init class="form-control select" name="salesDuration">
               <option value="" disabled selected hidden>Select</option>
-              <option value="Category">Daily</option>
-              <option value="Product">Weekly</option>
-              <option value="Product">Monthly</option>
-              <option value="Product">Yearly</option>
+              <option value="0">Daily</option>
+              <option value="1">Weekly</option>
+              <option value="2">Monthly</option>
+              <option value="3">Yearly</option>
             </select>
           </div>
         </div>
         <div class="row justify-content-center mt-2">
           <div class="col-auto">
-            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
+            <button class="btn btn-dark generate-report"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
           </div>
           <div class="col-auto">
-            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
+            <button class="btn btn-dark excel-report"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
           </div>
           <div class="col-auto">
-            <button class="btn btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
+            <button class="btn btn-dark pdf-report"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
           </div>
         </div>
       </div>
@@ -312,49 +312,53 @@
           </tr>
         </thead>
         <tbody class="datatable-body">
-          <% orders?.forEach(category=> { %>
+          <% customStats.customRange.orders.forEach(order=> { %>
+          <%function scrambleString(str) { %>
+          <% let shufflePattern = [12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10, 16, 21, 20, 23]; %>
+          <% let scrambledArray = []; %>
+
+          <% shufflePattern.forEach((newIndex, i) => { %>
+          <% scrambledArray[i] = str[newIndex]; %>
+          <% }) %>
+
+          <% scrambledArray.splice(20); %>
+          <% return scrambledArray.join(''); %>
+          <% } %>
+
+          <% let orderID = scrambleString(order.orderId.toString()); %>
           <tr>
             <td class="" data-mdb-field="field_0" false="">
               <p class="fw-bold mb-1 name">
-                <%= category.categoryName %>
+                <%= orderID %>
               </p>
             </td>
             <td class="" data-mdb-field="field_1" false="">
               <p class="fw-normal mb-1">
-                <%= new Date(category.createdAt).toDateString() %>
+                <%= new Date(order.createdAt).toDateString() %>
               </p>
               <p class="fw-normal mb-0">
-                <%= new Date(category.createdAt).toTimeString().slice(0, 8) %>
+                <%= new Date(order.createdAt).toTimeString().slice(0, 8) %>
               </p>
             </td>
-            <td class="" data-mdb-field="field_2" false="">
-              <p class="fw-normal mb-1 updated-date">
-                <%= new Date(category.updatedAt).toDateString() %>
-              </p>
-              <p class="fw-normal mb-0 updated-time">
-                <%= new Date(category.updatedAt).toTimeString().slice(0, 8) %>
+            <td class="" data-mdb-field="field_0" false="">
+              <p class="fw-normal mb-1 name">
+                <%= order.paymentMethod %>
               </p>
             </td>
-            <td class="" data-mdb-field="field_3" false="">
-              <span class="badge status <%= category.isActive ? 'badge-success' : 'badge-danger' %> rounded-pill d-inline">
-                <%= category.isActive ? 'Active' : 'Inactive' %>
-              </span>
+            <td class="" data-mdb-field="field_0" false="">
+              <p class="fw-normal mb-1 name">
+                <%= order.totalDiscount %>
+              </p>
             </td>
-            <td class="" data-mdb-field="field_4" false="">
-              <!-- active/inactive button -->
-              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold status-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                <i class="fa-duotone fa-solid <%= category.isActive ? 'fa-circle-check' : 'fa-circle-xmark' %> fa-xl status-icon" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-              </button>
-
-              <!-- edit button -->
-              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold edit-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                <i class="fa-duotone fa-solid fa-pen-to-square fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-              </button>
-
-              <!-- delete button -->
-              <button type="button" class="btn btn-link btn-rounded btn-sm fw-bold delete-button" data-mdb-ripple-color="dark" data-db-categoryId="<%= category._id %>">
-                <i class="fa-duotone fa-solid fa-trash fa-xl" style="--fa-primary-color: #4f4f4f; --fa-secondary-color: #a6a6a6; --fa-secondary-opacity: 1;"></i>
-              </button>
+            <td class="" data-mdb-field="field_0" false="">
+              <p class="fw-normal mb-1 name">
+                <%= order.totalCouponDiscount %>
+              </p>
+            </td>
+            <td class="" data-mdb-field="field_0" false="">
+              <p class="fw-normal mb-1 name">
+                <%= order.totalSalesAmount %>
+              </p>
             </td>
           </tr>
           <% }) %>
@@ -371,7 +375,7 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     // after redirection, remove the query parameter from the URL
-    window.history.replaceState(null, null, window.location.pathname);
+    // window.history.replaceState(null, null, window.location.pathname);
 
     // dynamically adds padding to h2 tag
     const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
@@ -380,5 +384,75 @@
     // dynamically adds padding to table container
     const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
     document.getElementsByClassName('datatable')[0].style.paddingBottom = `${footerHeight2 + 1}px`;
+
+    // will get the custom sales duration
+    const startDatePicker = document.querySelector('#start-date-picker');
+    const endDatePicker = document.querySelector('#end-date-picker');
+    const startDateInput = document.querySelector('input[name="startDateInput"]');
+    const endDateInput = document.querySelector('input[name="endDateInput"]');
+
+    function convertDateFormat(dateStr) {
+      const [day, month, year] = dateStr.split('/');
+
+      return `${year}-${month}-${day}`;
+    }
+
+    let startDate = new Date(convertDateFormat(startDateInput.value));
+    let endDate = new Date(convertDateFormat(endDateInput.value))
+
+    startDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
+      startDate = new Date(convertDateFormat(startDateInput.value));
+    })
+
+    endDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
+      endDate = new Date(convertDateFormat(endDateInput.value));
+    })
+
+    // will get the selected sales duration
+    const salesDurationSelect = document.querySelector('select[name="salesDuration"]');
+
+    salesDurationSelect.addEventListener('change', function() {
+      function convertDateFormat(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+      }
+
+      const dateRange = salesDurationSelect.value;
+      const currentDate = new Date();
+
+      if (parseInt(dateRange) === 0) {
+        startDate = new Date(currentDate);
+        startDate = new Date(currentDate);
+      }
+
+      if (parseInt(dateRange) === 1) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 7);
+      }
+
+      if (parseInt(dateRange) === 2) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 30);
+      }
+
+      if (parseInt(dateRange) === 3) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 365);
+      }
+
+      endDate = new Date(currentDate);
+
+      startDateInput.value = convertDateFormat(startDate.toString());
+      endDateInput.value = convertDateFormat(endDate.toString());
+    })
+
+    // will generate updated sales report based on the selected dates
+    document.querySelector('.generate-report').addEventListener('click', function() {
+      window.location.href = `/admin/sales-report?startDate=${startDate}&endDate=${endDate}`
+    })
   })
 </script>
