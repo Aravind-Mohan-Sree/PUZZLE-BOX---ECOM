@@ -54,28 +54,29 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     }
   );
 
-  // Summary section styling
-  worksheet.mergeCells("A3", "C3");
+  // Summary section styling (Updated)
+  worksheet.mergeCells("A3", "B3"); // Merge A3:B3 instead of A3:C3
   worksheet.getCell("A3").value = "Summary";
   worksheet.getCell("A3").font = {
     bold: true,
     size: 12,
-    color: { argb: "FFFFFF00" },
-  }; // Yellow font
+    color: { argb: "FFFFFF00" }, // Yellow font
+  };
   worksheet.getCell("A3").fill = {
     type: "pattern",
     pattern: "solid",
     fgColor: { argb: "FF404040" }, // Dark gray background
   };
   worksheet.getCell("A3").alignment = {
-    horizontal: "center",
+    horizontal: "center", // Center the text
     vertical: "middle",
   };
 
+  // Adjusted Summary Data
   const summaryData = [
     ["Overall Sales Count:", summaryMetrics.totalOrders],
-    ["Overall Sales Discount:", summaryMetrics.totalDiscount],
-    ["Overall Sales Coupon Discount:", summaryMetrics.totalCouponDiscount],
+    ["Overall Discount:", summaryMetrics.totalDiscount],
+    ["Overall Coupon Discount:", summaryMetrics.totalCouponDiscount],
     ["Overall Sales Amount:", summaryMetrics.totalSalesAmount],
   ];
 
@@ -83,7 +84,7 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
   summaryData.forEach(([label, value]) => {
     worksheet.getCell(`A${currentRow}`).value = label;
     worksheet.getCell(`B${currentRow}`).value = value;
-    worksheet.getCell(`A${currentRow}`).font = { bold: true };
+    worksheet.getCell(`A${currentRow}`).font = { bold: false };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: "pattern",
       pattern: "solid",
@@ -97,11 +98,13 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     if (typeof value === "number" && label !== "Overall Sales Count:") {
       worksheet.getCell(`B${currentRow}`).numFmt = "#,##0.00";
     }
+    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: "left" };
+    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: "right" }; // Right-align values
     currentRow++;
   });
 
-  // Border styling for summary section
-  ["A", "B", "C"].forEach((col) => {
+  // Border styling for summary section (Updated)
+  ["A", "B"].forEach((col) => {
     for (let i = 3; i < currentRow; i++) {
       worksheet.getCell(`${col}${i}`).border = {
         top: { style: "thin" },
