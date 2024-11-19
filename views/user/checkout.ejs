@@ -101,12 +101,12 @@
                   </div>
                   <div class="pe-0 col">
                     <div class="form-check mb-3">
-                      <input class="form-check-input me-3" type="radio" value="0" name="paymentMethod" id="flexRadioDefault1" <%= payableAmount1 >= 1000 ? 'disabled' : 'checked' %> />
+                      <input class="form-check-input me-3" type="radio" value="0" name="paymentMethod" id="flexRadioDefault1" <%= payableAmount1 > 1000 ? 'disabled' : 'checked' %> />
                       <label class="form-check-label" for="flexRadioDefault1"> Cash On Delivery</label>
-                      <span class="badge badge-danger ms-3"><%= payableAmount1 >= 1000 ? 'Available only for below ₹ 1000' : '' %></span>
+                      <span class="badge badge-danger ms-3"><%= payableAmount1 > 1000 ? 'Available only for below ₹ 1,001' : '' %></span>
                     </div>
                     <div class="form-check mb-3">
-                      <input class="form-check-input me-3" type="radio" value="1" name="paymentMethod" id="flexRadioDefault2" <%= payableAmount1 >= 1000 ? 'checked' : '' %> />
+                      <input class="form-check-input me-3" type="radio" value="1" name="paymentMethod" id="flexRadioDefault2" <%= payableAmount1 > 1000 ? 'checked' : '' %> />
                       <label class="form-check-label" for="flexRadioDefault2"> Razorpay </label>
                     </div>
                     <div class="form-check">

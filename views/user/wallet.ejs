@@ -68,10 +68,10 @@
                             </p>
                           </td>
                           <td class="" data-mdb-field="field_3" false="">
-                            <p class="fw-normal">₹ <%= ele.amount.toLocaleString() %> <span><%= ele.type === 'credit' ? 'Cr' : 'Dr' %></span></p>
+                            <p class="fw-normal <%= ele.type === 'credit' ? 'text-success' : 'text-danger' %>">₹ <%= ele.amount.toLocaleString() %> <span><%= ele.type === 'credit' ? 'Cr' : 'Dr' %></span></p>
                           </td>
                           <td class="" data-mdb-field="field_0" false="">
-                            <p class="mb-1 fw-normal <%= ele.type === 'credit' ? 'text-success' : 'text-danger' %>">
+                            <p class="mb-1 fw-semibold text-success">
                               ₹ <%= ele.runningBalance.toLocaleString() %>
                             </p>
                           </td>
