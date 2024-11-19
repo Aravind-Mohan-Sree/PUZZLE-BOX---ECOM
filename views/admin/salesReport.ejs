@@ -498,6 +498,17 @@
     // for downloading excel sales report on button click
     window.downloadSalesReport = async function() {
       try {
+        function convertDateFormat(dateString) {
+          const date = new Date(dateString);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+
+          return `${day}/${month}/${year}`;
+        }
+
+        const salesDuration = ['Daily', 'Weekly', 'Monthly', 'Yearly'];
+
         const response = await fetch('/admin/generate-excel-sales-report', {
           method: 'POST',
           headers: {
@@ -510,6 +521,17 @@
         });
 
         if (!response.ok) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Unable to download',
+            text: 'No sales for the selected dates.',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          })
+
           throw new Error('Failed to fetch the sales report');
         }
 
@@ -519,7 +541,7 @@
         // Create a link element to trigger the download
         const link = document.createElement('a');
         link.href = window.URL.createObjectURL(blob);
-        link.download = `Sales_Report_${startDate}_to_${endDate}.xlsx`;
+        link.download = `Puzzle Box Sales Report (${convertDateFormat(startDate)} to ${convertDateFormat(endDate)}).xlsx`;
         document.body.appendChild(link);
         link.click();
 

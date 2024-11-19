@@ -2,26 +2,120 @@ const ExcelJS = require("exceljs");
 const fs = require("fs");
 
 async function generateExcelSalesReport(data, startDate, endDate, response) {
-  // Create a new workbook and worksheet
+  function convertDateFormat(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
+
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sales Report");
 
-  // Add metadata with increased row height for title
+  // Main title styling
   worksheet.properties.outlineLevelCol = 2;
   worksheet.mergeCells("A1", "F1");
   worksheet.getRow(1).height = 30;
-  worksheet.getCell("A1").value = `Sales Report (${startDate} to ${endDate})`;
-  worksheet.getCell("A1").font = { bold: true, size: 16 };
+  worksheet.getCell("A1").value = `Puzzle Box Sales Report (${convertDateFormat(
+    startDate
+  )} to ${convertDateFormat(endDate)})`;
+  worksheet.getCell("A1").font = {
+    bold: true,
+    size: 16,
+    color: { argb: "FFFFFF00" },
+  }; // Yellow font
+  worksheet.getCell("A1").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FF404040" }, // Dark gray background
+  };
   worksheet.getCell("A1").alignment = {
     horizontal: "center",
     vertical: "middle",
   };
 
-  // Add spacing row after title
   worksheet.addRow([]);
   worksheet.getRow(2).height = 10;
 
-  // First, define the headers
+  const summaryMetrics = data.reduce(
+    (acc, order) => ({
+      totalOrders: acc.totalOrders + 1,
+      totalSalesAmount: acc.totalSalesAmount + (order.totalSalesAmount || 0),
+      totalDiscount: acc.totalDiscount + (order.totalDiscount || 0),
+      totalCouponDiscount:
+        acc.totalCouponDiscount + (order.totalCouponDiscount || 0),
+    }),
+    {
+      totalOrders: 0,
+      totalSalesAmount: 0,
+      totalDiscount: 0,
+      totalCouponDiscount: 0,
+    }
+  );
+
+  // Summary section styling
+  worksheet.mergeCells("A3", "C3");
+  worksheet.getCell("A3").value = "Summary";
+  worksheet.getCell("A3").font = {
+    bold: true,
+    size: 12,
+    color: { argb: "FFFFFF00" },
+  }; // Yellow font
+  worksheet.getCell("A3").fill = {
+    type: "pattern",
+    pattern: "solid",
+    fgColor: { argb: "FF404040" }, // Dark gray background
+  };
+  worksheet.getCell("A3").alignment = {
+    horizontal: "center",
+    vertical: "middle",
+  };
+
+  const summaryData = [
+    ["Overall Sales Count:", summaryMetrics.totalOrders],
+    ["Overall Sales Discount:", summaryMetrics.totalDiscount],
+    ["Overall Sales Coupon Discount:", summaryMetrics.totalCouponDiscount],
+    ["Overall Sales Amount:", summaryMetrics.totalSalesAmount],
+  ];
+
+  let currentRow = 4;
+  summaryData.forEach(([label, value]) => {
+    worksheet.getCell(`A${currentRow}`).value = label;
+    worksheet.getCell(`B${currentRow}`).value = value;
+    worksheet.getCell(`A${currentRow}`).font = { bold: true };
+    worksheet.getCell(`A${currentRow}`).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFC9ECBA" }, // Light green background
+    };
+    worksheet.getCell(`B${currentRow}`).fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FFC9ECBA" }, // Light green background
+    };
+    if (typeof value === "number" && label !== "Overall Sales Count:") {
+      worksheet.getCell(`B${currentRow}`).numFmt = "#,##0.00";
+    }
+    currentRow++;
+  });
+
+  // Border styling for summary section
+  ["A", "B", "C"].forEach((col) => {
+    for (let i = 3; i < currentRow; i++) {
+      worksheet.getCell(`${col}${i}`).border = {
+        top: { style: "thin" },
+        left: { style: "thin" },
+        right: { style: "thin" },
+        bottom: { style: "thin" },
+      };
+    }
+  });
+
+  worksheet.addRow([]);
+  currentRow++;
+
+  // Main table headers
   const headers = [
     "Order ID",
     "Ordered Date",
@@ -31,10 +125,25 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     "Order Amount",
   ];
 
-  // Add header row
-  worksheet.getRow(3).values = headers;
+  // Header styling
+  worksheet.getRow(currentRow).values = headers;
+  const headerRow = worksheet.getRow(currentRow);
+  headerRow.height = 25;
+  headerRow.font = { bold: true, size: 12, color: { argb: "FFFFFF00" } }; // Yellow font
+  headerRow.alignment = {
+    horizontal: "center",
+    vertical: "middle",
+    wrapText: true,
+  };
+  headerRow.eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF404040" }, // Dark gray background
+    };
+  });
 
-  // Then define column properties
+  // Column widths
   worksheet.columns = [
     { key: "orderId", width: 25 },
     { key: "createdAt", width: 30 },
@@ -44,121 +153,96 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     { key: "totalSalesAmount", width: 25 },
   ];
 
-  // Style the headers (row 3)
-  const headerRow = worksheet.getRow(3);
-  headerRow.height = 25;
-  headerRow.font = { bold: true, size: 12 };
-  headerRow.alignment = {
-    horizontal: "center",
-    vertical: "middle",
-    wrapText: true,
-  };
-  headerRow.fill = {
-    type: "pattern",
-    pattern: "solid",
-    fgColor: { argb: "FFE0E0E0" },
-  };
-
-  // Add data rows starting from row 4
-  let rowNumber = 4;
+  // Data rows
+  let rowNumber = currentRow + 1;
   data.forEach((order) => {
     function scrambleString(str) {
       const shufflePattern = [
         12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10,
         16, 21, 20, 23,
       ];
-      const scrambledArray = [];
-
-      shufflePattern.forEach((newIndex, i) => {
-        scrambledArray[i] = str[newIndex];
-      });
-
-      // Remove elements beyond index 20
-      scrambledArray.splice(20);
-
+      const scrambledArray = shufflePattern.map((i) => str[i]).slice(0, 20);
       return scrambledArray.join("");
     }
 
     const orderId = scrambleString(order.orderId.toString());
-
-    // Create row with all values explicitly
-    const rowValues = [
+    const row = worksheet.addRow([
       orderId,
       new Date(order.createdAt).toLocaleString(),
       order.paymentMethod,
       order.totalDiscount || 0,
       order.totalCouponDiscount || 0,
       order.totalSalesAmount || 0,
-    ];
+    ]);
 
-    const row = worksheet.addRow(rowValues);
+    // Data row styling
+    row.eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "FFC9ECBA" }, // Light green background
+      };
+      cell.alignment = { horizontal: "center", vertical: "middle" };
+    });
 
-    // Format number columns with 2 decimal places
-    row.getCell(4).numFmt = "#,##0.00"; // Total Discount
-    row.getCell(5).numFmt = "#,##0.00"; // Total Coupon Discount
-    row.getCell(6).numFmt = "#,##0.00"; // Net Sales Amount
-
-    // Ensure numeric values are set as numbers, not strings
-    row.getCell(4).value = Number(order.totalDiscount || 0);
-    row.getCell(5).value = Number(order.totalCouponDiscount || 0);
-    row.getCell(6).value = Number(order.totalSalesAmount || 0);
-
-    // Center align all cells in the row
-    row.alignment = { horizontal: "center", vertical: "middle" };
     row.height = 20;
+    row.getCell(4).numFmt = "#,##0.00";
+    row.getCell(5).numFmt = "#,##0.00";
+    row.getCell(6).numFmt = "#,##0.00";
     rowNumber++;
   });
 
-  // Add total row
+  // Total row
   const totalRow = worksheet.addRow({
     orderId: "Total",
     createdAt: "",
     paymentMethod: "",
-    totalDiscount: { formula: `SUM(D4:D${rowNumber - 1})` },
-    totalCouponDiscount: { formula: `SUM(E4:E${rowNumber - 1})` },
-    totalSalesAmount: { formula: `SUM(F4:F${rowNumber - 1})` },
+    totalDiscount: { formula: `SUM(D${currentRow + 1}:D${rowNumber - 1})` },
+    totalCouponDiscount: {
+      formula: `SUM(E${currentRow + 1}:E${rowNumber - 1})`,
+    },
+    totalSalesAmount: { formula: `SUM(F${currentRow + 1}:F${rowNumber - 1})` },
   });
 
-  // Style total row
-  totalRow.font = { bold: true, size: 12 };
-  totalRow.alignment = { horizontal: "center", vertical: "middle" };
+  // Total row styling
+  totalRow.font = { bold: true, size: 12, color: { argb: "FFFFFF00" } }; // Yellow font
   totalRow.height = 25;
-  totalRow.fill = {
-    type: "pattern",
-    pattern: "solid",
-    fgColor: { argb: "FFF0F0F0" },
-  };
+  totalRow.eachCell((cell) => {
+    cell.fill = {
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "FF404040" }, // Dark gray background
+    };
+    cell.alignment = { horizontal: "center", vertical: "middle" };
+    cell.border = {
+      top: { style: "thin" },
+      left: { style: "thin" },
+      bottom: { style: "double" },
+      right: { style: "thin" },
+    };
+  });
 
-  // Format total row numbers
   totalRow.getCell(4).numFmt = "#,##0.00";
   totalRow.getCell(5).numFmt = "#,##0.00";
   totalRow.getCell(6).numFmt = "#,##0.00";
 
-  // Add border to total row
-  totalRow.eachCell((cell) => {
-    cell.border = {
-      top: { style: "thin", color: { argb: "FFB0B0B0" } },
-      left: { style: "thin", color: { argb: "FFB0B0B0" } },
-      bottom: { style: "double", color: { argb: "FFB0B0B0" } },
-      right: { style: "thin", color: { argb: "FFB0B0B0" } },
-    };
-  });
-
-  // Add table styling with improved borders
+  // Table borders
   worksheet.eachRow((row, rowNumber) => {
-    row.eachCell((cell) => {
-      cell.border = {
-        top: { style: "thin", color: { argb: "FFB0B0B0" } },
-        left: { style: "thin", color: { argb: "FFB0B0B0" } },
-        bottom: { style: "thin", color: { argb: "FFB0B0B0" } },
-        right: { style: "thin", color: { argb: "FFB0B0B0" } },
-      };
-    });
+    if (rowNumber >= currentRow) {
+      row.eachCell((cell) => {
+        cell.border = {
+          top: { style: "thin" },
+          left: { style: "thin" },
+          bottom: { style: "thin" },
+          right: { style: "thin" },
+        };
+      });
+    }
   });
 
-  // Auto-filter for all columns
+  // Auto-filter
   worksheet.autoFilter = {
-    from: { row: 3, column: 1 },
+    from: { row: currentRow, column: 1 },
     to: { row: rowNumber - 1, column: 6 },
   };
 
@@ -167,22 +251,18 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     {
       state: "frozen",
       xSplit: 0,
-      ySplit: 3,
-      topLeftCell: "A4",
-      activeCell: "A4",
+      ySplit: currentRow,
+      topLeftCell: `A${currentRow + 1}`,
+      activeCell: `A${currentRow + 1}`,
     },
   ];
 
-  // Save the Excel file and send it as a response
   const buffer = await workbook.xlsx.writeBuffer();
   response.setHeader(
     "Content-Type",
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
   );
-  response.setHeader(
-    "Content-Disposition",
-    `attachment; filename="Puzzle_Box_Sales_Report_${new Date().toDateString()}.xlsx"`
-  );
+  response.setHeader("Content-Disposition", `attachment;`);
   response.send(buffer);
 }
 
