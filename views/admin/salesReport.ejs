@@ -287,10 +287,10 @@
             <button class="btn btn-dark generate-report btn-block"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>generate report</button>
           </div>
           <div class="col-12 col-lg-4 col-xl-2 mb-3 mb-lg-0">
-            <button class="btn btn-dark excel-report btn-block" onclick="downloadSalesReport()"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
+            <button class="btn btn-dark excel-report btn-block" onclick="downloadExcelSalesReport()"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>excel report</button>
           </div>
           <div class="col-12 col-lg-3 col-xl-2">
-            <button class="btn btn-dark pdf-report btn-block"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
+            <button class="btn btn-dark pdf-report btn-block" onclick="downloadPDFSalesReport()"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>pdf report</button>
           </div>
         </div>
       </div>
@@ -496,7 +496,7 @@
     })
 
     // for downloading excel sales report on button click
-    window.downloadSalesReport = async function() {
+    window.downloadExcelSalesReport = async function() {
       try {
         function convertDateFormat(dateString) {
           const date = new Date(dateString);
@@ -524,7 +524,7 @@
           Swal.fire({
             icon: 'info',
             title: 'Unable to download',
-            text: 'No sales for the selected dates.',
+            text: 'No sales for the current duration.',
             confirmButtonText: 'OK',
             allowOutsideClick: false,
             customClass: {
@@ -551,5 +551,60 @@
         console.error('Error downloading the sales report:', error);
       }
     };
+
+    // for downloading PDF sales report on button click
+    window.downloadPDFSalesReport = function() {
+      function convertDateFormat(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+      }
+
+      fetch('/admin/generate-pdf-sales-report', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            startDate,
+            endDate
+          })
+        })
+        .then(response => {
+          if (!response.ok) throw new Error('Failed to generate report');
+          return response.blob();
+        })
+        .then(pdfBlob => {
+          const downloadUrl = window.URL.createObjectURL(pdfBlob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.setAttribute('download', `Puzzle Box Sales Report (${convertDateFormat(startDate)} to ${convertDateFormat(endDate)}).pdf`);
+          document.body.appendChild(link);
+          link.click();
+          link.parentNode.removeChild(link);
+          window.URL.revokeObjectURL(downloadUrl);
+        })
+        .catch(error => {
+          Swal.fire({
+            icon: 'info',
+            title: 'Unable to download',
+            text: 'No sales for the current duration.',
+            confirmButtonText: 'OK',
+            allowOutsideClick: false,
+            customClass: {
+              container: 'swal-css'
+            }
+          })
+
+          console.error('Error downloading report:', error);
+        })
+        .finally(() => {
+          button.disabled = false;
+          button.textContent = 'Download Sales Report';
+        });
+    }
   })
 </script>

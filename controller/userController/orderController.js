@@ -15,29 +15,38 @@ const order = async (req, res) => {
     const orders = await orderSchema
       .find({ userID: req.session.user })
       .populate({
-        path: 'products.productID',
+        path: "products.productID",
         populate: {
-          path: 'productCategory'
-        }
+          path: "productCategory",
+        },
       })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(productsPerPage);
 
-    const orderCount = await orderSchema.countDocuments({userID: req.session.user});
+    const orderCount = await orderSchema.countDocuments({
+      userID: req.session.user,
+    });
 
     /* ---------- querying active categories for including in the navbar --------- */
-    const activeCategories = await productSchema.find({
-      isActive: true,
-      productCategory: { $in: await categorySchema.find({ isActive: true }).select('_id') }
-    })
-      .populate('productCategory');
+    const activeCategories = await productSchema
+      .find({
+        isActive: true,
+        productCategory: {
+          $in: await categorySchema.find({ isActive: true }).select("_id"),
+        },
+      })
+      .populate("productCategory");
 
-    const activeCategoryNames = Array.from(new Set(activeCategories.map(product => product.productCategory.categoryName))).sort((a, b) => a.localeCompare(b));
+    const activeCategoryNames = Array.from(
+      new Set(
+        activeCategories.map((product) => product.productCategory.categoryName)
+      )
+    ).sort((a, b) => a.localeCompare(b));
 
     res.render("user/orders", {
       title: "Orders",
-      alert: req.flash('alert'),
+      alert: req.flash("alert"),
       user: req.session.user,
       orders,
       pageNumber: Math.ceil(orderCount / productsPerPage),
@@ -45,7 +54,7 @@ const order = async (req, res) => {
       totalPages: Math.ceil(orderCount / productsPerPage),
       orderCount,
       activeCategoryNames,
-      content: ''
+      content: "",
     });
   } catch (err) {
     console.log(`Error rendering the order page ${err}`);
@@ -60,16 +69,23 @@ const cancelOrderPost = async (req, res) => {
     const productIndex = req.query.productIndex;
     const cancelReason = req.query.cancelReason;
 
-    const order = await orderSchema.findById(orderID).populate('products.productID');
+    const order = await orderSchema
+      .findById(orderID)
+      .populate("products.productID");
     const wallet = await walletSchema.findOne({ userID: order.userID });
-    const product = await productSchema.findById(order.products[productIndex].productID);
+    const product = await productSchema.findById(
+      order.products[productIndex].productID
+    );
 
-    if (order.products[productIndex].status !== 'Delivered') {
-      order.products[productIndex].status = 'Cancelled';
+    if (order.products[productIndex].status !== "Delivered") {
+      order.products[productIndex].status = "Cancelled";
       order.products[productIndex].reasonForCancel = cancelReason;
       product.productQuantity += order.products[productIndex].quantity;
 
-      if (order.paymentMethod === 'Razorpay' || order.paymentMethod === 'Wallet') {
+      if (
+        order.paymentMethod === "Razorpay" ||
+        order.paymentMethod === "Wallet"
+      ) {
         let orderTotalPrice = 0;
         let refundableAmount = 0;
         let productShare = 0; // returning product share for calculating coupon discount
@@ -129,14 +145,20 @@ const cancelOrderPost = async (req, res) => {
       await order.save();
       await product.save();
 
-      req.flash('alert', { message: 'Order cancellation successful!', color: 'bg-success' });
+      req.flash("alert", {
+        message: "Order cancellation successful!",
+        color: "bg-success",
+      });
     } else {
-      req.flash('alert', { message: 'Order cancellation unsuccessful!', color: 'bg-danger' });
+      req.flash("alert", {
+        message: "Order cancellation unsuccessful!",
+        color: "bg-danger",
+      });
     }
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log('Error while cancelling order', error);
+    console.log("Error while cancelling order", error);
 
     res.status(500).json({ error });
   }
@@ -150,7 +172,9 @@ const returnOrderPost = async (req, res) => {
     const productIndex = req.query.productIndex;
     const returnReason = req.query.returnReason;
 
-    const order = await orderSchema.findById(orderID).populate('products.productID');
+    const order = await orderSchema
+      .findById(orderID)
+      .populate("products.productID");
 
     const currentDate = new Date();
     const returnExpiryDate = order.products[productIndex].deliveryDate;
@@ -165,19 +189,25 @@ const returnOrderPost = async (req, res) => {
         );
       }
 
-      order.products[productIndex].status = 'Pending-Return';
+      order.products[productIndex].status = "Pending-Return";
       order.products[productIndex].reasonForReturn = returnReason;
 
       await order.save();
 
-      req.flash('alert', { message: 'Return request successful!', color: 'bg-success' });
+      req.flash("alert", {
+        message: "Return request successful!",
+        color: "bg-success",
+      });
     } else {
-      req.flash('alert', { message: 'Return request unsuccessful!', color: 'bg-danger' });
+      req.flash("alert", {
+        message: "Return request unsuccessful!",
+        color: "bg-danger",
+      });
     }
 
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log('Error while requesting return', error);
+    console.log("Error while requesting return", error);
 
     res.status(500).json({ error });
   }
@@ -193,12 +223,12 @@ const addReview = async (req, res) => {
     let totalRating = 0;
     let userReviewed = false;
 
-    const productReview = await reviewSchema.findOne({productID});
+    const productReview = await reviewSchema.findOne({ productID });
 
     /* ---------------------- checks if product has reviews --------------------- */
     if (productReview) {
       /* ------------------ if user already reviewed then update ------------------ */
-      productReview.reviews.forEach(review => {
+      productReview.reviews.forEach((review) => {
         if (review.userID.toString() === req.session.user.toString()) {
           review.rating = rating;
           review.description = description;
@@ -211,41 +241,51 @@ const addReview = async (req, res) => {
         productReview.reviews.push({
           userID: req.session.user,
           rating,
-          description
-        })
+          description,
+        });
       }
     } else {
       /* ---------------- if product has no review, then create one --------------- */
       const newReview = new reviewSchema({
         productID,
         averageRating: rating,
-        reviews: [{
-          userID: req.session.user,
-          rating,
-          description
-        }]
+        reviews: [
+          {
+            userID: req.session.user,
+            rating,
+            description,
+          },
+        ],
       });
 
       await newReview.save();
 
-      req.flash('alert', { message: 'Review posted successfully!', color: 'bg-success' });
+      req.flash("alert", {
+        message: "Review posted successfully!",
+        color: "bg-success",
+      });
       return res.status(200).json({ success: true });
     }
 
     /* ----------------- calculating total rating of the product ---------------- */
-    productReview.reviews.forEach(review => {
+    productReview.reviews.forEach((review) => {
       totalRating += review.rating;
     });
 
     /* --- average rating is being calculated and assigned to product review --- */
-    productReview.averageRating = (totalRating / productReview.reviews.length).toFixed(1);
+    productReview.averageRating = (
+      totalRating / productReview.reviews.length
+    ).toFixed(1);
 
     await productReview.save();
 
-    req.flash('alert', { message: 'Review posted successfully!', color: 'bg-success' });
+    req.flash("alert", {
+      message: "Review posted successfully!",
+      color: "bg-success",
+    });
     res.status(200).json({ success: true });
   } catch (error) {
-    console.log('Error while adding product review', error);
+    console.log("Error while adding product review", error);
 
     res.status(500).json({ error });
   }
@@ -256,5 +296,5 @@ module.exports = {
   order,
   cancelOrderPost,
   returnOrderPost,
-  addReview
+  addReview,
 };

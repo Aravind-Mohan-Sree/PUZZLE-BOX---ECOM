@@ -1,8 +1,7 @@
 const orderSchema = require("../../model/orderSchema");
-const generateExcelReport = require("../../services/generateExcelSalesReport");
+const generatePDFReport = require("../../services/generatePDFSalesReport");
 
-/* -------------------- will generate excel sales report -------------------- */
-const generateExcelSalesReport = async (req, res) => {
+const generatePDFSalesReport = async (req, res) => {
   try {
     const getOrderAnalytics = async (startDate = null, endDate = null) => {
       // If no dates provided, use default date ranges
@@ -387,18 +386,27 @@ const generateExcelSalesReport = async (req, res) => {
     // const overallStats = await getOrderAnalytics();
     const salesData = await getOrderAnalytics(startDate, endDate);
 
-    if (salesData?.customRange?.orders?.length > 0) {
-      const reportData = salesData.customRange.orders;
-      await generateExcelReport(reportData, startDate, endDate, res);
-    } else {
-      res.status(404).send("No data found for the selected date range");
+    if (salesData?.customRange?.orders?.length === 0) {
+      return res.status(404).send("No data found for the selected date range");
     }
-  } catch (err) {
-    console.log("Error while generating sales report", err);
+
+    // Generate PDF buffer
+    const reportData = salesData.customRange.orders;
+    const pdfBuffer = await generatePDFReport(reportData, startDate, endDate);
+
+    // Set response headers
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment;");
+
+    // Send the PDF buffer
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.error("Error generating sales report:", error);
+
+    res.status(500).json({ error: "Failed to generate sales report" });
   }
 };
-/* -------------------------------------------------------------------------- */
 
 module.exports = {
-  generateExcelSalesReport,
+  generatePDFSalesReport,
 };

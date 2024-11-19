@@ -74,10 +74,10 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
 
   // Adjusted Summary Data
   const summaryData = [
-    ["Overall Sales Count:", summaryMetrics.totalOrders],
-    ["Overall Discount:", summaryMetrics.totalDiscount],
-    ["Overall Coupon Discount:", summaryMetrics.totalCouponDiscount],
-    ["Overall Sales Amount:", summaryMetrics.totalSalesAmount],
+    ["Overall Sales Count", summaryMetrics.totalOrders],
+    ["Overall Discount", summaryMetrics.totalDiscount],
+    ["Overall Coupon Discount", summaryMetrics.totalCouponDiscount],
+    ["Overall Sales Amount", summaryMetrics.totalSalesAmount],
   ];
 
   let currentRow = 4;
@@ -169,6 +169,7 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     }
 
     const orderId = scrambleString(order.orderId.toString());
+
     const row = worksheet.addRow([
       orderId,
       new Date(order.createdAt).toLocaleString(),
