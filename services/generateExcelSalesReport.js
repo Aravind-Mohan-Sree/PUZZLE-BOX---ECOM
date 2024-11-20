@@ -74,7 +74,7 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
 
   // Adjusted Summary Data
   const summaryData = [
-    ["Overall Sales Count", summaryMetrics.totalOrders],
+    ["Overall Sales Count", summaryMetrics.totalOrders.toFixed(0)],
     ["Overall Discount", summaryMetrics.totalDiscount],
     ["Overall Coupon Discount", summaryMetrics.totalCouponDiscount],
     ["Overall Sales Amount", summaryMetrics.totalSalesAmount],
@@ -84,22 +84,33 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
   summaryData.forEach(([label, value]) => {
     worksheet.getCell(`A${currentRow}`).value = label;
     worksheet.getCell(`B${currentRow}`).value = value;
+
+    // Set cell formatting for A
     worksheet.getCell(`A${currentRow}`).font = { bold: false };
     worksheet.getCell(`A${currentRow}`).fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "FFC9ECBA" }, // Light green background
     };
+    worksheet.getCell(`A${currentRow}`).alignment = {
+      horizontal: "left",
+      indent: 2, // Add indentation for padding
+    };
+
+    // Set cell formatting for B
     worksheet.getCell(`B${currentRow}`).fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "FFC9ECBA" }, // Light green background
     };
     if (typeof value === "number" && label !== "Overall Sales Count:") {
-      worksheet.getCell(`B${currentRow}`).numFmt = "#,##0.00";
+      worksheet.getCell(`B${currentRow}`).numFmt = "₹ #,##0.00";
     }
-    worksheet.getCell(`A${currentRow}`).alignment = { horizontal: "left" };
-    worksheet.getCell(`B${currentRow}`).alignment = { horizontal: "right" }; // Right-align values
+    worksheet.getCell(`B${currentRow}`).alignment = {
+      horizontal: "right",
+      indent: 2, // Add indentation for padding
+    };
+
     currentRow++;
   });
 
@@ -190,9 +201,9 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     });
 
     row.height = 20;
-    row.getCell(4).numFmt = "#,##0.00";
-    row.getCell(5).numFmt = "#,##0.00";
-    row.getCell(6).numFmt = "#,##0.00";
+    row.getCell(4).numFmt = "₹ #,##0.00";
+    row.getCell(5).numFmt = "₹ #,##0.00";
+    row.getCell(6).numFmt = "₹ #,##0.00";
     rowNumber++;
   });
 
@@ -226,9 +237,9 @@ async function generateExcelSalesReport(data, startDate, endDate, response) {
     };
   });
 
-  totalRow.getCell(4).numFmt = "#,##0.00";
-  totalRow.getCell(5).numFmt = "#,##0.00";
-  totalRow.getCell(6).numFmt = "#,##0.00";
+  totalRow.getCell(4).numFmt = "₹ #,##0.00";
+  totalRow.getCell(5).numFmt = "₹ #,##0.00";
+  totalRow.getCell(6).numFmt = "₹ #,##0.00";
 
   // Table borders
   worksheet.eachRow((row, rowNumber) => {

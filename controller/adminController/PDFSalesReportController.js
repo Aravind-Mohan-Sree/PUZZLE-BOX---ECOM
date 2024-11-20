@@ -221,7 +221,7 @@ const generatePDFSalesReport = async (req, res) => {
               {
                 $group: {
                   _id: null,
-                  totalSalesCount: { $sum: "$products.quantity" },
+                  totalSalesCount: { $sum: 1 },
                   totalDiscount: {
                     $sum: {
                       $multiply: [

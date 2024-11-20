@@ -3,6 +3,7 @@ const productSchema = require("../../model/productSchema");
 const orderSchema = require("../../model/orderSchema");
 const walletSchema = require("../../model/walletSchema");
 const reviewSchema = require("../../model/reviewSchema");
+const generatePDFInvoice = require("../../services/generatePDFInvoice");
 
 /* ----------------------- will render the order page ----------------------- */
 const order = async (req, res) => {
@@ -292,9 +293,89 @@ const addReview = async (req, res) => {
 };
 /* -------------------------------------------------------------------------- */
 
+/* --------------- for downloading invoice  -------------- */
+const generateInvoice = async (req, res) => {
+  try {
+    function scrambleString(str) {
+      const shufflePattern = [
+        12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10,
+        16, 21, 20, 23,
+      ];
+      const scrambledArray = shufflePattern.map((i) => str[i]).slice(0, 20);
+      return scrambledArray.join("");
+    }
+
+    const { orderID, index } = req.body;
+
+    const order = await orderSchema.findById(orderID);
+    const product = order.products[index];
+
+    let orderTotalPrice = 0;
+    let productAmount = 0;
+    let productShare = 0; //  product share for calculating coupon discount
+    let couponDiscount = 0; // share of coupon discount for the item, if any
+    let discount = 0;
+    let deliveryCharge = 0;
+
+    discount = (product.price * product.discount / 100) * product.quantity;
+
+    order.products.forEach((ele) => {
+      orderTotalPrice += ele.productID.productDiscountedPrice * ele.quantity;
+    });
+
+    productShare =
+      (order.products[index].productID.productDiscountedPrice *
+        order.products[index].quantity) /
+      orderTotalPrice;
+
+    productAmount =
+      order.products[index].productID.productDiscountedPrice *
+      order.products[index].quantity;
+
+    if (order.couponDiscount > 0) {
+      orderTotalPrice -= order.couponDiscount;
+
+      couponDiscount = order.couponDiscount * productShare;
+      productAmount -= Math.round(couponDiscount);
+    }
+
+    if (orderTotalPrice < 500) {
+      deliveryCharge += 40 * order.products[index].quantity;
+      productAmount += deliveryCharge;
+    }
+    console.log(productAmount);
+
+    const data = {
+      invoiceId: scrambleString(order._id.toString()),
+      productName: product.productName,
+      quantity: product.quantity,
+      price: product.price,
+      discount,
+      couponDiscount,
+      total: productAmount,
+    };
+
+    // Generate PDF buffer
+    const pdfBuffer = await generatePDFInvoice(data);
+
+    // Set response headers
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader("Content-Disposition", "attachment;");
+
+    // Send the PDF buffer
+    res.send(pdfBuffer);
+  } catch (error) {
+    console.log("Error while generating invoice", error);
+
+    res.status(500).json({ error });
+  }
+};
+/* -------------------------------------------------------------------------- */
+
 module.exports = {
   order,
   cancelOrderPost,
   returnOrderPost,
   addReview,
+  generateInvoice,
 };

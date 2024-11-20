@@ -154,7 +154,7 @@
                     <option value="">None</option>
                     <% coupons.forEach((coupon,index)=> { %>
                     <option value="<%= coupon._id %>" data-index="<%= index %>" <%= cart.coupon ? (cart.coupon.code === coupon.code ? 'selected' : '') : '' %>>
-                      <%= coupon.name %>
+                      <%- (cart.payableAmount + (cart.coupon?.discount ?? 0)) < coupon.minPurchase ? '&#128711;' : '' %> <%= coupon.name %>
                     </option>
                     <% }) %>
                   </select>
@@ -195,17 +195,17 @@
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                   Discount
-                  <span id="discount" class="text-danger"><%= '- ₹ ' + (cart.totalPrice - cart.payableAmount).toLocaleString() %></span>
+                  <span id="discount" class="text-danger"><%= '- ₹ ' + (cart.totalPrice - (cart.payableAmount - deliveryCharge)).toLocaleString() %></span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center px-0">
                   Delivery Charge
-                  <span id="delivery-charge" class="<%= cart.payableAmount < 500 ? '' : 'text-danger' %>"><%= cart.payableAmount < 500 ? '+ ₹ ' + (40 * totalProductQuantity) : 'Free' %></span>
+                  <span id="delivery-charge" class="<%= deliveryCharge ? '' : 'text-danger' %>"><%= deliveryCharge ? '+ ₹ ' + deliveryCharge : 'Free' %></span>
                 </li>
                 <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                   <div>
                     <strong>Payable Amount</strong>
                   </div>
-                  <span><strong id="payable-amount"><%= cart.payableAmount < 500 ? '₹ ' + (cart.payableAmount + (40 * totalProductQuantity)).toLocaleString() : '₹ ' + cart.payableAmount.toLocaleString() %></strong></span>
+                  <span><strong id="payable-amount"><%= '₹ ' + cart.payableAmount.toLocaleString() %></strong></span>
                 </li>
               </ul>
 
@@ -220,7 +220,7 @@
         <% } %>
       </div>
     </div>
-  </section>  
+  </section>
   <!-- ----------------------------------------------------------------------- -->
 
   <!-- --------------------------- testimonials included --------------------------- -->
@@ -269,6 +269,18 @@
           }).then(response => response.json())
           .then((data) => {
             if ((data.productCount) >= 0) {
+              const couponSelect = document.querySelector('select[name="coupon"]');
+              const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
+              const payableWithoutCoupon = (data.payableAmount - data.deliveryCharge) + (data.productDiscount - (data.payableAmount - data.deliveryCharge));
+
+              for (let i = 0; i < couponSelect.options.length; i++) {
+                if (i > 1 && payableWithoutCoupon < coupons[i - 2].minPurchase) {
+                  couponSelect.options[i].innerHTML = `&#128711; ${coupons[i - 2].name}`;
+                } else if (i > 1) {
+                  couponSelect.options[i].innerHTML = `${coupons[i - 2].name}`;
+                }
+              }
+
               quantityCount[index].value = data.productCount;
               perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
               data.productTotal === data.productDiscount ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
@@ -276,9 +288,9 @@
               outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
               totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();
               discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
-              deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
-              data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
-              payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+              deliveryCharge.innerHTML = data.deliveryCharge ? '+ ₹ ' + data.deliveryCharge.toLocaleString() : 'Free';
+              data.deliveryCharge ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
+              payableAmount.innerHTML = '₹ ' + data.payableAmount.toLocaleString();
             }
 
             if (data.error) {
@@ -323,6 +335,18 @@
             }
 
             if ((data.productCount) >= 0) {
+              const couponSelect = document.querySelector('select[name="coupon"]');
+              const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
+              const payableWithoutCoupon = (data.payableAmount - data.deliveryCharge) + (data.productDiscount - (data.payableAmount - data.deliveryCharge));
+
+              for (let i = 0; i < couponSelect.options.length; i++) {
+                if (i > 1 && payableWithoutCoupon < coupons[i - 2].minPurchase) {
+                  couponSelect.options[i].innerHTML = `&#128711; ${coupons[i - 2].name}`;
+                } else if (i > 1) {
+                  couponSelect.options[i].innerHTML = `${coupons[i - 2].name}`;
+                }
+              }
+
               quantityCount[index].value = data.productCount;
               perProductAmount[index].innerHTML = data.productTotal !== data.productDiscount ? '₹ ' + data.productTotal.toLocaleString() : '';
               data.productTotal === data.productDiscount ? perProductAmount[index].classList.remove('me-2') : perProductAmount[index].classList.add('me-2');
@@ -330,9 +354,9 @@
               outOfStock[index].innerHTML = data.productCount === 0 ? 'Out of stock' : '';
               totalAmount.innerHTML = '₹ ' + data.totalAmount.toLocaleString();
               discount.innerHTML = '- ₹ ' + data.discount.toLocaleString();
-              deliveryCharge.innerHTML = data.payableAmount < 500 ? '+ ₹ ' + (40 * data.totalProductQuantity).toLocaleString() : 'Free';
-              data.payableAmount < 500 ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
-              payableAmount.innerHTML = data.payableAmount < 500 ? '₹ ' + (data.payableAmount + (40 * data.totalProductQuantity)) : '₹ ' + data.payableAmount.toLocaleString();
+              deliveryCharge.innerHTML = data.deliveryCharge ? '+ ₹ ' + data.deliveryCharge.toLocaleString() : 'Free';
+              data.deliveryCharge ? deliveryCharge.classList.remove('text-danger') : deliveryCharge.classList.add('text-danger');
+              payableAmount.innerHTML = '₹ ' + data.payableAmount.toLocaleString();
             }
 
             if (data.error) {

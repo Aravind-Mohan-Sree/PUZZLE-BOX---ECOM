@@ -1,4 +1,5 @@
 const PDFDocument = require("pdfkit-table");
+const path = require("path");
 
 async function generatePDFSalesReport(data, startDate, endDate) {
   function convertDateFormat(dateString) {
@@ -10,7 +11,7 @@ async function generatePDFSalesReport(data, startDate, endDate) {
   }
 
   // Create PDF document
-  const doc = new PDFDocument({ margin: 30, size: "A3" });
+  const doc = new PDFDocument({ margin: 20, size: "A3" });
 
   // Create buffer to store PDF
   const chunks = [];
@@ -32,7 +33,7 @@ async function generatePDFSalesReport(data, startDate, endDate) {
         `Puzzle Box Sales Report (${convertDateFormat(
           startDate
         )} to ${convertDateFormat(endDate)})`,
-        { align: "center" }
+        { align: "center", underline: true }
       )
       .moveDown();
 

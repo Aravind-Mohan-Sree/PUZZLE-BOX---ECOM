@@ -153,6 +153,7 @@ user.get("/orders", checkUserSession, orderController.order);
 user.post("/cancel-order", checkUserSession, orderController.cancelOrderPost);
 user.post("/return-order", checkUserSession, orderController.returnOrderPost);
 user.post("/add-review", checkUserSession, orderController.addReview);
+user.post("/generate-invoice", checkUserSession, orderController.generateInvoice);
 
 // will handle the user wallet route
 user.get("/wallet", checkUserSession, walletController.getWallet);

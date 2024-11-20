@@ -263,7 +263,7 @@
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <% if ((ele.paymentMethod === 'Cash on delivery' && (product.status === 'Delivered' || product.status === 'Returned' || product.status === 'Pending-Return')) || (ele.paymentMethod === 'Razorpay' && product.status !== 'Pending') || (ele.paymentMethod === 'Wallet')) { %>
                   <div>
-                    <button class="mt-2 btn btn-sm shadow-0 btn-dark"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
+                    <button class="mt-2 btn btn-sm shadow-0 btn-dark invoice-btn" data-order-id="<%= ele._id %>" data-index="<%= index %>"><i class="fa-duotone fa-solid fa-download fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>invoice</button>
                   </div>
                   <% } %>
                   <% if (product.status === 'Pending') { %>
@@ -1025,6 +1025,54 @@
 
         updateOrderInterval();
       }
+    })
+
+    // for downloading invoice 
+    const invoiceBtn = document.querySelectorAll('.invoice-btn');
+
+    invoiceBtn.forEach(ele => {
+      ele.addEventListener('click', function() {
+        function scrambleString(str) {
+          const shufflePattern = [
+            12, 5, 19, 2, 17, 0, 22, 9, 14, 8, 3, 15, 1, 18, 6, 11, 4, 13, 7, 10,
+            16, 21, 20, 23,
+          ];
+          const scrambledArray = shufflePattern.map((i) => str[i]).slice(0, 20);
+          return scrambledArray.join("");
+        }
+
+        const orderID = ele.getAttribute('data-order-id');
+        const index = ele.getAttribute('data-index');
+
+        fetch('/generate-invoice', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              orderID,
+              index
+            })
+          })
+          .then(response => {
+            if (!response.ok) throw new Error('Failed to generate report');
+            return response.blob();
+          })
+          .then(pdfBlob => {
+            const downloadUrl = window.URL.createObjectURL(pdfBlob);
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.setAttribute('download', `Invoice (#${scrambleString(orderID)}).pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(downloadUrl);
+          })
+          .catch(error => {
+            console.error('Error downloading report:', error);
+          })
+          .finally(() => {});
+      })
     })
   });
 </script>
