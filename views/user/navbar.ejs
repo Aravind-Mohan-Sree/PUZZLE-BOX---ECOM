@@ -231,7 +231,7 @@
         method: 'POST'
       }).then(response => response.json())
       .then(data => {
-        const user = JSON.parse('<%- JSON.stringify(user) %>');
+        const user = JSON.parse(`<%- JSON.stringify(user) %>`);
         const cartCount = document.getElementById('cart-count');
         const wishlistCount = document.getElementById('wishlist-count');
 

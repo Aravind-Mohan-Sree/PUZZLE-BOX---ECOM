@@ -535,7 +535,7 @@
 
     // for editing user address
     let index;
-    let addresses = JSON.parse('<%- JSON.stringify(addresses) %>');
+    let addresses = JSON.parse(`<%- JSON.stringify(addresses) %>`);
 
     document.getElementById('address').addEventListener('change', function() {
       index = this.value;

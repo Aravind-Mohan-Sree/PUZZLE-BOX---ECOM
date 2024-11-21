@@ -62,12 +62,15 @@ async function generatePDFSalesReport(data, startDate, endDate) {
       ],
       rows: [
         ["Overall Sales Count", summaryMetrics.totalOrders],
-        ["Overall Discount", summaryMetrics.totalDiscount.toFixed(2)],
+        ["Overall Discount", "Rs " + summaryMetrics.totalDiscount.toFixed(2)],
         [
           "Overall Coupon Discount",
-          summaryMetrics.totalCouponDiscount.toFixed(2),
+          "Rs " + summaryMetrics.totalCouponDiscount.toFixed(2),
         ],
-        ["Overall Sales Amount", summaryMetrics.totalSalesAmount.toFixed(2)],
+        [
+          "Overall Sales Amount",
+          "Rs " + summaryMetrics.totalSalesAmount.toFixed(2),
+        ],
       ],
     };
 
@@ -107,9 +110,9 @@ async function generatePDFSalesReport(data, startDate, endDate) {
         scrambleString(order.orderId.toString()),
         new Date(order.createdAt).toLocaleString(),
         order.paymentMethod,
-        order.totalDiscount.toFixed(2),
-        order.totalCouponDiscount.toFixed(2),
-        order.totalSalesAmount.toFixed(2),
+        "Rs " + order.totalDiscount.toFixed(2),
+        "Rs " + order.totalCouponDiscount.toFixed(2),
+        "Rs " + order.totalSalesAmount.toFixed(2),
       ]),
     };
 

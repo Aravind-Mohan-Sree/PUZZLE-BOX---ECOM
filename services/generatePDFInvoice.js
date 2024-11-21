@@ -2,7 +2,10 @@ const PDFDocument = require("pdfkit-table");
 
 async function generatePDFInvoice(data) {
   // Create PDF document
-  const doc = new PDFDocument({ margin: 20, size: "A3" });
+  const doc = new PDFDocument({
+    margins: { top: 90, left: 45, bottom: 50, right: 50 },
+    size: "A3",
+  });
 
   // Create buffer to store PDF
   const chunks = [];
@@ -23,26 +26,46 @@ async function generatePDFInvoice(data) {
       .text("INVOICE", { align: "center", underline: true })
       .moveDown();
 
+    doc
+      .font("Helvetica-Bold")
+      .fontSize(12)
+      .fillColor("#000000")
+      .text(`Invoice #${data.invoiceId}`, { align: "left" })
+      .moveDown()
+      .text(`Ordered On ${data.orderedDate}`, { align: "left" })
+      .moveDown()
+      .text(`Payment Method: ${data.paymentMethod}`, { align: "left" })
+      .moveDown()
+      .text(`Shipping Address`, { align: "left", underline: true })
+      .moveDown()
+      .text(
+        `${data.address.contactName}, ${data.address.house}, ${data.address.area}, ${data.address.city}, ${data.address.state}, Pincode: ${data.address.pincode}, Contact: ${data.address.phone}`,
+        {
+          align: "left",
+        }
+      )
+      .moveDown(4);
+
     // Generate invoice details table
     const invoiceTable = {
       headers: [
-        { label: "Invoice ID", width: 160 },
         { label: "Product Name", width: 150 },
-        { label: "Quantity", width: 100 },
-        { label: "Price", width: 100 },
-        { label: "Discount", width: 100 },
+        { label: "Quantity", width: 90 },
+        { label: "Price", width: 90 },
+        { label: "Discount", width: 90 },
         { label: "Coupon Discount", width: 120 },
-        { label: "Total", width: 120 },
+        { label: "Delivery Charge", width: 120 },
+        { label: "Total", width: 90 },
       ],
       rows: [
         [
-          data.invoiceId,
           data.productName,
           data.quantity.toString(),
-          data.price.toFixed(2),
-          data.discount.toFixed(2),
-          data.couponDiscount.toFixed(2),
-          data.total.toFixed(2),
+          "Rs " + data.price.toFixed(2),
+          "Rs " + data.discount.toFixed(2),
+          "Rs " + data.couponDiscount.toFixed(2),
+          "Rs " + data.deliveryCharge.toFixed(2),
+          "Rs " + data.total.toFixed(2),
         ],
       ],
       options: {
@@ -65,6 +88,15 @@ async function generatePDFInvoice(data) {
     };
 
     doc.table(invoiceTable);
+
+    doc.moveDown(4);
+
+    // Add footer
+    doc
+      .fontSize(15)
+      .fillColor("#000000")
+      .text("Thank You!", { align: "center" })
+      .moveDown();
 
     // Finalize PDF
     doc.end();

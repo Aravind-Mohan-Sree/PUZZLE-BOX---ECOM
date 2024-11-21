@@ -270,7 +270,7 @@
           .then((data) => {
             if ((data.productCount) >= 0) {
               const couponSelect = document.querySelector('select[name="coupon"]');
-              const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
+              const coupons = JSON.parse(`<%- JSON.stringify(coupons) %>`);
               const payableWithoutCoupon = (data.payableAmount - data.deliveryCharge) + (data.productDiscount - (data.payableAmount - data.deliveryCharge));
 
               for (let i = 0; i < couponSelect.options.length; i++) {
@@ -336,7 +336,7 @@
 
             if ((data.productCount) >= 0) {
               const couponSelect = document.querySelector('select[name="coupon"]');
-              const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
+              const coupons = JSON.parse(`<%- JSON.stringify(coupons) %>`);
               const payableWithoutCoupon = (data.payableAmount - data.deliveryCharge) + (data.productDiscount - (data.payableAmount - data.deliveryCharge));
 
               for (let i = 0; i < couponSelect.options.length; i++) {
@@ -427,7 +427,7 @@
 
     // when a coupon is selected, it will be inserted with values and shown up
     document.querySelector('select[name="coupon"]').addEventListener('change', function(event) {
-      const coupons = JSON.parse('<%- JSON.stringify(coupons) %>');
+      const coupons = JSON.parse(`<%- JSON.stringify(coupons) %>`);
       const selectedOption = event.target.options[event.target.selectedIndex];
       const currentIndex = selectedOption.getAttribute('data-index');
 
@@ -450,7 +450,7 @@
       } else {
         couponDetail.classList.add('d-none');
 
-        const coupon = '<%- JSON.stringify(cart?.coupon) %>';
+        const coupon = `<%- JSON.stringify(cart?.coupon) %>`;
 
         // if user deselect an applied coupon, then will send a fetch request to remove that coupon from cart
         if (coupon) {

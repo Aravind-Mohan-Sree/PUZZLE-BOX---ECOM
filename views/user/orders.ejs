@@ -975,7 +975,7 @@
     })
 
     // remove pending orders using fetch after a predefined time
-    const orders = JSON.parse('<%- JSON.stringify(orders) %>');
+    const orders = JSON.parse(`<%- JSON.stringify(orders) %>`);
 
     orders.forEach(ele => {
       if (ele.products[0].status === 'Pending') {
@@ -1062,7 +1062,7 @@
             const downloadUrl = window.URL.createObjectURL(pdfBlob);
             const link = document.createElement('a');
             link.href = downloadUrl;
-            link.setAttribute('download', `Invoice (#${scrambleString(orderID)}).pdf`);
+            link.setAttribute('download', `Puzzle Box Invoice (#${scrambleString(orderID)}).pdf`);
             document.body.appendChild(link);
             link.click();
             link.parentNode.removeChild(link);

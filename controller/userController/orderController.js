@@ -307,7 +307,9 @@ const generateInvoice = async (req, res) => {
 
     const { orderID, index } = req.body;
 
-    const order = await orderSchema.findById(orderID);
+    const order = await orderSchema
+      .findById(orderID)
+      .populate("products.productID");
     const product = order.products[index];
 
     let orderTotalPrice = 0;
@@ -317,7 +319,7 @@ const generateInvoice = async (req, res) => {
     let discount = 0;
     let deliveryCharge = 0;
 
-    discount = (product.price * product.discount / 100) * product.quantity;
+    discount = ((product.price * product.discount) / 100) * product.quantity;
 
     order.products.forEach((ele) => {
       orderTotalPrice += ele.productID.productDiscountedPrice * ele.quantity;
@@ -343,15 +345,18 @@ const generateInvoice = async (req, res) => {
       deliveryCharge += 40 * order.products[index].quantity;
       productAmount += deliveryCharge;
     }
-    console.log(productAmount);
 
     const data = {
       invoiceId: scrambleString(order._id.toString()),
+      orderedDate: order.createdAt.toDateString(),
+      paymentMethod: order.paymentMethod,
+      address: order.address,
       productName: product.productName,
       quantity: product.quantity,
       price: product.price,
       discount,
       couponDiscount,
+      deliveryCharge,
       total: productAmount,
     };
 

@@ -630,7 +630,7 @@
                 method: 'POST'
               }).then(response => response.json())
               .then(data => {
-                const user = JSON.parse('<%- JSON.stringify(user) %>');
+                const user = JSON.parse(`<%- JSON.stringify(user) %>`);
                 const cartCount = document.getElementById('cart-count');
                 const wishlistCount = document.getElementById('wishlist-count');
 
@@ -685,7 +685,7 @@
                 method: 'POST'
               }).then(response => response.json())
               .then(data => {
-                const user = JSON.parse('<%- JSON.stringify(user) %>');
+                const user = JSON.parse(`<%- JSON.stringify(user) %>`);
                 const cartCount = document.getElementById('cart-count');
                 const wishlistCount = document.getElementById('wishlist-count');
 
@@ -702,8 +702,8 @@
 
     // using fetch for adding product to cart
     document.getElementById('add-to-cart').addEventListener('click', function() {
-      const productId = JSON.parse('<%- JSON.stringify(product._id) %>');
-      const productPrice = JSON.parse('<%- JSON.stringify(product.productPrice) %>');
+      const productId = JSON.parse(`<%- JSON.stringify(product._id) %>`);
+      const productPrice = JSON.parse(`<%- JSON.stringify(product.productPrice) %>`);
 
       fetch(`/add-to-cart?productId=${productId}&productPrice=${productPrice}`, {
           method: 'POST',

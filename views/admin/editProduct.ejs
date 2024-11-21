@@ -428,7 +428,7 @@
   document.addEventListener('DOMContentLoaded', (event) => {
     const inputImage = document.getElementById('product-image-upload');
     const imageContainer = document.getElementById('imageContainer');
-    const backendImageUrls = JSON.parse('<%- JSON.stringify(product.productImage) %>');
+    const backendImageUrls = JSON.parse(`<%- JSON.stringify(product.productImage) %>`);
     let cropper;
     let currentImageElement;
 
