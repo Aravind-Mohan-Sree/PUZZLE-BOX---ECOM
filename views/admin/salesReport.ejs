@@ -399,8 +399,8 @@
       return `${year}-${month}-${day}`;
     }
 
-    let startDate = new Date(convertDateFormat(startDateInput.value));
-    let endDate = new Date(convertDateFormat(endDateInput.value))
+    let startDate = convertDateFormat(startDateInput.value);
+    let endDate = convertDateFormat(endDateInput.value);
 
     startDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
       startDate = new Date(convertDateFormat(startDateInput.value));
@@ -436,7 +436,7 @@
       }
 
       const dateRange = salesDurationSelect.value;
-      const currentDate = new Date();
+      const currentDate = new Date().toISOString().split("T")[0];
 
       if (parseInt(dateRange) === 0) {
         startDate = new Date(currentDate);

@@ -20,7 +20,6 @@ admin.post('/login', adminController.loginPost);
 
 // will handle admin dashboard route
 admin.get('/dashboard', checkAdminSession, adminController.dashboard);
-// admin.post('/dashboard', adminController.dashboardPost);
 
 // will handle admin sales report route
 admin.get('/sales-report', checkAdminSession, salesReportController.getSalesReport);

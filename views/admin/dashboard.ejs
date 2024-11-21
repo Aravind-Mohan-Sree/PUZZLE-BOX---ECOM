@@ -1,11 +1,280 @@
-<!-- navbar included -->
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  input[name="startDateInput"],
+  input[name="endDateInput"] {
+    pointer-events: none;
+    border: 2px solid #000;
+    height: 35px;
+  }
+
+  .datepicker-toggle-button {
+    right: 8%;
+    top: 50%;
+    transform: translate(0%, 0%);
+  }
+
+  #dashboard {
+    background-color: rgba(51, 45, 45, .05);
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
 <%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
 
-<!-- sidenav included -->
+<!-- -------------------------- sidenav included --------------------------- -->
 <%- include('sidenav') %>
+<!-- ----------------------------------------------------------------------- -->
 
-<!-- javaScript -->
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">DASHBOARD</h2>
+
+<hr>
+
+<!-- -------------------------- sales data chart --------------------------- -->
+<div id="content">
+  <div class="container-fluid px-4">
+    <div class="row justify-content-center">
+      <%
+      function convertDateFormat(dateString) {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+
+      return `${day}/${month}/${year}`;
+      }
+      %>
+      <div class="col-12 col-lg-3 col-xl-2">
+        <div class="position-relative datepicker" id="start-date-picker">
+          <label class="form-label text-dark m-0" for="form12">Start Date</span></label>
+          <input type="text" id="form1" class="form-control mb-2" name="startDateInput" value="<%= convertDateFormat(dateRange.start) %>" />
+          <small class="start-date-alert position-absolute top-100 text-danger"></small>
+        </div>
+      </div>
+      <div class="col-12 col-lg-3 col-xl-2 mt-2 mb-2 mt-lg-0 mb-lg-0">
+        <div class="position-relative datepicker" id="end-date-picker">
+          <label class="form-label text-dark m-0" for="form12">End Date</span></label>
+          <input type="text" id="form1" class="form-control mb-2" name="endDateInput" value="<%= convertDateFormat(dateRange.end) %>" />
+          <small class="end-date-alert position-absolute top-100 text-danger"></small>
+        </div>
+      </div>
+      <div class="col-12 col-lg-3 col-xl-2">
+        <label for="" class="text-dark m-0">Sales Duration</label>
+        <select data-mdb-select-init class="form-control select" name="salesDuration">
+          <option value="" disabled selected hidden>Select</option>
+          <option value="0">Daily</option>
+          <option value="1">Weekly</option>
+          <option value="2">Monthly</option>
+          <option value="3">Yearly</option>
+        </select>
+      </div>
+    </div>
+    <div class="row justify-content-center mt-3 text-center">
+      <div class="col-12 col-lg-4 col-xl-3 mb-3 mb-lg-0">
+        <button class="btn btn-dark update-chart"><i class="fa-duotone fa-solid fa-rotate fa-xl me-2" style="--fa-primary-color: #a0aabb; --fa-secondary-color: #ffffff; --fa-secondary-opacity: 1;"></i>update chart</button>
+      </div>
+    </div>
+    <div class="row mt-5">
+      <div class="col-md-10 offset-md-1">
+        <canvas id="salesChart" class="mb-5"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javaScript ------------------------------ -->
 <script>
-  // after redirection, remove the query parameter from the URL
-  window.history.replaceState(null, null, window.location.pathname);
+  let chart;
+
+  function createChart(data) {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+
+    if (chart) {
+      chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['Total Sales Count', 'Total Discount', 'Total Coupon Discount', 'Total Delivery Charges', 'Total Sales Amount'],
+        datasets: [{
+          label: ' ',
+          data: [
+            data.totalSalesCount,
+            data.totalDiscount,
+            data.totalCouponDiscount,
+            data.totalDeliveryCharges,
+            data.totalSalesAmount
+          ],
+          backgroundColor: [
+            'rgba(255, 99, 132, 0.2)',
+            'rgba(54, 162, 235, 0.2)',
+            'rgba(255, 206, 86, 0.2)',
+            'rgba(75, 192, 192, 0.2)',
+            'rgba(153, 102, 255, 0.2)'
+          ],
+          borderColor: [
+            'rgba(255, 99, 132, 1)',
+            'rgba(54, 162, 235, 1)',
+            'rgba(255, 206, 86, 1)',
+            'rgba(75, 192, 192, 1)',
+            'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        },
+        plugins: {
+          legend: {
+            display: false
+          },
+          title: {
+            display: true,
+            text: 'Sales Data Overview'
+          }
+        }
+      }
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // dynamically adds padding to h2 tag
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+
+    // dynamically adds padding to table container
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+    document.getElementById('content').style.paddingBottom = `${footerHeight2 + 1}px`;
+
+    const chartData = JSON.parse(`<%- JSON.stringify(chartData) %>`)
+    const startDateInput = document.querySelector('input[name="startDateInput"]');
+    const endDateInput = document.querySelector('input[name="endDateInput"]');
+    const startDatePicker = document.querySelector('#start-date-picker');
+    const endDatePicker = document.querySelector('#end-date-picker');
+    const startDateAlert = document.querySelector('.start-date-alert');
+    const endDateAlert = document.querySelector('.end-date-alert');
+    const updateChartButton = document.querySelector('.update-chart');
+
+    function convertDateFormat(dateStr) {
+      const [day, month, year] = dateStr.split('/');
+
+      return `${year}-${month}-${day}`;
+    }
+
+    let startDate = convertDateFormat(startDateInput.value);
+    let endDate = convertDateFormat(endDateInput.value);
+
+    startDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
+      startDate = convertDateFormat(startDateInput.value);
+    })
+
+    endDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
+      endDate = convertDateFormat(endDateInput.value);
+    })
+
+    document.addEventListener('open.mdb.datepicker', function() {
+      document.querySelector('#h2').style.display = 'none';
+      document.querySelector('#content').style.display = 'none';
+    })
+
+    document.addEventListener('close.mdb.datepicker', function() {
+      setTimeout(function() {
+        document.querySelector('#h2').style.display = 'block';
+        document.querySelector('#content').style.display = 'block';
+      }, 250)
+    })
+
+    // will get the selected sales duration
+    const salesDurationSelect = document.querySelector('select[name="salesDuration"]');
+
+    salesDurationSelect.addEventListener('change', function() {
+      function convertDateFormat(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+
+        return `${day}/${month}/${year}`;
+      }
+
+      const dateRange = salesDurationSelect.value;
+      const currentDate = new Date().toISOString().split("T")[0];
+
+      if (parseInt(dateRange) === 0) {
+        startDate = new Date(currentDate);
+        startDate = new Date(currentDate);
+      }
+
+      if (parseInt(dateRange) === 1) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 7);
+      }
+
+      if (parseInt(dateRange) === 2) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 30);
+      }
+
+      if (parseInt(dateRange) === 3) {
+        startDate = new Date(currentDate);
+        startDate.setDate(startDate.getDate() - 365);
+      }
+
+      endDate = new Date(currentDate);
+
+      startDateInput.value = convertDateFormat(startDate.toString());
+      endDateInput.value = convertDateFormat(endDate.toString());
+    })
+
+    updateChartButton.addEventListener('click', async () => {
+      try {
+        const currentDate = new Date();
+        let isValid = true;
+
+        startDateAlert.style.display = 'none';
+        endDateAlert.style.display = 'none';
+
+        if (startDate > currentDate) {
+          startDateAlert.style.display = 'inline';
+          startDateAlert.innerHTML = 'Invalid start date';
+          isValid = false;
+        }
+
+        if (endDate > currentDate) {
+          endDateAlert.style.display = 'inline';
+          endDateAlert.innerHTML = 'Invalid end date';
+          isValid = false;
+        }
+
+        if (startDate > endDate) {
+          startDateAlert.style.display = 'inline';
+          startDateAlert.innerHTML = 'Invalid start date';
+          isValid = false;
+        }
+
+        if (isValid) {
+          window.location.href = `/admin/dashboard?startDate=${startDate}&endDate=${endDate}`
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        alert('An error occurred while fetching data. Please try again.');
+      }
+    });
+
+    createChart(chartData);
+  });
 </script>
+<!-- ----------------------------------------------------------------------- -->
