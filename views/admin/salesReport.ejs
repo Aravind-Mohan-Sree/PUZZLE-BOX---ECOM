@@ -65,6 +65,11 @@
     transform: translate(0%, 0%);
   }
 
+  small {
+    display: none;
+    font-size: .75rem;
+  }
+
   #salesReport {
     background-color: rgba(51, 45, 45, .05);
   }
@@ -403,11 +408,11 @@
     let endDate = convertDateFormat(endDateInput.value);
 
     startDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
-      startDate = new Date(convertDateFormat(startDateInput.value));
+      startDate = convertDateFormat(startDateInput.value);
     })
 
     endDatePicker.addEventListener('dateChange.mdb.datepicker', function() {
-      endDate = new Date(convertDateFormat(endDateInput.value));
+      endDate = convertDateFormat(endDateInput.value);
     })
 
     document.addEventListener('open.mdb.datepicker', function() {
@@ -466,7 +471,7 @@
 
     // will generate updated sales report based on the selected dates on button click
     document.querySelector('.generate-report').addEventListener('click', function() {
-      const currentDate = new Date();
+      const currentDate = new Date().toISOString().split("T")[0];
       let isValid = true;
 
       startDateAlert.style.display = 'none';

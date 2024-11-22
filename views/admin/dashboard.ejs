@@ -13,6 +13,11 @@
     transform: translate(0%, 0%);
   }
 
+  small {
+    display: none;
+    font-size: .75rem;
+  }
+
   #dashboard {
     background-color: rgba(51, 45, 45, .05);
   }
@@ -32,7 +37,7 @@
 
 <hr>
 
-<!-- -------------------------- sales data chart --------------------------- -->
+<!-- -------------------------- sales data chart container --------------------------- -->
 <div id="content">
   <div class="container-fluid px-4">
     <div class="row justify-content-center">
@@ -94,16 +99,53 @@
   let chart;
 
   function createChart(data) {
-    const ctx = document.getElementById('salesChart').getContext('2d');
+    const canvas = document.getElementById('salesChart');
+
+    Object.assign(canvas.style, {
+      width: '100%',
+      height: '500px',
+      maxWidth: '1200px', // Optional: add maximum width
+      margin: '0 auto', // Optional: center the canvas
+      display: 'block' // Optional: better spacing
+    });
+
+    const ctx = canvas.getContext('2d');
 
     if (chart) {
       chart.destroy();
     }
 
+    // Custom gradient backgrounds
+    const gradients = [
+      createGradient(ctx, '#FF6384', '#FF9EB5'),
+      createGradient(ctx, '#36A2EB', '#73C3FB'),
+      createGradient(ctx, '#FFCE56', '#FFE4A1'),
+      createGradient(ctx, '#4BC0C0', '#96DFDF'),
+      createGradient(ctx, '#9966FF', '#C4A7FF')
+    ];
+
+    // Format large numbers with rupee symbol
+    const formatNumber = (value) => {
+      if (value >= 10000000) {
+        return '₹ ' + (value / 10000000).toFixed(2) + 'Cr';
+      } else if (value >= 100000) {
+        return '₹ ' + (value / 100000).toFixed(2) + 'L';
+      } else if (value >= 1000) {
+        return '₹ ' + (value / 1000).toFixed(1) + 'K';
+      }
+      return '₹ ' + value.toFixed(0);
+    };
+
     chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['Total Sales Count', 'Total Discount', 'Total Coupon Discount', 'Total Delivery Charges', 'Total Sales Amount'],
+        labels: [
+          'Total Sales',
+          'Discounts',
+          'Coupon Savings',
+          'Delivery Fees',
+          'Net Revenue'
+        ],
         datasets: [{
           label: ' ',
           data: [
@@ -113,41 +155,147 @@
             data.totalDeliveryCharges,
             data.totalSalesAmount
           ],
-          backgroundColor: [
-            'rgba(255, 99, 132, 0.2)',
-            'rgba(54, 162, 235, 0.2)',
-            'rgba(255, 206, 86, 0.2)',
-            'rgba(75, 192, 192, 0.2)',
-            'rgba(153, 102, 255, 0.2)'
-          ],
+          backgroundColor: gradients,
           borderColor: [
-            'rgba(255, 99, 132, 1)',
-            'rgba(54, 162, 235, 1)',
-            'rgba(255, 206, 86, 1)',
-            'rgba(75, 192, 192, 1)',
-            'rgba(153, 102, 255, 1)'
+            '#FF6384',
+            '#36A2EB',
+            '#FFCE56',
+            '#4BC0C0',
+            '#9966FF'
           ],
-          borderWidth: 1
+          borderWidth: 2,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBackgroundColor: 'white',
+          pointBorderWidth: 2,
+          tension: 0.4,
+          fill: true
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
           y: {
-            beginAtZero: true
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.1)',
+              drawBorder: false
+            },
+            ticks: {
+              callback: function(value) {
+                return formatNumber(value);
+              },
+              font: {
+                family: "'Arial', sans-serif",
+                size: 12,
+                weight: 'bold'
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                family: "'Arial', sans-serif",
+                size: 12,
+                weight: 'bold'
+              }
+            }
           }
         },
         plugins: {
           legend: {
-            display: false
+            display: false,
+            position: 'top',
+            labels: {
+              font: {
+                family: "'Arial', sans-serif",
+                size: 14,
+                weight: 'bold'
+              },
+              usePointStyle: true,
+              padding: 20
+            }
           },
           title: {
             display: true,
-            text: 'Sales Data Overview'
+            text: 'Sales Performance Overview',
+            font: {
+              family: "'Arial', sans-serif",
+              size: 20,
+              weight: 'bold'
+            },
+            padding: {
+              top: 20,
+              bottom: 20
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+            titleColor: '#333',
+            titleFont: {
+              size: 14,
+              weight: 'bold'
+            },
+            bodyColor: '#666',
+            bodyFont: {
+              size: 13
+            },
+            borderColor: '#ddd',
+            borderWidth: 1,
+            padding: 12,
+            displayColors: true,
+            callbacks: {
+              label: function(context) {
+                let label = context.dataset.label || '';
+                if (label) {
+                  label += ': ';
+                }
+                // Skip rupee symbol for the first data point (Total Sales Count)
+                if (context.dataIndex === 0) {
+                  return label + context.raw;
+                }
+                return label + '₹ ' + context.raw;
+              }
+            }
+          },
+          // Add data labels directly on the chart
+          datalabels: {
+            anchor: 'end',
+            align: 'top',
+            formatter: function(value) {
+              return formatNumber(value);
+            },
+            font: {
+              weight: 'bold'
+            },
+            padding: 6,
+            color: function(context) {
+              return context.dataset.borderColor[context.dataIndex];
+            }
           }
+        },
+        interaction: {
+          intersect: false,
+          mode: 'index'
+        },
+        animation: {
+          duration: 1000,
+          easing: 'easeInOutQuart'
         }
       }
     });
+  }
+
+  // Helper function to create gradients
+  function createGradient(ctx, startColor, endColor) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, startColor + '40');
+    gradient.addColorStop(1, endColor + '10');
+    return gradient;
   }
 
   document.addEventListener('DOMContentLoaded', () => {
@@ -241,7 +389,7 @@
 
     updateChartButton.addEventListener('click', async () => {
       try {
-        const currentDate = new Date();
+        const currentDate = new Date().toISOString().split("T")[0];
         let isValid = true;
 
         startDateAlert.style.display = 'none';

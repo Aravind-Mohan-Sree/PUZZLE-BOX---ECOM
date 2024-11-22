@@ -88,6 +88,11 @@
     border: 6px solid transparent;
     border-right-color: #333;
   }
+
+  small {
+    display: none;
+    font-size: .75rem;
+  }
 </style>
 <!-- ----------------------------------------------------------------------- -->
 
@@ -141,7 +146,7 @@
                   <p class="h5"><%= product.productName %></p>
                   <p class="text-muted"> Qt: <%= product.quantity %></p>
                   <% if (product.status === 'Pending') { %>
-                    <p class="text-danger mt-4 mb-0"> Payment failed for this item.</p>
+                  <p class="text-danger mt-4 mb-0"> Payment failed for this item.</p>
                   <% } else if (product.status === 'Pending-Return') { %>
                   <div>
                     <details class="m-0 mb-2">
@@ -364,9 +369,9 @@
     });
 
     // for showing page content when modal closes
-    document.querySelector('#close-modal').addEventListener('click', function () {
+    document.querySelector('#close-modal').addEventListener('click', function() {
       document.querySelector('#content').style.display = 'block';
-    });    
+    });
 
     // will reject return request using fetch
     document.querySelector('body').addEventListener('click', function(event) {

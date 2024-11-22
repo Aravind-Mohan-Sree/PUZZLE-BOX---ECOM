@@ -49,9 +49,14 @@
             return starsHtml;
           }
 
-          topRatedReviews.forEach((reviewData) => {
+          topRatedReviews.forEach((reviewData, index) => {
             const colDiv = document.createElement("div");
-            colDiv.className = "col-md-4 mb-md-0";
+
+            if (index !== topRatedReviews.length - 1) {
+              colDiv.className = "col-md-4 mb-md-0 mb-5";
+            } else {
+              colDiv.className = "col-md-4 mb-md-0";
+            }
 
             colDiv.innerHTML = `
       <h5 class="mb-3">${reviewData.userID.name}</h5>
@@ -66,7 +71,7 @@
             reviewsRow.appendChild(colDiv);
           });
         } else {
-          document.getElementById('reviews-section').style.display = 'none';       
+          document.getElementById('reviews-section').style.display = 'none';
         }
       })
   });
