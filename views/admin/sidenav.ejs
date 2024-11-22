@@ -256,31 +256,19 @@
 
   // for changing navbar toggler icon
   document.getElementById('toggler').addEventListener('click', function() {
-    const ariaExpanded = document.getElementById('toggler').getAttribute('aria-expanded');
     const toggler = document.getElementById('toggler');
     const togglerIcon1 = document.getElementById('toggler-icon1');
     const togglerIcon2 = document.getElementById('toggler-icon2');
 
-    // create a mutation observer to watch for class changes
-    const observer = new MutationObserver(mutationsList => {
-      for (const mutation of mutationsList) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          // check if the class is present
-          if (ariaExpanded === 'false') {
-            togglerIcon1.style.display = 'inline-block';
-            togglerIcon2.style.display = 'none';
-          } else {
-            togglerIcon1.style.display = 'none';
-            togglerIcon2.style.display = 'inline-block';
-          }
-        }
-      }
-    });
+    const isExpanded = toggler.getAttribute('aria-expanded') === 'true';
 
-    // start observing the target node for configured mutations
-    observer.observe(toggler, {
-      attributes: true
-    });
+    if (isExpanded) {
+      togglerIcon1.style.display = 'none';
+      togglerIcon2.style.display = 'inline-block';
+    } else {
+      togglerIcon1.style.display = 'inline-block';
+      togglerIcon2.style.display = 'none';
+    }
   });
 
   // using fetch for admin logout
