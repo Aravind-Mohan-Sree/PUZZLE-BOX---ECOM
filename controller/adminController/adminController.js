@@ -183,7 +183,7 @@ const dashboard = async (req, res) => {
         {
           $match: {
             "products.status": {
-              $nin: ["Pending", "Returned", "Cancelled"],
+              $nin: ["Pending", "Cancelled", "Pending-Return", "Returned"],
             },
           },
         },

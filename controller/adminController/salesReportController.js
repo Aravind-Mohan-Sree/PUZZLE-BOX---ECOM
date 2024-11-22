@@ -125,7 +125,7 @@ const getOrderAnalytics = async (startDate = null, endDate = null) => {
     {
       $match: {
         "products.status": {
-          $nin: ["Pending", "Returned", "Cancelled"],
+          $nin: ["Pending", "Cancelled", "Pending-Return", "Returned"],
         },
       },
     },

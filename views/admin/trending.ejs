@@ -1,0 +1,101 @@
+<!-- ------------------------------- styles -------------------------------- -->
+<style>
+  #trending {
+    background-color: rgba(51, 45, 45, .05);
+  }
+
+  small {
+    font-size: .75rem;
+  }
+</style>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- navbar included --------------------------- -->
+<%- include('navbar') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- -------------------------- sidenav included --------------------------- -->
+<%- include('sidenav') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- title -->
+<h2 id="h2" class="ms-4 ms-md-0 pe-5 text-sm-end me-sm-5">TRENDING</h2>
+
+<hr>
+
+<!-- ------------------------- trending container -------------------------- -->
+<div id="content">
+  <!-- ----------------------- top 10 products section ----------------------- -->
+  <section>
+    <div class="container px-4">
+      <h1 class="h2 border-bottom border-3 border-dark d-inline-block text-dark mt-3">TOP 10 PRODUCTS</h1>
+      <div class="row mt-2 gy-4">
+        <% topProducts.forEach(ele => { %>
+        <div class="col-sm-6 col-lg-4 col-xl-3">
+          <div class="card">
+            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light" data-mdb-ripple-color="light">
+              <img src="<%= ele.productImage[0] %>" class="w-100 img-fluid" />
+            </div>
+            <div class="card-body">
+              <h5 class="card-title text-truncate m-0"><%= ele.productName %></h5>
+              <small class="m-0 text-truncate"><%= ele.productCategory.name %></small>
+              <h6 class="mt-3">
+                <s class="text-danger"><%= ele.productDiscount !== 0 ? '₹ ' + ele.productPrice.toLocaleString() : '' %></s><strong class="<%= ele.productDiscount !== 0 ? 'ms-2' : '' %> text-dark">₹ <%= ele.productDiscountedPrice.toLocaleString() %></strong>
+              </h6>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+        <% if (topProducts.length === 0) { %>
+        <div>
+          <h4 class="m-0">No items yet...</h4>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+
+  <!-- ----------------------- top 10 categories section ----------------------- -->
+  <section class="mb-5 mt-5">
+    <div class="container px-4">
+      <h1 class="h2 border-bottom border-3 border-dark d-inline-block text-dark mt-3">TOP 10 CATEGORIES</h1>
+      <div class="row mt-2 gy-4">
+        <% topCategories.forEach(ele => { %>
+        <div class="col-md-6 col-xl-3">
+          <div class="card">
+            <div class="card-body text-center">
+              <p class="m-0 fst-italic fw-semibold"><%= ele.categoryName %></p>
+            </div>
+          </div>
+        </div>
+        <% }) %>
+        <% if (topCategories.length === 0) { %>
+        <div>
+          <h4 class="m-0">No items yet...</h4>
+        </div>
+        <% } %>
+      </div>
+    </div>
+  </section>
+  <!-- ----------------------------------------------------------------------- -->
+</div>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- --------------------------- footer included --------------------------- -->
+<%- include('footer') %>
+<!-- ----------------------------------------------------------------------- -->
+
+<!-- ----------------------------- javascript ------------------------------ -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // dynamically adds padding to h2 tag
+    const navHeight2 = document.getElementsByTagName('nav')[0].offsetHeight;
+    document.getElementById('h2').style.paddingTop = `${navHeight2 + 20}px`;
+
+    // dynamically adds padding to table container
+    const footerHeight2 = document.getElementsByTagName('footer')[0].offsetHeight;
+    document.getElementById('content').style.paddingBottom = `${footerHeight2 + 1}px`;
+  })
+</script>
+<!-- ----------------------------------------------------------------------- -->
