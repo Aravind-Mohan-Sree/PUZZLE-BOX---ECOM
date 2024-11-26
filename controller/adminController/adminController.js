@@ -272,8 +272,7 @@ const dashboard = async (req, res) => {
             aggregatedMetrics: [
               {
                 $group: {
-                  _id: null,
-                  totalSalesCount: { $sum: 1 },
+                  _id: "$_id",
                   totalDiscount: {
                     $sum: {
                       $multiply: [
@@ -290,11 +289,11 @@ const dashboard = async (req, res) => {
                       ],
                     },
                   },
-                  totalDeliveryCharges: {
+                  deliveryCharges: {
                     $sum: {
                       $cond: {
                         if: "$isDeliveryChargeApplicable",
-                        then: { $multiply: ["$products.quantity", 40] },
+                        then: 40,
                         else: 0,
                       },
                     },
@@ -321,13 +320,23 @@ const dashboard = async (req, res) => {
                         {
                           $cond: {
                             if: "$isDeliveryChargeApplicable",
-                            then: { $multiply: ["$products.quantity", 40] },
+                            then: 40,
                             else: 0,
                           },
                         },
                       ],
                     },
                   },
+                },
+              },
+              {
+                $group: {
+                  _id: null,
+                  totalSalesCount: { $sum: 1 },
+                  totalDiscount: { $sum: "$totalDiscount" },
+                  totalCouponDiscount: { $sum: "$totalCouponDiscount" },
+                  totalDeliveryCharges: { $sum: "$deliveryCharges" },
+                  totalSalesAmount: { $sum: "$totalSalesAmount" },
                 },
               },
               {
