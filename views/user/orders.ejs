@@ -248,7 +248,7 @@
 
                   <% let orderID = scrambleString(ele.id); %>
                   <p class="text-muted mb-2"> Order ID: <span class="fw-bold text-body"><%= orderID %></span></p>
-                  <p class="text-muted mb-0"><%= ele.products[0].status === 'Pending' ? 'Pending' : 'Place' %> On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+                  <p class="text-muted mb-0"><%= ele.products[0].status === 'Pending' ? 'Pending' : 'Place' %> On <span class="fw-bold text-body"><%= new Date(ele.createdAt).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
                 </div>
               </div>
             </div>
@@ -361,19 +361,19 @@
               <div class="text-center">
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
               </div>
-              <p class="text-muted text-center"> Returned on <span class="text-body"><%= new Date(product.returnedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+              <p class="text-muted text-center"> Returned on <span class="text-body"><%= new Date(product.returnedDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else if (product.status === 'Delivered') { %>
               <div class="text-center">
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
               </div>
-              <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
+              <p class="text-muted text-center"> Delivered on <span class="text-body"><%= new Date(product.deliveryDate).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %></span> </p>
               <% } else if (product.status === 'Pending-Return') { %>
               <div class="text-center">
                 <button class="mt-2 mb-3 btn btn-warning btn-sm shadow-0 text-black review-modal-btn" data-mdb-modal-init data-mdb-target="#review-modal" data-product-id="<%= product.productID._id %>" type="button"><i class="fa-duotone fa-solid fa-star fa-xl me-2" style="--fa-primary-color: #000000; --fa-secondary-color: #000000; --fa-secondary-opacity: 1;"></i>write a review</button>
               </div>
-              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
+              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } else if (product.status !== 'Cancelled' && product.status !== 'Pending') { %>
-              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-IN', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
+              <p class="text-muted text-center">Tracking Status on: <span class="text-body"><%= new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }) %>, Today</span></p>
               <% } %>
               <% if (product.status !== 'Cancelled' && product.status !== 'Pending') { %>
               <div class="stepper-container mb-4" data-order-status="<%= product.status %>">
