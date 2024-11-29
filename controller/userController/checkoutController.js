@@ -132,11 +132,6 @@ const checkout = async (req, res) => {
       return res.redirect("/home");
     }
 
-    /* ----------------- will add delivery charge if applicable ----------------- */
-    if (cart.payableAmount < 500) {
-      cart.payableAmount += 40 * totalProductQuantity;
-    }
-
     await cart.save();
 
     cart.items.sort((a, b) => b.createdAt - a.createdAt);
