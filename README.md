@@ -114,7 +114,7 @@ cd PUZZLE-BOX---ECOM
 npm install
 ```
 
-Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgKwO2k63n6i_8pv?usp=sharing) and put it inside the node_modules folder.
+Download this folder(https://drive.google.com/drive/folders/1GnGRQp3ZuJrKTyn_CMtOR_Db-k9Lrdsz?usp=sharing) and put it inside the node_modules folder.
 
 ### Set Up Environment Variables
 
