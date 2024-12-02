@@ -72,7 +72,7 @@ Local signup with OTP verification (via Nodemailer)<br><br>
 
 ## 📦 Major Libraries and Tools
 
-express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2<br><br>
+express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, cloudinary, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2<br><br>
 
 ## 🚀 Deployment Details
 
