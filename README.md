@@ -157,7 +157,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ### Start the Server
 
 ```
-npm run dev
+npm start
 ```
 
 ### Access the Application
