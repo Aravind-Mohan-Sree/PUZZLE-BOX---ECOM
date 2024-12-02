@@ -118,7 +118,7 @@ Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgK
 
 ### Set Up Environment Variables
 
-**Create a .env file in the root directory and configure the following:**
+Create a .env file in the root directory and configure the following:
 
 ```
 PORT=your_port  
