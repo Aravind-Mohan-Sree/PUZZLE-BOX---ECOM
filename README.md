@@ -86,7 +86,7 @@ NGINX: Used as a reverse proxy for optimized performance and security.<br><br>
 
 ### Prerequisites
 
-### Before running this project locally, ensure you have the following installed:
+Before running this project locally, ensure you have the following installed:
 
 `git`
 
