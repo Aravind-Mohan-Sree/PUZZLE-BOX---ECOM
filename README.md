@@ -72,7 +72,7 @@ Local signup with OTP verification (via Nodemailer)<br><br>
 
 ## 📦 Major Libraries and Tools
 
-express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2<br><br>
+express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, cloudinary, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2<br><br>
 
 ## 🚀 Deployment Details
 
@@ -114,7 +114,7 @@ cd PUZZLE-BOX---ECOM
 npm install
 ```
 
-Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgKwO2k63n6i_8pv?usp=sharing) and put it inside the node_modules folder.
+Download this folder(https://drive.google.com/drive/folders/1zq3UnXE2gvAdkODfwgvYj4IWALZPcixG?usp=sharing) and put it inside the node_modules folder.
 
 ### Set Up Environment Variables
 
@@ -157,7 +157,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ### Start the Server
 
 ```
-npm run dev
+npm start
 ```
 
 ### Access the Application
