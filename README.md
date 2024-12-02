@@ -72,7 +72,7 @@ Local signup with OTP verification (via Nodemailer)<br><br>
 
 ## 📦 Major Libraries and Tools
 
-**express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2** <br><br>
+express, nodemon, ejs, nocache, express-ejs-layouts, express-session, mongoose, bcrypt, connect-flash, dotenv, chart.js, cookie-parser, cropperjs, exceljs, multer, nodemailer, otp-generator, passport, passport-google-oauth2, pdfkit-table, razorpay, uuid, voucher-code-generator, sweetalert2<br><br>
 
 ## 🚀 Deployment Details
 
@@ -84,61 +84,81 @@ NGINX: Used as a reverse proxy for optimized performance and security.<br><br>
 
 ## 🛠️ Getting Started
 
+### Prerequisites
+
+Before running this project locally, ensure you have the following installed:
+
+`git`
+
+`Node.js (v14 or above)`
+
+`MongoDB`
+
 ## Installation
 
 ### Clone the Repository
 
-`git clone https://github.com/Aravind-Mohan-Sree/PUZZLE-BOX---ECOM.git`
+```
+git clone https://github.com/Aravind-Mohan-Sree/PUZZLE-BOX---ECOM.git
+```
 
 ### Navigate to the Project Directory
 
-`PUZZLE-BOX---ECOM`
+```
+cd PUZZLE-BOX---ECOM
+```
 
 ### Install Dependencies
 
-`npm install express nodemon ejs nocache express-ejs-layouts express-session mongoose bcrypt connect-flash dotenv chart.js cookie-parser cropperjs exceljs multer nodemailer otp-generator passport passport-google-oauth2 pdfkit-table razorpay uuid voucher-code-generator sweetalert2`
+```
+npm install
+```
 
 Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgKwO2k63n6i_8pv?usp=sharing) and put it inside the node_modules folder.
 
 ### Set Up Environment Variables
 
-**Create a .env file in the root directory and configure the following:**
+Create a .env file in the root directory and configure the following:
 
-`PORT=your_port`  
+```
+PORT=your_port  
 
-`MONGODB_CONNECTION_STRING=your_mongodb_connection_string`
+MONGODB_CONNECTION_STRING=your_mongodb_connection_string
 
-`ADMIN_EMAIL=your_admin_email`
+ADMIN_EMAIL=your_admin_email
 
-`ADMIN_PASSWORD=your_admin_password`
+ADMIN_PASSWORD=your_admin_password
 
-`SMTP_HOST=your_smtp_host`
+SMTP_HOST=your_smtp_host
 
-`SMTP_PORT=your_smtp_port`
+SMTP_PORT=your_smtp_port
 
-`SMTP_MAIL=your_smtp_mail`
+SMTP_MAIL=your_smtp_mail
 
-`SMTP_PASSWORD=your_smtp_password`
+SMTP_PASSWORD=your_smtp_password
 
-`GOOGLE_CLIENT_ID=your_google_client_id`
+GOOGLE_CLIENT_ID=your_google_client_id
 
-`GOOGLE_CLIENT_SECRET=your_google_client_secret`
+GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-`GOOGLE_CALLBACK_URL=your_google_callback_url`
+GOOGLE_CALLBACK_URL=your_google_callback_url
 
-`RAZORPAY_KEY_ID=your_razorpay_key_id`
+RAZORPAY_KEY_ID=your_razorpay_key_id
 
-`RAZORPAY_KEY_SECRET=your_razorpay_key_secret`
+RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 
-`CLOUDINARY_CLOUD_NAME=your_cloudinary_name`
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
 
-`CLOUDINARY_API_KEY=your_cloudinary_api_key`
+CLOUDINARY_API_KEY=your_cloudinary_api_key
 
-`CLOUDINARY_API_SECRET=your_cloudinary_api_secret`
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+```
 
 ### Start the Server
 
-`npm run dev`
+```
+npm run dev
+```
 
 ### Access the Application
 
@@ -146,7 +166,7 @@ Open your browser and navigate to `http://localhost:PORT`.<br><br>
 
 ## 🏗️ Project Structure
 
-### PUZZLE BOX is designed using the MVC architecture for clean and organized development:
+PUZZLE BOX is designed using the MVC architecture for clean and organized development:
 
 `/controllers   - Application logic for handling requests`
 
