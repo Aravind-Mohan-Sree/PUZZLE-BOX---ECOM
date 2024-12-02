@@ -92,7 +92,7 @@ NGINX: Used as a reverse proxy for optimized performance and security.<br><br>
 
 ### Navigate to the Project Directory
 
-`PUZZLE-BOX---ECOM`
+`cd PUZZLE-BOX---ECOM`
 
 ### Install Dependencies
 
