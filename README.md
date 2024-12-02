@@ -98,7 +98,7 @@ NGINX: Used as a reverse proxy for optimized performance and security.<br><br>
 
 `npm install express nodemon ejs nocache express-ejs-layouts express-session mongoose bcrypt connect-flash dotenv chart.js cookie-parser cropperjs exceljs multer nodemailer otp-generator passport passport-google-oauth2 pdfkit-table razorpay uuid voucher-code-generator sweetalert2`
 
-Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgKwO2k63n6i_8pv?usp=drive_link) and put it inside the node_modules folder.
+Download this folder(https://drive.google.com/drive/folders/1xrzUer59Th9-Kq0CYgKwO2k63n6i_8pv?usp=sharing) and put it inside the node_modules folder.
 
 ### Set Up Environment Variables
 
