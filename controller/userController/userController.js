@@ -604,13 +604,9 @@ const googleAuthCallback = (req, res, next) => {
 // will destroy the session and logout user
 const logout = (req, res) => {
   try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.redirect("/login?logout=true");
-      }
-    });
+    delete req.session.user;
+
+    res.redirect("/login?logout=true");
   } catch (err) {
     console.log("Error on user logout", err);
   }

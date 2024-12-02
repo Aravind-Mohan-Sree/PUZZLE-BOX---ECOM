@@ -467,13 +467,9 @@ const dashboard = async (req, res) => {
 // will logout admin
 const logout = (req, res) => {
   try {
-    req.session.destroy((err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.json({ url: "/admin/login?logout=true" });
-      }
-    });
+    delete req.session.admin;
+    
+    res.json({ url: "/admin/login?logout=true" });
   } catch (err) {
     console.log("Error on admin logout post");
   }
