@@ -166,7 +166,7 @@ Open your browser and navigate to `http://localhost:PORT`.<br><br>
 
 ## 🏗️ Project Structure
 
-### PUZZLE BOX is designed using the MVC architecture for clean and organized development:
+PUZZLE BOX is designed using the MVC architecture for clean and organized development:
 
 `/controllers   - Application logic for handling requests`
 
