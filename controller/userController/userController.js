@@ -590,19 +590,19 @@ const googleAuthCallback = (req, res, next) => {
           // Store the user ID in the session
           req.session.user = user._id;
 
+          const admin = req.app.locals.admin;
+
+          delete req.app.locals.admin;
+
+          req.session.admin = admin;
+
           const redirectUrl =
             intendedAction === "signup"
               ? "/home?signup=true"
               : "/home?login=true";
 
           return res.redirect(redirectUrl);
-        });
-
-        const admin = res.locals.admin;
-
-        delete res.locals.admin;
-
-        req.session.admin = admin;
+        });        
       }
     )(req, res, next);
   } catch (err) {
