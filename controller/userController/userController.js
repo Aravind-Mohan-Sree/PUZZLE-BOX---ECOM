@@ -444,7 +444,6 @@ const googleLogin = (req, res) => {
     req.session.intendedAction = "login";
 
     passport.authenticate("google", {
-      keepSessionInfo: true,
       scope: ["email", "profile"],
     })(req, res);
   } catch (err) {
@@ -484,7 +483,6 @@ const googleSignup = async (req, res) => {
     req.session.referralCode = referralCodes[0];
 
     passport.authenticate("google", {
-      keepSessionInfo: true,
       scope: ["email", "profile"],
     })(req, res);
   } catch (err) {
@@ -497,7 +495,6 @@ const googleAuthCallback = (req, res, next) => {
   try {
     passport.authenticate(
       "google",
-      { keepSessionInfo: true },
       async (err, user, info) => {
         if (err) {
           console.log(`Error on google auth callback: ${err}`);
@@ -591,7 +588,7 @@ const googleAuthCallback = (req, res, next) => {
           }
 
           // Store the user ID in the session
-          req.session.user = user._id;
+          req.session.user = { id: user._id };
 
           const redirectUrl =
             intendedAction === "signup"
