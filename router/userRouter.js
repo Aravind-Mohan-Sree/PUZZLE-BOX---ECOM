@@ -14,6 +14,7 @@ const updateNavbarController = require("../controller/userController/updateNavba
 const testimonialController = require("../controller/userController/testimonialController");
 const checkUserSession = require("../middleware/userSession");
 const checkUserBlocked = require("../middleware/checkUserBlocked");
+const saveAdminSession = require("../middleware/saveAdminSession");
 
 // will handle user login route
 user.get("/", userController.user);
@@ -21,8 +22,8 @@ user.get("/login", userController.login);
 user.post("/login", userController.loginPost);
 
 // will handle google auth routes
-user.get("/google/login", userController.googleLogin);
-user.get("/google/signup", userController.googleSignup);
+user.get("/google/login", saveAdminSession, userController.googleLogin);
+user.get("/google/signup", saveAdminSession, userController.googleSignup);
 user.get("/auth/google/callback", userController.googleAuthCallback);
 
 // will handle user signup route

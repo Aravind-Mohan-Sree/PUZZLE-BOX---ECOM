@@ -597,6 +597,12 @@ const googleAuthCallback = (req, res, next) => {
 
           return res.redirect(redirectUrl);
         });
+
+        const admin = res.locals.admin;
+
+        delete res.locals.admin;
+
+        req.session.admin = admin;
       }
     )(req, res, next);
   } catch (err) {

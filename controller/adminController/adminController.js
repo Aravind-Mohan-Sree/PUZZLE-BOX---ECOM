@@ -14,7 +14,7 @@ const login = (req, res) => {
       if (req.query.logout) {
         req.flash("alert", {
           message: "Logout successful!",
-          color: "bg-danger",
+          color: "bg-success",
         });
       }
 
