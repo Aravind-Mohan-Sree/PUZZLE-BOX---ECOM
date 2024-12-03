@@ -444,6 +444,7 @@ const googleLogin = (req, res) => {
     req.session.intendedAction = "login";
 
     passport.authenticate("google", {
+      keepSessionInfo: true,
       scope: ["email", "profile"],
     })(req, res);
   } catch (err) {
@@ -483,6 +484,7 @@ const googleSignup = async (req, res) => {
     req.session.referralCode = referralCodes[0];
 
     passport.authenticate("google", {
+      keepSessionInfo: true,
       scope: ["email", "profile"],
     })(req, res);
   } catch (err) {
