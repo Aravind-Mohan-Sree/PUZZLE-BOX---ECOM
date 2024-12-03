@@ -493,52 +493,80 @@ const googleSignup = async (req, res) => {
 // google auth callback from the auth service
 const googleAuthCallback = (req, res, next) => {
   try {
-    passport.authenticate("google", async (err, user, info) => {
-      if (err) {
-        console.log(`Error on google auth callback: ${err}`);
-        return next(err);
-      }
+    passport.authenticate(
+      "google",
+      { keepSessionInfo: true },
+      async (err, user, info) => {
+        if (err) {
+          console.log(`Error on google auth callback: ${err}`);
+          return next(err);
+        }
 
-      const existingUser = await userSchema.findOne({ email: user.email });
-      const intendedAction = req.session.intendedAction;
-      const signupReferralCode = req.session.signupReferralCode;
-      delete req.session.intendedAction;
-      delete req.session.signupReferralCode;
-      delete req.session.referralCode;
+        const existingUser = await userSchema.findOne({ email: user.email });
+        const intendedAction = req.session.intendedAction;
+        const signupReferralCode = req.session.signupReferralCode;
+        delete req.session.intendedAction;
+        delete req.session.signupReferralCode;
+        delete req.session.referralCode;
 
-      if (!existingUser && intendedAction === "login") {
-        req.flash("alert", {
-          message: "Account not exists. Try signup!",
-          color: "bg-danger",
-        });
+        if (!existingUser && intendedAction === "login") {
+          req.flash("alert", {
+            message: "Account not exists. Try signup!",
+            color: "bg-danger",
+          });
 
-        return res.redirect("/signup");
-      }
+          return res.redirect("/signup");
+        }
 
-      if (!info.newUser && intendedAction === "signup") {
-        req.flash("alert", {
-          message: "Account already exists. Try login!",
-          color: "bg-danger",
-        });
+        if (!info.newUser && intendedAction === "signup") {
+          req.flash("alert", {
+            message: "Account already exists. Try login!",
+            color: "bg-danger",
+          });
 
-        return res.redirect("/login");
-      }
+          return res.redirect("/login");
+        }
 
-      if (info.newUser && signupReferralCode) {
-        const rewardAmount = 500;
+        if (info.newUser && signupReferralCode) {
+          const rewardAmount = 500;
 
-        const referrer = await userSchema.findOne({
-          referralCode: signupReferralCode,
-        });
+          const referrer = await userSchema.findOne({
+            referralCode: signupReferralCode,
+          });
 
-        const referrerWallet = await walletSchema.findOne({
-          userID: referrer._id,
-        });
-
-        // creates wallet for referrer if not exist, else update wallet
-        if (!referrerWallet) {
-          await walletSchema.create({
+          const referrerWallet = await walletSchema.findOne({
             userID: referrer._id,
+          });
+
+          // creates wallet for referrer if not exist, else update wallet
+          if (!referrerWallet) {
+            await walletSchema.create({
+              userID: referrer._id,
+              balance: rewardAmount,
+              transactions: [
+                {
+                  reason: "Referral Reward",
+                  amount: rewardAmount,
+                  type: "credit",
+                  runningBalance: rewardAmount,
+                },
+              ],
+            });
+          } else {
+            referrerWallet.balance += rewardAmount;
+            referrerWallet.transactions.push({
+              reason: "Referral Reward",
+              amount: rewardAmount,
+              type: "credit",
+              runningBalance: referrerWallet.balance,
+            });
+
+            await referrerWallet.save();
+          }
+
+          // creates wallet for referred
+          await walletSchema.create({
+            userID: user._id,
             balance: rewardAmount,
             transactions: [
               {
@@ -549,53 +577,29 @@ const googleAuthCallback = (req, res, next) => {
               },
             ],
           });
-        } else {
-          referrerWallet.balance += rewardAmount;
-          referrerWallet.transactions.push({
-            reason: "Referral Reward",
-            amount: rewardAmount,
-            type: "credit",
-            runningBalance: referrerWallet.balance,
-          });
-
-          await referrerWallet.save();
         }
 
-        // creates wallet for referred
-        await walletSchema.create({
-          userID: user._id,
-          balance: rewardAmount,
-          transactions: [
-            {
-              reason: "Referral Reward",
-              amount: rewardAmount,
-              type: "credit",
-              runningBalance: rewardAmount,
-            },
-          ],
+        if (!user) {
+          return res.redirect("/login");
+        }
+
+        req.logIn(user, (err) => {
+          if (err) {
+            return next(err);
+          }
+
+          // Store the user ID in the session
+          req.session.user = user._id;
+
+          const redirectUrl =
+            intendedAction === "signup"
+              ? "/home?signup=true"
+              : "/home?login=true";
+
+          return res.redirect(redirectUrl);
         });
       }
-
-      if (!user) {
-        return res.redirect("/login");
-      }
-
-      req.logIn(user, (err) => {
-        if (err) {
-          return next(err);
-        }
-
-        // Store the user ID in the session
-        req.session.user = user._id;
-
-        const redirectUrl =
-          intendedAction === "signup"
-            ? "/home?signup=true"
-            : "/home?login=true";
-
-        return res.redirect(redirectUrl);
-      });
-    })(req, res, next);
+    )(req, res, next);
   } catch (err) {
     console.log(`Error on google callback ${err}`);
   }
