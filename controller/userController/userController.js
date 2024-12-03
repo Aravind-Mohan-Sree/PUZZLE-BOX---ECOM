@@ -588,7 +588,7 @@ const googleAuthCallback = (req, res, next) => {
           }
 
           // Store the user ID in the session
-          req.session.user = { id: user._id };
+          req.session.user = user._id;
 
           const redirectUrl =
             intendedAction === "signup"
