@@ -196,7 +196,7 @@
 
           <div class="position-relative">
             <label class="form-label" for="form12">Phone Number <span class="text-danger">*</span></label>
-            <input type="tel" id="form2" class="form-control mb-3" name="phone" placeholder="type..." />
+            <input type="tel" id="form56" class="form-control mb-3" name="phone" placeholder="type..." />
             <small class="phone-alert position-absolute top-100 text-danger"></small>
           </div>
 
@@ -274,6 +274,7 @@
       if (target.id === 'form' || target.id === 'form2') {
         event.preventDefault();
         const formElement = document.getElementById(target.id);
+        console.log(formElement);
 
         const contactName = formElement.querySelector('input[name="contactName"]').value;
         const phone = formElement.querySelector('input[name="phone"]').value;
